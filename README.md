@@ -2,6 +2,8 @@
 
 This is a work-in-progress guide to build Gentoo Linux. I'm mapping out EXACTLY what I did to my VM to make it easier for others to help me troubleshoot.
 
+Depending on how large this gets, I'll probably separate this README to 3 separate READMEs (1 for creating the Virtual Machine, 1 for installing Gentoo (excluding the kernel configuration part), and 1 just for the kernel config part).
+
 This setup has been done on a QEMU KVM hypervisor on a Arch Linux host. This is my host setup:
 ![image](https://user-images.githubusercontent.com/47036723/158039894-8337d0db-e63c-43e1-afd9-fc81e0f41b4d.png)
 
