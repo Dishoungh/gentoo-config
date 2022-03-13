@@ -106,11 +106,11 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 44. **(chroot) livecd / # eselect kernel list**
 45. **(chroot) livecd / # eselect kernel set 1**<br>
   Note: Kernel version is 5.16.14-gentoo 
-46. **(chroot) livecd / # emerge -aq sys-apps/pciutils**
+46. **(chroot) livecd / # emerge -aq sys-apps/pciutils app-arch/lzop app-arch/lz4**
 47. **(chroot) livecd / # cd /usr/src/linux && make menuconfig**
 
 # Configuring Kernel (Make Menuconfig)
-This is what I have configured in my Kernel config. I will try to be as detailed as possible with the EXACT changes I made. Keep in mind that I will have to work around Markdown's formatting to portray my changes as accurately as possible.
+This is what I have configured in my Kernel config. I will try to be as detailed as possible with the EXACT changes I made. Keep in mind that I will have to work around Markdown's formatting to portray my changes as accurately as possible. I know I can just use genkernel to make a completely generic kernel or use a prebuilt kernel binary, but I think that pretty much destroys the whole point of Gentoo. I want to learn to configure the kernel myself.
 
 Kernel Version: Linux/x86 5.16.14-gentoo
 
@@ -121,6 +121,122 @@ Kernel Version: Linux/x86 5.16.14-gentoo
 Here is what I have:
 
 - General setup --->
+   - ( ) Compile also drivers which will not load (NEW)
+   - ( ) Compile the kernel with warnings as errors (NEW)
+   - () Local version - append to kernel release (NEW)
+   - ( ) Automatically append version information to the version string
+   - () Build ID Salt (NEW)
+   - Kernel compression mode (LZ4) --->
+   - () Default init path (NEW)
+   - ((none)) Default hostname (NEW)
+   - (*) Support for paging of anonymous memory (swap) (NEW)
+   - (*) System V IPC
+   - ( ) POSIX Message Queues
+   - ( ) General notification queue (NEW)
+   - ( ) Enable process_vm_readv/writev syscalls
+   - ( ) uselib syscall
+   - ( ) Auditing support
+   - IRQ subsystem --->
+      - ( ) Expose irq internals in debugfs (NEW)  
+   - Timers subsystem --->
+      - Timer tick handling (Periodic timer ticks (constant rate, no dynticks))
+      - ( ) Old Idle dynticks config
+      - ( ) High Resolution Timer Support
+   - BPF subsystem --->
+      - ( ) Enable bpf() system call (NEW)
+      - ( ) Enable BPF Just In Time compiler (NEW) 
+   - Preemption Model (Voluntary Kernel Preemption (Desktop)) --->
+   - (*) Preemption behaviour defined on boot (NEW)
+   - ( ) Core Scheduling for SMT (NEW)
+   - CPU/Task time and stats accounting --->
+      - Cputime accounting (Simple tick based cputime accounting) --->
+      - ( ) Fine granularity task level IRQ time accounting (NEW)
+      - ( ) BSD Process Accounting
+      - ( ) Export task/process statistics through netlink
+      - ( ) Pressure stall information tracking (NEW)
+   - (*) CPU isolation (NEW)
+   - RCU Subsystem --->
+      - ( ) Make expert-level adjustment to RCU configuration (NEW) 
+   - (*) Kernel .config support
+   - ( ) Enable access to .config through /proc/config.gz (NEW)
+   - ( ) Enable kernel headers through /sys/kernel/kheaders.tar.xz (NEW)
+   - (15) Kernel log buffer size (16 => 64KB, 17 => 128KB)
+   - (15) CPU kernel log buffer size contribution (13 => 8 KB, 17 => 128KB)
+   - (12) Temporary per-CPU printk log buffer size (12 => 4KB, 13 => 8KB)
+   - ( ) Printk indexing debugfs interface (NEW)
+   - Scheduler features --->
+      - ( ) Enable utilization clamping for RT/FAIR tasks (NEW) 
+   - (*) Control Group support --->
+      - ( ) Memory controller (NEW)
+      - ( ) IO controller (NEW)
+      - (*) CPU controller --->
+         -  (*) Group scheduling for SCHED_OTHER (NEW)
+         -  ( ) CPU bandwidth provisioning for FAIR_GROUP_SCHED (NEW)
+         -  Group scheduling for SCHED_RR/FIFO (NEW)
+      - ( ) PIDs controller (NEW)
+      - ( ) RDMA controller (NEW)
+      - ( ) Freezer controller
+      - ( ) HugeTLB controller (NEW)
+      - (*) Cpuset controller
+      - (*) Include legacy /proc/<pid>/cpuset file (NEW)
+      - (*) Device controller (NEW)
+      - (*) Simple CPU accounting controller
+      - ( ) Perf controller (NEW)
+      - ( ) Misc resource controller (NEW)
+      - ( ) Debug controller (NEW)
+   - (*) Namespaces support --->
+      - (*) UTS namespace
+      - (*) TIME namespace (NEW)
+      - (*) IPC namespace
+      - (*) User namespace
+      - (*) PID Namespaces
+      - (*) Network namespace
+   - ( ) Checkpoint/restore support (NEW)
+   - ( ) Automatic process group scheduling (NEW)
+   - ( ) Enable deprecated sysfs features to support old userspace tools (NEW)
+   - (*) Kernel->user space relay support (formerly relayfs)
+   - (*) Initial RAM filesystem and RAM disk (initramfs/initrd) support
+   - () Initramfs source fil(s) (NEW)
+   - ( ) Support initial ramdisk/ramfs compressed using gzip
+   - ( ) Support initial ramdisk/ramfs compressed using bzip2
+   - ( ) Support initial ramdisk/ramfs compressed using LZMA
+   - ( ) Support initial ramdisk/ramfs compressed using XZ
+   - (*) Support initial ramdisk/ramfs compressed using LZO (NEW)
+   - (*) Support initial ramdisk/ramfs compressed using LZ4 (NEW)
+   - ( ) Support initial ramdisk/ramfs compressed using ZSTD
+   - ( ) Boot config support (NEW)
+   - Compiler optimization level (Optimize for performance (-O2)) --->
+   - ( ) Configure standard kernel features (expert users) (NEW)
+   - (*) Load all symbols for debugging/ksymoops
+   - (*) Include all symbols in kallsyms
+   - ( ) Enable userfaultfd() system call (NEW)
+   - ( ) Embedded system (NEW)
+   - Kernel Performance Events And Counters --->
+      - ( ) Debug: use vmalloc to back perf mmap() buffers (NEW)
+   - ( ) Disable heap randomization
+   - Choose SLAB allocator (SLUB (Unqueued Allocator)) --->
+   - (*) Allow slab caches to be merged (NEW)
+   - ( ) Randomize slab freelist (NEW)
+   - ( ) Harden slab freelist metadata (NEW)
+   - ( ) Page allocator randomization (NEW)
+   - (*) SLUB per cpu partial cache (NEW)
+   - (*) Profiling support
 - (*) 64-bit kernel (NEW)
 - Processor type and features --->
-- 
+- Power management and ACPI options --->
+- Bus options (PCI etc.) --->
+- Binary Emulations --->
+- (*) Virtualization (NEW)
+- General architecture-dependent options --->
+- (*) Enable loadable module support --->
+- (*) Enable the block layer --->
+- (*) Executable file formats --->
+- Memory Management options --->
+- (*) Networking support --->
+- Device Drivers --->
+- File systems --->
+- Security options --->
+- (*) Cryptographic API --->
+- Library routines --->
+- Kernel hacking --->
+- Gentoo Linux --->
