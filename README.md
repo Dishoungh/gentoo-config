@@ -70,7 +70,7 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 13. **livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf**<br>
    Note: This is what I have for my make.conf after this command<br>![image](https://user-images.githubusercontent.com/47036723/158043959-f8fb9f62-07b4-42f1-93d9-00ab955178b7.png)
 14. **livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf**
-   Note: If the DNS problem happens again, change the DNS values back like shown before. Here is my make.conf now (I basically selected every mirror in the U.S)<br>![image](https://user-images.githubusercontent.com/47036723/158044098-365a9b21-3edc-4115-8389-d17645eb1ef8.png)
+   Note: If the DNS problem happens again, change the DNS values back like shown before. Here is my make.conf now (I basically selected every mirror in the U.S)<br>![image](https://user-images.githubusercontent.com/47036723/158045042-87f96a1e-1b8c-4af2-99fa-1861d4b39d99.png)
 15. **livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf**
 16. **livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**
 17. **livecd /mnt/gentoo # cat /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**
@@ -90,3 +90,7 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 29. **(chroot) livecd / # mount /dev/vda1 /boot**
 30. **(chroot) livecd / # emerge-webrsync**
 31. **(chroot) livecd / # emerge --sync --quiet**
+32. **(chroot) livecd / # eselect profile list**
+33. **(chroot) livecd / # eselect profile set 8**
+34. **(chroot) livecd / # emerge -avuDN @world && (emerge --info | grep ^USE)**
+35. **(chroot) livecd / # **
