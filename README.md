@@ -2,7 +2,7 @@
 
 This is a work-in-progress guide for me to build a Gentoo VM. I'm mapping out EXACTLY what I did to my VM to make it easier for others to help me troubleshoot.
 
-Depending on how large this gets, I'll probably separate this README to 3 separate READMEs (1 for creating the Virtual Machine, 1 for installing Gentoo (excluding the kernel configuration part), and 1 just for the kernel config part).
+Depending on how large this gets, I'll probably separate this README to multiple READMEs or keep it as one depending on which one is easiest to read.
 
 This setup has been done on a QEMU KVM hypervisor on a Arch Linux host. This is my host setup:
 ![image](https://user-images.githubusercontent.com/47036723/158039894-8337d0db-e63c-43e1-afd9-fc81e0f41b4d.png)
@@ -42,7 +42,7 @@ Links to guides and tutorials I used:
 18. After clicking "Begin Installation", Virt-Manager should automatically start the Virtual Machine. Boot into "LiveCD (kernel: gentoo)<br>![image](https://user-images.githubusercontent.com/47036723/158042060-6a6a2221-9746-42a4-a266-b4f8a60e36bb.png)
 
 
-# Installing Gentoo
+# Installing Gentoo (Before Make Menuconfig)
 
 The following contains commands exactly as I typed them in order. I'll occasionally show screenshots to show some important information and I'll try to be as transparent as possible while trying not to show a bunch of unnecessary commands.
 
@@ -92,5 +92,35 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 31. **(chroot) livecd / # emerge --sync --quiet**
 32. **(chroot) livecd / # eselect profile list**
 33. **(chroot) livecd / # eselect profile set 8**
-34. **(chroot) livecd / # emerge -avuDN @world && (emerge --info | grep ^USE)**
-35. **(chroot) livecd / # **
+34. **(chroot) livecd / # emerge -avuDN @world && (emerge --info | grep ^USE)**<br>
+   Note: Command took about 3 hours to complete. I could have added more USE flags to decrease the emerge time and size of the whole system, but I want to make sure my USE flags aren't messing things up. Once I get my vm up right, I'll perhaps mess with the USE flags later?<br>Output of USE Flags:<br>![image](https://user-images.githubusercontent.com/47036723/158071253-0b886a5b-e5fd-4818-a55b-5ac1a7057a42.png)
+35. **(chroot) livecd / # emerge -aq app-editors/vim**
+36. **(chroot) livecd / # echo "America/Chicago" > /etc/timezone**
+37. **(chroot) livecd / # emerge --config sys-libs/timezone-data**
+38. **(chroot) livecd / # echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen**
+39. **(chroot) livecd / # locale-gen**
+40. **(chroot) livecd / # eselect locale list**
+41. **(chroot) livecd / # eselect locale set 4**
+42. **(chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"**
+43. **(chroot) livecd / # emerge -aq sys-kernel/linux-firmware sys-kernel/gentoo-sources**
+44. **(chroot) livecd / # eselect kernel list**
+45. **(chroot) livecd / # eselect kernel set 1**<br>
+  Note: Kernel version is 5.16.14-gentoo 
+46. **(chroot) livecd / # emerge -aq sys-apps/pciutils**
+47. **(chroot) livecd / # cd /usr/src/linux && make menuconfig**
+
+# Configuring Kernel (Make Menuconfig)
+This is what I have configured in my Kernel config. I will try to be as detailed as possible with the EXACT changes I made. Keep in mind that I will have to work around Markdown's formatting to portray my changes as accurately as possible.
+
+Kernel Version: Linux/x86 5.16.14-gentoo
+
+(*) = Built into the kernel<br>
+(M) = Built as a module<br>
+( ) = Excluded<br>
+
+Here is what I have:
+
+- General setup --->
+- (*) 64-bit kernel (NEW)
+- Processor type and features --->
+- 
