@@ -4,7 +4,7 @@ This is a work-in-progress guide for me to build a Gentoo VM. I'm mapping out EX
 
 Depending on how large this gets, I'll probably separate this README to multiple READMEs or keep it as one depending on which one is easiest to read.
 
-This setup has been done on a QEMU KVM hypervisor on a Arch Linux host. This is my host setup:
+This setup has been done on a QEMU KVM hypervisor on a Arch Linux host...because of course I would be on Arch. This is my host setup:
 ![image](https://user-images.githubusercontent.com/47036723/158039894-8337d0db-e63c-43e1-afd9-fc81e0f41b4d.png)
 
 I'm not intending on passing through much of my host hardware except my CPU configuration. I'm trying to create a fairly generic Gentoo VM, so I don't care about passing through my GPU or getting graphics drivers for it in the kernel (at least not yet anyway). The goal here is to minimize the variability aside from the actual kernel configuration later.
