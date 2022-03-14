@@ -108,7 +108,7 @@ The following contains commands exactly as I typed them in order. I'll occasiona
   Note: Kernel version is 5.16.14-gentoo 
 46. **(chroot) livecd / # emerge -aq sys-apps/pciutils app-arch/lzop app-arch/lz4**
 47. **(chroot) livecd / # cd /usr/src/linux && make menuconfig**<br>
-  Note: I uploaded the .config file as "kernel_config.txt"
+  Note: [Here is the text file for the .config](https://github.com/Dishoungh/gentoo-config/blob/master/kernel_config.txt)
 49. **(chroot) livecd /usr/src/linux # make && make modules_install && make install**
 50. **(chroot) livecd /usr/src/linux # emerge -aq dev-vcs/git sys-kernel/dracut**
 51. **(chroot) livecd /usr/src/linux # dracut --kver=5.16.14-gentoo**
