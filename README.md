@@ -107,9 +107,9 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 45. **(chroot) livecd / # eselect kernel set 1**<br>
   Note: Kernel version is 5.16.14-gentoo 
 46. **(chroot) livecd / # emerge -aq sys-apps/pciutils app-arch/lzop app-arch/lz4**
-47. **(chroot) livecd / # cd /usr/src/linux && make menuconfig**
-48. **(chroot) livecd /usr/src/linux # make && make modules_install && make install**
-49. **(chroot) livecd /usr/src/linux # emerge -aq dev-vcs/git sys-kernel/dracut**
-   Note: I am doing this to upload the .config file here so it will be easier to show you exactly what was done in the make menuconfig
-50. **(chroot) livecd /usr/src/linux # dracut --kver=5.16.14-gentoo**
-51. **(chroot) livecd /usr/src/linux # **
+47. **(chroot) livecd / # cd /usr/src/linux && make menuconfig**<br>
+  Note: I uploaded the .config file as "kernel_config.txt"
+49. **(chroot) livecd /usr/src/linux # make && make modules_install && make install**
+50. **(chroot) livecd /usr/src/linux # emerge -aq dev-vcs/git sys-kernel/dracut**
+51. **(chroot) livecd /usr/src/linux # dracut --kver=5.16.14-gentoo**
+52. **(chroot) livecd /usr/src/linux # **
