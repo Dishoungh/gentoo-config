@@ -138,6 +138,8 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 70. **livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}**
 71. **livecd ~ # umount -R /mnt/gentoo**
 72. **livecd ~ # reboot**
-
+   Note: During the reboot, I actually shut down my VM to remove the ISO disk from the boot menu. This is the boot menu now:<br>
+      ![image](https://user-images.githubusercontent.com/47036723/158173094-943c3fc3-1ecc-4e3e-af40-18f09f13005d.png)
+      
 # Post-Installation
 TBD
