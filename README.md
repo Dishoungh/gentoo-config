@@ -111,5 +111,33 @@ The following contains commands exactly as I typed them in order. I'll occasiona
   Note: [Here is the text file for the .config](https://github.com/Dishoungh/gentoo-config/blob/master/kernel_config.txt)
 49. **(chroot) livecd /usr/src/linux # make && make modules_install && make install**
 50. **(chroot) livecd /usr/src/linux # emerge -aq dev-vcs/git sys-kernel/dracut**
-51. **(chroot) livecd /usr/src/linux # dracut --kver=5.16.14-gentoo**
-52. **(chroot) livecd /usr/src/linux # **
+51. **(chroot) livecd /usr/src/linux # dracut --kver=5.16.14-gentoo**<br>
+   Note: Here is what shows up on /boot<br>![image](https://user-images.githubusercontent.com/47036723/158161486-1731096d-2053-4722-b556-e7a4c5c9159c.png)
+52. **(chroot) livecd /usr/src/linux # (echo -e "UUID=$(blkid -s UUID -o value /dev/vda1)\t\t\t\t\t/boot/efi\tvfat\tdefaults\t0 2" >> /etc/fstab) && (echo -e "UUID=$(blkid -s UUID -o value /dev/vda2)\tnone\t\tswap\tsw\t\t0 0" >> /etc/fstab) && (echo -e "UUID=$(blkid -s UUID -o value /dev/vda3)\t/\t\text4\tnoatime\t\t0 1" >> /etc/fstab)**
+53. **(chroot) livecd /usr/src/linux # echo "hostname=\"gentoo-vm\"" > /etc/conf.d/hostname**
+54. **(chroot) livecd /usr/src/linux # emerge --noreplace --quiet net-misc/netifrc**
+55. **(chroot) livecd /usr/src/linux # emerge -aq net-misc/dhcpcd**
+56. **(chroot) livecd /usr/src/linux # rc-update add dhcpcd default**
+57. **(chroot) livecd /usr/src/linux # cd /etc/init.d**
+58. **(chroot) livecd /etc/init.d # ln -s net.lo net.enp1s0**
+59. **(chroot) livecd /etc/init.d # rc-update add net.enp1s0 default**
+60. **(chroot) livecd /etc/init.d # (echo -e "127.0.0.1\tgentoo-vm.homenetwork\tgentoo-vm\tlocalhost" > /etc/hosts) && (echo -e "::1\t\tlocalhost" >> /etc/hosts)**
+61. **(chroot) livecd /etc/init.d # passwd**
+62. **(chroot) livecd /etc/init.d # emerge -aq app-admin/sysklogd && rc-update add sysklogd default**
+63. **(chroot) livecd /etc/init.d # emerge -avq sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2**
+64. **(chroot) livecd /etc/init.d # echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf**
+65. **(chroot) livecd /etc/init.d # cd /**
+66. **(chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot**<br>
+   Output:<br>
+      ![image](https://user-images.githubusercontent.com/47036723/158171503-4a552bbc-8f90-42de-9d12-5e656824b7c9.png)
+67. **(chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg**<br>
+   Output:<br>
+      ![image](https://user-images.githubusercontent.com/47036723/158171740-c7cdb14d-9f90-4932-af63-0eac8521bd70.png)
+68. **(chroot) livecd / # exit**
+69. **livecd /mnt/gentoo # cd**
+70. **livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}**
+71. **livecd ~ # umount -R /mnt/gentoo**
+72. **livecd ~ # reboot**
+
+# Post-Installation
+TBD
