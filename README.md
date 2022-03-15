@@ -14,7 +14,7 @@ Using this as a reference as well: <br>
 
 QEMU/KVM Virt-manager Versions: 4.0.0
 
-Gentoo ISO File Used: install-amd64-minimal-20220227T170528Z.iso
+Gentoo ISO File Used: install-amd64-minimal-20220314T175555Z.iso
 
 Links to guides and tutorials I used:
    - [Gentoo Linux amd64 Handbook: Installing Gentoo](https://wiki.gentoo.org/wiki/Handbook:AMD64/Full/Installation#Introduction)
@@ -27,18 +27,18 @@ Links to guides and tutorials I used:
 
 1. Create a new virtual machine<br>![image](https://user-images.githubusercontent.com/47036723/158039966-403e8835-8871-4c33-a915-6542802c8259.png)
 2. Select "Local install media (ISO image or CDROM)<br>![image](https://user-images.githubusercontent.com/47036723/158040033-4f539e53-a665-44c0-94d6-0f81bd4e4c9c.png)
-3. Choose "install-amd64-minimal-20220227T170528Z.iso" file<br>![image](https://user-images.githubusercontent.com/47036723/158040074-63e2a2e3-518d-47e0-a7f1-c742d13e4ce9.png)
+3. Choose "install-amd64-minimal-20220314T175555Z.iso" file<br>![image](https://user-images.githubusercontent.com/47036723/158284533-184850c9-af84-4fe5-954d-2ffe2c92c9e6.png)
 4. Memory: 16384 MiB (16 GB)<br>&nbsp;CPUs (Threads): 8 <br>![image](https://user-images.githubusercontent.com/47036723/158040123-367645b3-d6d9-4c4e-8047-6de5af83bc03.png)
 5. I'm using a secondary hard drive that is 500GB but I'll use 100GB for the VM. I'm not sure what "Allocate entire volume now" means, but I'll check it because that seems to make sense to do.<br>![image](https://user-images.githubusercontent.com/47036723/158040209-523fabeb-069c-4c1c-b152-9c73c2b04e54.png)
 6. After clicking "Finish", the storage will be allocated.
 7. Choose the allocated storage volume for the Gentoo VM (mine is called "gentoo.qcow2")
 8. Check "Customize configuration before install" then click "Finish"<br>![image](https://user-images.githubusercontent.com/47036723/158040262-89a3ad74-c50c-41f2-849e-28ed773b335b.png)
-9. Overview<br>![image](https://user-images.githubusercontent.com/47036723/158042928-8f619c00-2e11-4b58-b717-27864cac0baf.png)
+9. Overview<br>![image](https://user-images.githubusercontent.com/47036723/158284928-815cca46-f246-425c-8a97-085cfb2be4d8.png)
 10. CPUs<br>![image](https://user-images.githubusercontent.com/47036723/158043080-c05b8217-47e2-4511-bf5f-2c3cace8e23e.png)
 11. Memory<br>![image](https://user-images.githubusercontent.com/47036723/158042969-b2a8b000-0946-4300-870a-e02a0024a4f1.png)
 12. Boot Options<br>![image](https://user-images.githubusercontent.com/47036723/158042978-baaa6a0d-f41c-4f80-a94f-2f72028b72ce.png)
 13. VirtIO Disk 1<br>![image](https://user-images.githubusercontent.com/47036723/158042992-f009f18a-4883-47a2-8aa9-9372ac46cbf0.png)
-14. SATA CDROM 1<br>![image](https://user-images.githubusercontent.com/47036723/158043013-30d12337-bc24-4885-801a-21d758707a16.png)
+14. SATA CDROM 1<br>![image](https://user-images.githubusercontent.com/47036723/158285706-5474b864-0cd0-4339-93ee-14f3178c7f01.png)
 15. NIC<br>![image](https://user-images.githubusercontent.com/47036723/158043022-078e7d62-622c-406b-a732-3ceef37943c9.png)
 16. Video<br>![image](https://user-images.githubusercontent.com/47036723/158175376-f897e4d5-b2b2-4d04-be25-15533e07623f.png)<br>&emsp;Other Settings (Information that I don't think is important but in case if it would be)<br>&emsp;&emsp;- Tablet: EvTouch USB Graphics Tablet (Type), Absolute Movement (Mode)<br>&emsp;&emsp;- Sound: HDA (ICH9)<br>&emsp;&emsp;- Console Device Type: pty<br>&emsp;&emsp;- Display Spice Type: Spice server<br>
 17. Click "Begin Installation"
