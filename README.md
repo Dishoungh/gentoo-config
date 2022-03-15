@@ -2,17 +2,19 @@
 
 This is a work-in-progress guide for me to build a Gentoo VM. I'm mapping out EXACTLY what I did to my VM to make it easier for others to help me troubleshoot.
 
+Depending on how large this gets, I'll probably separate this README to multiple READMEs or keep it as one depending on which one is easiest to read.
+
 This setup has been done on a QEMU+KVM+Virt-Manager hypervisor on a Arch Linux host...because of course I would be on Arch. This is my host setup:<br>
 ![image](https://user-images.githubusercontent.com/47036723/158039894-8337d0db-e63c-43e1-afd9-fc81e0f41b4d.png)
 
-I'm not intending on passing through much of my host hardware except my CPU configuration. I'm trying to create a fairly generic Gentoo VM, so I will be using gentoo-kernel-bin and a "universal" tarball. 
+I'm not intending on passing through much of my host hardware except my CPU configuration. I'm trying to create a fairly generic Gentoo VM, so I don't care about passing through my GPU or getting graphics drivers for it in the kernel (at least not yet anyway). The goal here is to minimize the variability aside from the actual kernel configuration later.
 
 Using this as a reference as well: <br>
 ![image](https://user-images.githubusercontent.com/47036723/158282862-1617c3a7-3a65-4aa3-afbb-00c36ebea260.png)
 
 QEMU/KVM Virt-manager Versions: 4.0.0
 
-Gentoo ISO File Used: install-amd64-minimal-20220314T175555Z.iso
+Gentoo ISO File Used: install-amd64-minimal-20220227T170528Z.iso
 
 Links to guides and tutorials I used:
    - [Gentoo Linux amd64 Handbook: Installing Gentoo](https://wiki.gentoo.org/wiki/Handbook:AMD64/Full/Installation#Introduction)
@@ -25,18 +27,18 @@ Links to guides and tutorials I used:
 
 1. Create a new virtual machine<br>![image](https://user-images.githubusercontent.com/47036723/158039966-403e8835-8871-4c33-a915-6542802c8259.png)
 2. Select "Local install media (ISO image or CDROM)<br>![image](https://user-images.githubusercontent.com/47036723/158040033-4f539e53-a665-44c0-94d6-0f81bd4e4c9c.png)
-3. Choose "install-amd64-minimal-20220314T175555Z.iso" file<br>![image](https://user-images.githubusercontent.com/47036723/158284533-184850c9-af84-4fe5-954d-2ffe2c92c9e6.png)
+3. Choose "install-amd64-minimal-20220227T170528Z.iso" file<br>![image](https://user-images.githubusercontent.com/47036723/158040074-63e2a2e3-518d-47e0-a7f1-c742d13e4ce9.png)
 4. Memory: 16384 MiB (16 GB)<br>&nbsp;CPUs (Threads): 8 <br>![image](https://user-images.githubusercontent.com/47036723/158040123-367645b3-d6d9-4c4e-8047-6de5af83bc03.png)
 5. I'm using a secondary hard drive that is 500GB but I'll use 100GB for the VM. I'm not sure what "Allocate entire volume now" means, but I'll check it because that seems to make sense to do.<br>![image](https://user-images.githubusercontent.com/47036723/158040209-523fabeb-069c-4c1c-b152-9c73c2b04e54.png)
 6. After clicking "Finish", the storage will be allocated.
 7. Choose the allocated storage volume for the Gentoo VM (mine is called "gentoo.qcow2")
 8. Check "Customize configuration before install" then click "Finish"<br>![image](https://user-images.githubusercontent.com/47036723/158040262-89a3ad74-c50c-41f2-849e-28ed773b335b.png)
-9. Overview<br>![image](https://user-images.githubusercontent.com/47036723/158284928-815cca46-f246-425c-8a97-085cfb2be4d8.png)
+9. Overview<br>![image](https://user-images.githubusercontent.com/47036723/158042928-8f619c00-2e11-4b58-b717-27864cac0baf.png)
 10. CPUs<br>![image](https://user-images.githubusercontent.com/47036723/158043080-c05b8217-47e2-4511-bf5f-2c3cace8e23e.png)
 11. Memory<br>![image](https://user-images.githubusercontent.com/47036723/158042969-b2a8b000-0946-4300-870a-e02a0024a4f1.png)
 12. Boot Options<br>![image](https://user-images.githubusercontent.com/47036723/158042978-baaa6a0d-f41c-4f80-a94f-2f72028b72ce.png)
 13. VirtIO Disk 1<br>![image](https://user-images.githubusercontent.com/47036723/158042992-f009f18a-4883-47a2-8aa9-9372ac46cbf0.png)
-14. SATA CDROM 1<br>![image](https://user-images.githubusercontent.com/47036723/158285706-5474b864-0cd0-4339-93ee-14f3178c7f01.png)
+14. SATA CDROM 1<br>![image](https://user-images.githubusercontent.com/47036723/158043013-30d12337-bc24-4885-801a-21d758707a16.png)
 15. NIC<br>![image](https://user-images.githubusercontent.com/47036723/158043022-078e7d62-622c-406b-a732-3ceef37943c9.png)
 16. Video<br>![image](https://user-images.githubusercontent.com/47036723/158175376-f897e4d5-b2b2-4d04-be25-15533e07623f.png)<br>&emsp;Other Settings (Information that I don't think is important but in case if it would be)<br>&emsp;&emsp;- Tablet: EvTouch USB Graphics Tablet (Type), Absolute Movement (Mode)<br>&emsp;&emsp;- Sound: HDA (ICH9)<br>&emsp;&emsp;- Console Device Type: pty<br>&emsp;&emsp;- Display Spice Type: Spice server<br>
 17. Click "Begin Installation"
@@ -66,13 +68,17 @@ The following contains commands exactly as I typed them in order. I'll occasiona
    Note: Screenshot to show the UUIDs assigned to these partitions.<br>![image](https://user-images.githubusercontent.com/47036723/158043496-4b8143a8-04bd-4d51-8633-791c94c509d0.png)
 9. **livecd ~ # mount /dev/vda3 /mnt/gentoo**<br>
 10. **livecd ~ # cd /mnt/gentoo**<br>
-11. **livecd /mnt/gentoo # wget https://builds.xartin.tv/Gentoo-17.1-universalcc-February-2022/amd64/openrc/desktop/Gentoo-amd64-17.1-desktop-openrc-universalcc-2022-02-10_00-32-stage4.tar.gz**<br>
-   Note: This is a universal tarball which already sets up a lot of stuff for you.
-13. **livecd /mnt/gentoo # tar xpvf ./Gentoo-17.1-universalcc-February-2022/amd64/openrc/desktop/Gentoo-amd64-17.1-desktop-openrc-universalcc-2022-02-10_00-32-stage4.tar.gz --xattrs-include='*.*' --numeric-owner**<br>
-14. **livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf**<br>
-15. **livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf**
-   Note: If the DNS problem happens again, change the DNS values back like shown before. [My make.conf file is uploaded here]()
-18. (DELETE???) **livecd /mnt/gentoo # cp --dereference /etc/resolv.conf /mnt/gentoo/etc/**
+11. **livecd /mnt/gentoo # wget http://www.gtlib.gatech.edu/pub/gentoo/releases/amd64/autobuilds/20220227T170528Z/stage3-amd64-desktop-openrc-20220227T170528Z.tar.xz**<br>
+12. **livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220227T170528Z.tar.xz --xattrs-include='*.*' --numeric-owner**<br>
+13. **livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf**<br>
+   Note: This is what I have for my make.conf after this command<br>![image](https://user-images.githubusercontent.com/47036723/158043959-f8fb9f62-07b4-42f1-93d9-00ab955178b7.png)
+14. **livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf**
+   Note: If the DNS problem happens again, change the DNS values back like shown before. Here is my make.conf now (I basically selected every mirror in the U.S)<br>![image](https://user-images.githubusercontent.com/47036723/158045042-87f96a1e-1b8c-4af2-99fa-1861d4b39d99.png)
+15. **livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf**
+16. **livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**
+17. **livecd /mnt/gentoo # cat /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**
+   Output:<br>![image](https://user-images.githubusercontent.com/47036723/158044281-44cbc935-2db9-4d6f-bbc1-ef70c2f9b3b6.png)
+18. **livecd /mnt/gentoo # cp --dereference /etc/resolv.conf /mnt/gentoo/etc/**
    Note: Make sure the DNS information in the file hasn't been reset
 19. **livecd /mnt/gentoo # mount --types proc /proc /mnt/gentoo/proc**
 20. **livecd /mnt/gentoo # mount --rbind /sys /mnt/gentoo/sys**
