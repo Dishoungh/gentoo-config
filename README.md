@@ -9,6 +9,9 @@ This setup has been done on a QEMU+KVM+Virt-Manager hypervisor on a Arch Linux h
 
 I'm not intending on passing through much of my host hardware except my CPU configuration. I'm trying to create a fairly generic Gentoo VM, so I don't care about passing through my GPU or getting graphics drivers for it in the kernel (at least not yet anyway). The goal here is to minimize the variability aside from the actual kernel configuration later.
 
+Using this as a reference as well: <br>
+![image](https://user-images.githubusercontent.com/47036723/158282862-1617c3a7-3a65-4aa3-afbb-00c36ebea260.png)
+
 QEMU/KVM Virt-manager Versions: 4.0.0
 
 Gentoo ISO File Used: install-amd64-minimal-20220227T170528Z.iso
