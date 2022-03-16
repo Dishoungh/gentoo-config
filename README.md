@@ -14,7 +14,7 @@ Using this as a reference as well: <br>
 
 QEMU/KVM Virt-manager Versions: 4.0.0
 
-Gentoo ISO File Used: install-amd64-minimal-20220227T170528Z.iso
+Gentoo ISO File Used: install-amd64-minimal-20220314T175555Z.iso
 
 Links to guides and tutorials I used:
    - [Gentoo Linux amd64 Handbook: Installing Gentoo](https://wiki.gentoo.org/wiki/Handbook:AMD64/Full/Installation#Introduction)
@@ -54,93 +54,93 @@ The following contains commands exactly as I typed them in order. I'll occasiona
       a. **livecd ~ # nano /etc/resolv.conf**<br>
       b. Original file:<br>![image](https://user-images.githubusercontent.com/47036723/158042284-bd2e3f27-76df-4e76-af94-5262f9abda5f.png)<br>
       c. Edits:<br>![image](https://user-images.githubusercontent.com/47036723/158042349-15188150-2e74-416e-9a6b-daeadd1481b3.png)<br>
-2. **livecd ~ # ping -c3 www.gentoo.org**<br>
+      d. **livecd ~ # ping -c3 www.gentoo.org**<br>
    Note: Command worked this time. If there is a better solution, let me know.<br>![image](https://user-images.githubusercontent.com/47036723/158042681-7bda119f-2243-4c00-a41e-8bcd87393966.png)<br>
-3. **livecd ~ # lsblk**<br>
+2. **livecd ~ # lsblk**<br>
    Note: Below is what shows for my list of block devices<br>![image](https://user-images.githubusercontent.com/47036723/158043217-f2c64054-abd3-41d8-a83d-f1bb989a726f.png)
-4. **livecd ~ # fdisk /dev/vda**<br>
+3. **livecd ~ # fdisk /dev/vda**<br>
    Note: This is how I partitioned /dev/vda. I likely don't need that much swap, but I doubt the swap will cause any issues<br>![image](https://user-images.githubusercontent.com/47036723/158043398-01dc03f4-2384-45a6-8f70-7549a6df5dec.png)
 
-5. **livecd ~ # mkfs.vfat -F 32 /dev/vda1**<br>
-6. **livecd ~ # mkfs.ext4 /dev/vda3**<br>
-7. **livecd ~ # mkswap /dev/vda2**<br>
-8. **livecd ~ # swapon /dev/vda2**<br>
+4. **livecd ~ # mkfs.vfat -F 32 /dev/vda1**<br>
+5. **livecd ~ # mkfs.ext4 /dev/vda3**<br>
+6. **livecd ~ # mkswap /dev/vda2**<br>
+7. **livecd ~ # swapon /dev/vda2**<br>
    Note: Screenshot to show the UUIDs assigned to these partitions.<br>![image](https://user-images.githubusercontent.com/47036723/158043496-4b8143a8-04bd-4d51-8633-791c94c509d0.png)
-9. **livecd ~ # mount /dev/vda3 /mnt/gentoo**<br>
-10. **livecd ~ # cd /mnt/gentoo**<br>
-11. **livecd /mnt/gentoo # wget http://www.gtlib.gatech.edu/pub/gentoo/releases/amd64/autobuilds/20220227T170528Z/stage3-amd64-desktop-openrc-20220227T170528Z.tar.xz**<br>
-12. **livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220227T170528Z.tar.xz --xattrs-include='*.*' --numeric-owner**<br>
-13. **livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf**<br>
+8. **livecd ~ # mount /dev/vda3 /mnt/gentoo**<br>
+9. **livecd ~ # cd /mnt/gentoo**<br>
+10. **livecd /mnt/gentoo # wget http://www.gtlib.gatech.edu/pub/gentoo/releases/amd64/autobuilds/20220314T175555Z/stage3-amd64-desktop-openrc-20220314T175555Z.tar.xz**<br>
+11. **livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220227T170528Z.tar.xz --xattrs-include='*.*' --numeric-owner**<br>
+12. **livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf**<br>
    Note: This is what I have for my make.conf after this command<br>![image](https://user-images.githubusercontent.com/47036723/158043959-f8fb9f62-07b4-42f1-93d9-00ab955178b7.png)
-14. **livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf**
+13. **livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf**
    Note: If the DNS problem happens again, change the DNS values back like shown before. Here is my make.conf now (I basically selected every mirror in the U.S)<br>![image](https://user-images.githubusercontent.com/47036723/158045042-87f96a1e-1b8c-4af2-99fa-1861d4b39d99.png)
-15. **livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf**
-16. **livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**
-17. **livecd /mnt/gentoo # cat /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**
+14. **livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf**
+15. **livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**
+16. **livecd /mnt/gentoo # cat /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**
    Output:<br>![image](https://user-images.githubusercontent.com/47036723/158044281-44cbc935-2db9-4d6f-bbc1-ef70c2f9b3b6.png)
-18. **livecd /mnt/gentoo # cp --dereference /etc/resolv.conf /mnt/gentoo/etc/**
+17. **livecd /mnt/gentoo # cp --dereference /etc/resolv.conf /mnt/gentoo/etc/**
    Note: Make sure the DNS information in the file hasn't been reset
-19. **livecd /mnt/gentoo # mount --types proc /proc /mnt/gentoo/proc**
-20. **livecd /mnt/gentoo # mount --rbind /sys /mnt/gentoo/sys**
-21. **livecd /mnt/gentoo # mount --make-rslave /mnt/gentoo/sys**
-22. **livecd /mnt/gentoo # mount --rbind /dev /mnt/gentoo/dev**
-23. **livecd /mnt/gentoo # mount --make-rslave /mnt/gentoo/dev**
-24. **livecd /mnt/gentoo # mount --bind /run /mnt/gentoo/run**
-25. **livecd /mnt/gentoo # mount --make-slave /mnt/gentoo/run**
-26. **livecd /mnt/gentoo # chroot /mnt/gentoo /bin/bash**
-27. **livecd / # source /etc/profile**
-28. **livecd / # export PS1="(chroot) ${PS1}"**
-29. **(chroot) livecd / # mount /dev/vda1 /boot**
-30. **(chroot) livecd / # emerge-webrsync**
-31. **(chroot) livecd / # emerge --sync --quiet**
-32. **(chroot) livecd / # eselect profile list**
-33. **(chroot) livecd / # eselect profile set 8**
-34. **(chroot) livecd / # emerge -avuDN @world && (emerge --info | grep ^USE)**<br>
+18. **livecd /mnt/gentoo # mount --types proc /proc /mnt/gentoo/proc**
+19. **livecd /mnt/gentoo # mount --rbind /sys /mnt/gentoo/sys**
+20. **livecd /mnt/gentoo # mount --make-rslave /mnt/gentoo/sys**
+21. **livecd /mnt/gentoo # mount --rbind /dev /mnt/gentoo/dev**
+22. **livecd /mnt/gentoo # mount --make-rslave /mnt/gentoo/dev**
+23. **livecd /mnt/gentoo # mount --bind /run /mnt/gentoo/run**
+24. **livecd /mnt/gentoo # mount --make-slave /mnt/gentoo/run**
+25. **livecd /mnt/gentoo # chroot /mnt/gentoo /bin/bash**
+26. **livecd / # source /etc/profile**
+27. **livecd / # export PS1="(chroot) ${PS1}"**
+28. **(chroot) livecd / # mount /dev/vda1 /boot**
+29. **(chroot) livecd / # emerge-webrsync**
+30. **(chroot) livecd / # emerge --sync --quiet**
+31. **(chroot) livecd / # eselect profile list**
+32. **(chroot) livecd / # eselect profile set 8**
+33. **(chroot) livecd / # emerge -avuDN @world && (emerge --info | grep ^USE)**<br>
    Note: Command took about 3 hours to complete. I could have added more USE flags to decrease the emerge time and size of the whole system, but I want to make sure my USE flags aren't messing things up. Once I get my vm up right, I'll perhaps mess with the USE flags later?<br>Output of USE Flags:<br>![image](https://user-images.githubusercontent.com/47036723/158071253-0b886a5b-e5fd-4818-a55b-5ac1a7057a42.png)
-35. **(chroot) livecd / # emerge -aq app-editors/vim**
-36. **(chroot) livecd / # echo "America/Chicago" > /etc/timezone**
-37. **(chroot) livecd / # emerge --config sys-libs/timezone-data**
-38. **(chroot) livecd / # echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen**
-39. **(chroot) livecd / # locale-gen**
-40. **(chroot) livecd / # eselect locale list**
-41. **(chroot) livecd / # eselect locale set 4**
-42. **(chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"**
-43. **(chroot) livecd / # emerge -aq sys-kernel/linux-firmware sys-kernel/gentoo-sources**
-44. **(chroot) livecd / # eselect kernel list**
-45. **(chroot) livecd / # eselect kernel set 1**<br>
+34. **(chroot) livecd / # emerge -aq app-editors/vim**
+35. **(chroot) livecd / # echo "America/Chicago" > /etc/timezone**
+36. **(chroot) livecd / # emerge --config sys-libs/timezone-data**
+37. **(chroot) livecd / # echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen**
+38. **(chroot) livecd / # locale-gen**
+39. **(chroot) livecd / # eselect locale list**
+40. **(chroot) livecd / # eselect locale set 4**
+41. **(chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"**
+42. **(chroot) livecd / # emerge -aq sys-kernel/linux-firmware sys-kernel/gentoo-sources**
+43. **(chroot) livecd / # eselect kernel list**
+44. **(chroot) livecd / # eselect kernel set 1**<br>
   Note: Kernel version is 5.16.14-gentoo 
-46. **(chroot) livecd / # emerge -aq sys-apps/pciutils app-arch/lzop app-arch/lz4**
-47. **(chroot) livecd / # cd /usr/src/linux && make menuconfig**<br>
-  Note: [Here is the text file for the .config](https://github.com/Dishoungh/gentoo-config/blob/master/kernel_config.txt)
-49. **(chroot) livecd /usr/src/linux # make && make modules_install && make install**
-50. **(chroot) livecd /usr/src/linux # emerge -aq dev-vcs/git sys-kernel/dracut**
-51. **(chroot) livecd /usr/src/linux # dracut --kver=5.16.14-gentoo**<br>
+45. **(chroot) livecd / # emerge -aq sys-apps/pciutils app-arch/lzop app-arch/lz4**
+46. **(chroot) livecd / # cd /usr/src/linux && make menuconfig**<br>
+ Note: [Here is the text file for the .config](https://github.com/Dishoungh/gentoo-config/blob/master/kernel_config.txt)
+47. **(chroot) livecd /usr/src/linux # make && make modules_install && make install**
+48. **(chroot) livecd /usr/src/linux # emerge -aq dev-vcs/git sys-kernel/dracut**
+49. **(chroot) livecd /usr/src/linux # dracut --kver=5.16.14-gentoo**<br>
    Note: Here is what shows up on /boot<br>![image](https://user-images.githubusercontent.com/47036723/158161486-1731096d-2053-4722-b556-e7a4c5c9159c.png)
-52. **(chroot) livecd /usr/src/linux # (echo -e "UUID=$(blkid -s UUID -o value /dev/vda1)\t\t\t\t\t/boot/efi\tvfat\tdefaults\t0 2" >> /etc/fstab) && (echo -e "UUID=$(blkid -s UUID -o value /dev/vda2)\tnone\t\tswap\tsw\t\t0 0" >> /etc/fstab) && (echo -e "UUID=$(blkid -s UUID -o value /dev/vda3)\t/\t\text4\tnoatime\t\t0 1" >> /etc/fstab)**
-53. **(chroot) livecd /usr/src/linux # echo "hostname=\"gentoo-vm\"" > /etc/conf.d/hostname**
-54. **(chroot) livecd /usr/src/linux # emerge --noreplace --quiet net-misc/netifrc**
-55. **(chroot) livecd /usr/src/linux # emerge -aq net-misc/dhcpcd**
-56. **(chroot) livecd /usr/src/linux # rc-update add dhcpcd default**
-57. **(chroot) livecd /usr/src/linux # cd /etc/init.d**
-58. **(chroot) livecd /etc/init.d # ln -s net.lo net.enp1s0**
-59. **(chroot) livecd /etc/init.d # rc-update add net.enp1s0 default**
-60. **(chroot) livecd /etc/init.d # (echo -e "127.0.0.1\tgentoo-vm.homenetwork\tgentoo-vm\tlocalhost" > /etc/hosts) && (echo -e "::1\t\tlocalhost" >> /etc/hosts)**
-61. **(chroot) livecd /etc/init.d # passwd**
-62. **(chroot) livecd /etc/init.d # emerge -aq app-admin/sysklogd && rc-update add sysklogd default**
-63. **(chroot) livecd /etc/init.d # emerge -avq sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2**
-64. **(chroot) livecd /etc/init.d # echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf**
-65. **(chroot) livecd /etc/init.d # cd /**
-66. **(chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot**<br>
+50. **(chroot) livecd /usr/src/linux # (echo -e "UUID=$(blkid -s UUID -o value /dev/vda1)\t\t\t\t\t/boot/efi\tvfat\tdefaults\t0 2" >> /etc/fstab) && (echo -e "UUID=$(blkid -s UUID -o value /dev/vda2)\tnone\t\tswap\tsw\t\t0 0" >> /etc/fstab) && (echo -e "UUID=$(blkid -s UUID -o value /dev/vda3)\t/\t\text4\tnoatime\t\t0 1" >> /etc/fstab)**
+51. **(chroot) livecd /usr/src/linux # echo "hostname=\"gentoo-vm\"" > /etc/conf.d/hostname**
+52. **(chroot) livecd /usr/src/linux # emerge --noreplace --quiet net-misc/netifrc**
+53. **(chroot) livecd /usr/src/linux # emerge -aq net-misc/dhcpcd**
+54. **(chroot) livecd /usr/src/linux # rc-update add dhcpcd default**
+55. **(chroot) livecd /usr/src/linux # cd /etc/init.d**
+56. **(chroot) livecd /etc/init.d # ln -s net.lo net.enp1s0**
+57. **(chroot) livecd /etc/init.d # rc-update add net.enp1s0 default**
+58. **(chroot) livecd /etc/init.d # (echo -e "127.0.0.1\tgentoo-vm.homenetwork\tgentoo-vm\tlocalhost" > /etc/hosts) && (echo -e "::1\t\tlocalhost" >> /etc/hosts)**
+59. **(chroot) livecd /etc/init.d # passwd**
+60. **(chroot) livecd /etc/init.d # emerge -aq app-admin/sysklogd && rc-update add sysklogd default**
+61. **(chroot) livecd /etc/init.d # emerge -avq sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2**
+62. **(chroot) livecd /etc/init.d # echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf**
+63. **(chroot) livecd /etc/init.d # cd /**
+64. **(chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot**<br>
    Output:<br>
       ![image](https://user-images.githubusercontent.com/47036723/158171503-4a552bbc-8f90-42de-9d12-5e656824b7c9.png)
-67. **(chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg**<br>
+65. **(chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg**<br>
    Output:<br>
       ![image](https://user-images.githubusercontent.com/47036723/158171740-c7cdb14d-9f90-4932-af63-0eac8521bd70.png)
-68. **(chroot) livecd / # exit**
-69. **livecd /mnt/gentoo # cd**
-70. **livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}**
-71. **livecd ~ # umount -R /mnt/gentoo**
-72. **livecd ~ # reboot**
+66. **(chroot) livecd / # exit**
+67. **livecd /mnt/gentoo # cd**
+68. **livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}**
+69. **livecd ~ # umount -R /mnt/gentoo**
+70. **livecd ~ # reboot**
    Note: During the reboot, I actually shut down my VM to remove the ISO disk from the boot menu. This is the boot menu now:<br>
       ![image](https://user-images.githubusercontent.com/47036723/158173094-943c3fc3-1ecc-4e3e-af40-18f09f13005d.png)
       
