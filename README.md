@@ -71,7 +71,7 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 10. **livecd /mnt/gentoo # wget http://www.gtlib.gatech.edu/pub/gentoo/releases/amd64/autobuilds/20220314T175555Z/stage3-amd64-desktop-openrc-20220314T175555Z.tar.xz**<br>
 11. **livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220227T170528Z.tar.xz --xattrs-include='*.*' --numeric-owner**<br>
 12. **livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf**<br>
-   Note: Copy the make.conf file<br>![image](https://user-images.githubusercontent.com/47036723/158714277-384333cc-595b-48dc-a4e9-41080817b0f0.png)
+   Note: Copy the make.conf file<br>![image](https://user-images.githubusercontent.com/47036723/158724449-dcd197d7-05b4-4dc1-9fbb-ecf630214816.png)
 14. **livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf**
 15. **livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**
 16. **livecd /mnt/gentoo # cat /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**<br>
@@ -93,21 +93,17 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 30. **(chroot) livecd / # emerge --sync --quiet**
 32. **(chroot) livecd / # eselect profile set 8**
 33. **(chroot) livecd / # emerge -vuDN @world**<br>
-   Note: Command took about 3 hours to complete. I could have added more USE flags to decrease the emerge time and size of the whole system, but I want to make sure my USE flags aren't messing things up. Once I get my vm up right, I'll perhaps mess with the USE flags later?<br>Output of USE Flags:<br>![image](https://user-images.githubusercontent.com/47036723/158071253-0b886a5b-e5fd-4818-a55b-5ac1a7057a42.png)
 35. **(chroot) livecd / # echo "America/Chicago" > /etc/timezone**
 36. **(chroot) livecd / # emerge --config sys-libs/timezone-data**
 37. **(chroot) livecd / # echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen**
 38. **(chroot) livecd / # locale-gen**
-39. **(chroot) livecd / # eselect locale list**
 40. **(chroot) livecd / # eselect locale set 4**
 41. **(chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"**
-42. **(chroot) livecd / # emerge -q app-editors/vim sys-kernel/linux-firmware sys-kernel/gentoo-sources sys-apps/pciutils app-arch/lzop app-arch/lz4 dev-vcs/git sys-kernel/dracut**
-43. **(chroot) livecd / # eselect kernel list**
+42. **(chroot) livecd / # emerge -q --autounmask app-editors/vim sys-kernel/linux-firmware sys-kernel/gentoo-sources sys-apps/pciutils app-arch/lzop app-arch/lz4 dev-vcs/git sys-kernel/dracut**
 44. **(chroot) livecd / # eselect kernel set 1**<br>
-  Note: Kernel version is 5.16.14-gentoo 
-46. **(chroot) livecd / # cd /usr/src/linux**<br>
- Note: [Here is the text file for the .config](https://github.com/Dishoungh/gentoo-config/blob/master/kernel_config.txt)
- It's probably going to be better to just copy the .config directly from this github page
+46. **(chroot) livecd / # cd /usr/src && (git clone https://github.com/Dishoungh/gentoo-config) && ((cat ./gentoo-config/kernel_config_v2.txt) > ./linux/.config) && rm -rf ./gentoo-config/ && cd linux**<br>
+47. **(chroot) livecd /usr/src/linux # make menuconfig**<br>
+   Note: Since you've imported an old kernel config, still comb through and make sure the appropriate options are selected/deselected and SAVE to update the .config to align with the newer build
 47. **(chroot) livecd /usr/src/linux # make && make modules_install && make install**
 49. **(chroot) livecd /usr/src/linux # dracut --kver=5.16.14-gentoo**<br>
    Note: Here is what shows up on /boot<br>![image](https://user-images.githubusercontent.com/47036723/158161486-1731096d-2053-4722-b556-e7a4c5c9159c.png)
@@ -116,16 +112,17 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 52. **(chroot) livecd /usr/src/linux # emerge --noreplace --quiet net-misc/netifrc**
 53. **(chroot) livecd /usr/src/linux # emerge -q net-misc/dhcpcd**
 54. **(chroot) livecd /usr/src/linux # rc-update add dhcpcd default**
-55. **(chroot) livecd /usr/src/linux # cd /etc/init.d**
-56. **(chroot) livecd /etc/init.d # ln -s net.lo net.enp1s0**
-57. **(chroot) livecd /etc/init.d # rc-update add net.enp1s0 default**
-58. **(chroot) livecd /etc/init.d # (echo -e "127.0.0.1\tgentoo-vm.homenetwork\tgentoo-vm\tlocalhost" > /etc/hosts) && (echo -e "::1\t\tlocalhost" >> /etc/hosts)**
-59. **(chroot) livecd /etc/init.d # passwd**
-60. **(chroot) livecd /etc/init.d # emerge -q app-admin/sysklogd && rc-update add sysklogd default**
-61. **(chroot) livecd /etc/init.d # emerge -vq sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2**
-62. **(chroot) livecd /etc/init.d # echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf**
-63. **(chroot) livecd /etc/init.d # cd /**
-64. **(chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot**<br>
+55. **(chroot) livecd /usr/src/linux # echo -e "config_{INTERFACE ID}=\"dhcp\"" > /etc/conf.d/net
+56. **(chroot) livecd /usr/src/linux # cd /etc/init.d**
+57. **(chroot) livecd /etc/init.d # ln -s net.lo net.{INTERFACE ID}**
+58. **(chroot) livecd /etc/init.d # rc-update add net.{INTERFACE ID} default**
+59. **(chroot) livecd /etc/init.d # (echo -e "127.0.0.1\tgentoo-vm.homenetwork\tgentoo-vm\tlocalhost\n::1\t\tlocalhost" > /etc/hosts)**
+60. **(chroot) livecd /etc/init.d # passwd**
+62. **(chroot) livecd /etc/init.d # emerge -vq sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 app-admin/sysklogd**
+63. **(chroot) livecd /etc/init.d # rc-update add sysklogd default**
+64. **(chroot) livecd /etc/init.d # echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf**
+65. **(chroot) livecd /etc/init.d # cd /**
+66. **(chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot**<br>
    Output:<br>
       ![image](https://user-images.githubusercontent.com/47036723/158171503-4a552bbc-8f90-42de-9d12-5e656824b7c9.png)
 65. **(chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg**<br>
