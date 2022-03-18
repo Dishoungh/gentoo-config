@@ -101,23 +101,26 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 41. **(chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"**
 42. **(chroot) livecd / # emerge -q --autounmask app-editors/vim sys-kernel/linux-firmware sys-kernel/gentoo-sources sys-apps/pciutils app-arch/lzop app-arch/lz4 dev-vcs/git sys-kernel/dracut**
 44. **(chroot) livecd / # eselect kernel set 1**<br>
-46. **(chroot) livecd / # cd /usr/src && (git clone https://github.com/Dishoungh/gentoo-config) && ((cat ./gentoo-config/kernel_config_v2.txt) > ./linux/.config) && rm -rf ./gentoo-config/ && cd linux**<br>
-47. **(chroot) livecd /usr/src/linux # make menuconfig**<br>
+46. **(chroot) livecd / # cd /usr/src/linux**<br>
+   Note: I'm doing this the lazy way since I don't feel like setting up my kernel config again. DO NOT DO IT THIS WAY. Only reason I'm doing it is because I'm lazy lol.<br>
+   cd .. && (git clone https://github.com/Dishoungh/gentoo-config) && ((cat ./gentoo-config/kernel_config_v2.txt) > ./linux/.config) && rm -rf ./gentoo-config/ && cd linux<br>
+48. **(chroot) livecd /usr/src/linux # make menuconfig**<br>
    Note: Since you've imported an old kernel config, still comb through and make sure the appropriate options are selected/deselected and SAVE to update the .config to align with the newer build
 47. **(chroot) livecd /usr/src/linux # make && make modules_install && make install**
 49. **(chroot) livecd /usr/src/linux # dracut --kver=5.16.14-gentoo**<br>
    Note: Here is what shows up on /boot<br>![image](https://user-images.githubusercontent.com/47036723/158161486-1731096d-2053-4722-b556-e7a4c5c9159c.png)
-50. **(chroot) livecd /usr/src/linux # (echo -e "UUID=$(blkid -s UUID -o value /dev/vda1)\t\t\t\t\t/boot/efi\tvfat\tdefaults\t0 2" >> /etc/fstab) && (echo -e "UUID=$(blkid -s UUID -o value /dev/vda2)\tnone\t\tswap\tsw\t\t0 0" >> /etc/fstab) && (echo -e "UUID=$(blkid -s UUID -o value /dev/vda3)\t/\t\text4\tnoatime\t\t0 1" >> /etc/fstab)**
-51. **(chroot) livecd /usr/src/linux # echo -e "hostname=\"gentoo-vm\"" > /etc/conf.d/hostname**
-52. **(chroot) livecd /usr/src/linux # emerge --noreplace --quiet net-misc/netifrc**
-53. **(chroot) livecd /usr/src/linux # emerge -q net-misc/dhcpcd**
-54. **(chroot) livecd /usr/src/linux # rc-update add dhcpcd default**
-55. **(chroot) livecd /usr/src/linux # echo -e "config_{INTERFACE ID}=\"dhcp\"" > /etc/conf.d/net
-56. **(chroot) livecd /usr/src/linux # cd /etc/init.d**
-57. **(chroot) livecd /etc/init.d # ln -s net.lo net.{INTERFACE ID}**
-58. **(chroot) livecd /etc/init.d # rc-update add net.{INTERFACE ID} default**
-59. **(chroot) livecd /etc/init.d # (echo -e "127.0.0.1\tgentoo-vm.homenetwork\tgentoo-vm\tlocalhost\n::1\t\tlocalhost" > /etc/hosts)**
-60. **(chroot) livecd /etc/init.d # passwd**
+50. **(chroot) livecd /usr/src/linux # echo -e "/dev/vda1\t/boot\tvfat\tdefaults\t0 2\n/dev/vda2\tnone\tswap\tsw\t\t0 0\n/dev/vda\t/\text4\tnoatime\t\t0 1" >> /etc/fstab**
+   Note: My fstab looks like this:<br>![image](https://user-images.githubusercontent.com/47036723/158912686-5fdb2b3a-7786-4ab4-bea8-98fe74fafdd5.png)
+52. **(chroot) livecd /usr/src/linux # echo -e "hostname=\"gentoo-vm\"" > /etc/conf.d/hostname**
+53. **(chroot) livecd /usr/src/linux # emerge --noreplace --quiet net-misc/netifrc**
+54. **(chroot) livecd /usr/src/linux # emerge -q net-misc/dhcpcd**
+55. **(chroot) livecd /usr/src/linux # rc-update add dhcpcd default**
+56. **(chroot) livecd /usr/src/linux # echo -e "config_{INTERFACE ID}=\"dhcp\"" > /etc/conf.d/net
+57. **(chroot) livecd /usr/src/linux # cd /etc/init.d**
+58. **(chroot) livecd /etc/init.d # ln -s net.lo net.{INTERFACE ID}**
+59. **(chroot) livecd /etc/init.d # rc-update add net.{INTERFACE ID} default**
+60. **(chroot) livecd /etc/init.d # (echo -e "127.0.0.1\tgentoo-vm.homenetwork\tgentoo-vm\tlocalhost\n::1\t\tlocalhost" > /etc/hosts)**
+61. **(chroot) livecd /etc/init.d # passwd**
 62. **(chroot) livecd /etc/init.d # emerge -vq sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 app-admin/sysklogd**
 63. **(chroot) livecd /etc/init.d # rc-update add sysklogd default**
 64. **(chroot) livecd /etc/init.d # echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf**
@@ -128,15 +131,16 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 65. **(chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg**<br>
    Output:<br>
       ![image](https://user-images.githubusercontent.com/47036723/158171740-c7cdb14d-9f90-4932-af63-0eac8521bd70.png)
-66. **(chroot) livecd / # exit**
-67. **livecd /mnt/gentoo # cd**
-68. **livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}**
-69. **livecd ~ # umount -R /mnt/gentoo**
-70. **livecd ~ # reboot**
+66. **(chroot) livecd / # vim /etc/default/grub**<br>
+   Note: Due to me being on a virtual machine, the real UUID of the root device will be different from the UUID reported in the blkid in the livecd. It's a strange bug, but I got around this by uncommenting a disable flag in the default grub config file here:<br>![image](https://user-images.githubusercontent.com/47036723/158910933-1c5a38e4-e4b1-455d-ab9a-cd3c4ef44ccf.png)
+68. **(chroot) livecd / # exit**
+69. **livecd /mnt/gentoo # cd**
+70. **livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}**
+71. **livecd ~ # umount -R /mnt/gentoo**
+72. **livecd ~ # reboot**
    Note: During the reboot, I actually shut down my VM to remove the ISO disk from the boot menu. This is the boot menu now:<br>
       ![image](https://user-images.githubusercontent.com/47036723/158173094-943c3fc3-1ecc-4e3e-af40-18f09f13005d.png)
       
 # Post-Installation
 
 1. Start gentoo VM (and hope the login screen pops up)
-2. If error, cry yourself to sleep...
