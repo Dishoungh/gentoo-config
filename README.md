@@ -20,7 +20,7 @@ Links to guides and tutorials I used:
    - [Gentoo Linux amd64 Handbook: Installing Gentoo](https://wiki.gentoo.org/wiki/Handbook:AMD64/Full/Installation#Introduction)
    - [QEMU/Linux guest - Gentoo Wiki](https://wiki.gentoo.org/wiki/QEMU/Linux_guest)
    - [Ryzen Gentoo Wiki](https://wiki.gentoo.org/wiki/Ryzen)
-   - [Full Gentoo Installation - Big Brain Edition](https://www.youtube.com/watch?v=6yxJoMa05ZM&t)
+   - [Install Gentoo Linux (Part 2) to the desktop](https://www.youtube.com/watch?v=wQxBsunITaA)
    - [Configuring a Custom Linux Kernel (5.6.7-gentoo)](https://www.youtube.com/watch?v=NVWVHiLx1sU&t)
 
 # Creating the Virtual Machine on Virt-Manager
@@ -72,7 +72,7 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 10. **livecd /mnt/gentoo # wget http://www.gtlib.gatech.edu/pub/gentoo/releases/amd64/autobuilds/20220314T175555Z/stage3-amd64-desktop-openrc-20220314T175555Z.tar.xz**<br>
 11. **livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220227T170528Z.tar.xz --xattrs-include='*.*' --numeric-owner**<br>
 12. **livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf**<br>
-   Note: Copy the make.conf file<br>![image](https://user-images.githubusercontent.com/47036723/158724449-dcd197d7-05b4-4dc1-9fbb-ecf630214816.png)
+   Note: Copy the make.conf file<br>![image](https://user-images.githubusercontent.com/47036723/158923947-def5b606-97ea-4acb-a1f1-3ab2b9030098.png)
 13. **livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf**
 14. **livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**
 15. **livecd /mnt/gentoo # cat /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**<br>
@@ -146,4 +146,20 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 
 1. Start gentoo VM (and hope the login screen pops up)
    Should look like this:<br>![image](https://user-images.githubusercontent.com/47036723/158914164-a18e4a99-4189-46e4-83e6-39f00d2c7e33.png)
-
+2. **gentoo-vm ~ # cd /**
+3. **gentoo-vm / # emerge -q app-admin/sudo**
+4. **gentoo-vm / # visudo**<br>
+   Uncomment: "%wheel ALL=(ALL) ALL
+5. **gentoo-vm / # useradd -m -G users,wheel,audio -s /bin/bash noob**
+6. **gentoo-vm / # passwd noob**
+7. **gentoo-vm / # reboot**
+8. **noob@gentoo-vm ~ $ sudo emerge -q gentoolkit**
+9. **noob@gentoo-vm ~ $ sudo rc-update add elogind boot**
+10. **noob@gentoo-vm ~ $ sudo rc-update add udev sysinit**
+11. **noob@gentoo-vm ~ $ sudo rc-update add dbus default**
+12. **noob@gentoo-vm ~ $ sudo emerge -q udisks**
+13. **noob@gentoo-vm ~ $ sudo emerge -q x11-base/xorg-drivers**
+14. **noob@gentoo-vm ~ $ sudo emerge -q kde-plasma/plasma-meta**<br>
+   Note: You may get dependency errors. To fix this, respond yes to saving the config file then send command:<br>
+      **dispatch-conf**<br>
+      Type 'u' for the package dependency page<br>
