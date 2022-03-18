@@ -1,0 +1,29 @@
+These are packages or software that I use regularly on my Linux systems
+
+
+1. Arduino IDE
+2. Ark
+3. Audacity
+4. Bitwarden
+5. Chromium (Ungoogled-Chromium)
+6. Discord
+7. Dolphin Emulator
+8. Filelight
+9. FileZilla
+10. GNU Image Manpiulation Program
+11. Kate (or some equivalent)
+12. Kdenlive
+13. KSysGuard
+14. LibreOffice
+15. Logisim
+16. OBS Studio
+17. PCSX2
+18. Portmaster
+19. Psensor (or some equivalent)
+20. Spectacle
+21. Steam
+22. Timeshift
+23. Vim
+24. Virtual Machine Manager
+25. Visualboy Advance
+26. VLC Media Player
