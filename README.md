@@ -173,7 +173,7 @@ The following contains commands exactly as I typed them in order. I'll occasiona
    Note: Change DISPLAYMANAGER to "sddm"<br>![image](https://user-images.githubusercontent.com/47036723/159036719-6aa49aa9-cd50-4c0c-b6f8-ffacfdbbd2b2.png)
 20. **gentoo-vm / # rc-update add display-manager default**
 21. **gentoo-vm / # rc-service display-manager start**
-22. **gentoo-vm / # echo -e "DISPLAYMANAGER=\"sddm\" > /etc/conf.d/xdm**
+22. **gentoo-vm / # echo 'DISPLAYMANAGER="sddm"' > /etc/conf.d/xdm**
 23. **gentoo-vm / # rc-update add xdm default**
 24. **gentoo-vm / # /etc/init.d/xdm start**
 
