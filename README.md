@@ -169,8 +169,10 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 16. **gentoo-vm / # echo "setxkbmap us" > /etc/sddm/scripts/Xsetup**
 17. **gentoo-vm / # chmod a+x /etc/sddm/scripts/Xsetup**
 18. **gentoo-vm / # echo -e "CHECKVT=7\nDISPLAYMANAGER=\"sddm\"" > /etc/conf.d/xdm**
-19. **gentoo-vm / # rc-update add xdm default**
-20. **gentoo-vm / # /etc/init.d/xdm start**
+19. **gentoo-vm / # rc-update add display-manager default
+20. **gentoo-vm / # rc-service display-manager start
+21. **gentoo-vm / # rc-update add xdm default**
+22. **gentoo-vm / # /etc/init.d/xdm start**
 
 
 
