@@ -150,7 +150,7 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 3. **gentoo-vm / # emerge -q app-admin/sudo**
 4. **gentoo-vm / # visudo**<br>
    Uncomment: "%wheel ALL=(ALL) ALL
-5. **gentoo-vm / # useradd -m -G users,wheel,audio -s /bin/bash noob**
+5. **gentoo-vm / # useradd -m -G users,wheel,audio,video -s /bin/bash noob**
 6. **gentoo-vm / # passwd noob**
 7. **gentoo-vm / # reboot**
 8. **noob@gentoo-vm ~ $ sudo emerge -q gentoolkit**
