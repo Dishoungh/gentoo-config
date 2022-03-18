@@ -168,11 +168,14 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 15. **gentoo-vm / # mkdir -p /etc/sddm/scripts**
 16. **gentoo-vm / # echo "setxkbmap us" > /etc/sddm/scripts/Xsetup**
 17. **gentoo-vm / # chmod a+x /etc/sddm/scripts/Xsetup**
-18. **gentoo-vm / # echo -e "CHECKVT=7\nDISPLAYMANAGER=\"sddm\"" > /etc/conf.d/xdm**
-19. **gentoo-vm / # rc-update add display-manager default
-20. **gentoo-vm / # rc-service display-manager start
-21. **gentoo-vm / # rc-update add xdm default**
-22. **gentoo-vm / # /etc/init.d/xdm start**
+18. **gentoo-vm / # emerge -q gui-libs/display-manager-init**
+19. **gentoo-vm / # vim /etc/conf.d/display-manager**<br>
+   Note: Change DISPLAYMANAGER to "sddm"<br>![image](https://user-images.githubusercontent.com/47036723/159036719-6aa49aa9-cd50-4c0c-b6f8-ffacfdbbd2b2.png)
+20. **gentoo-vm / # rc-update add display-manager default**
+21. **gentoo-vm / # rc-service display-manager start**
+22. **gentoo-vm / # echo -e "DISPLAYMANAGER=\"sddm\" > /etc/conf.d/xdm**
+23. **gentoo-vm / # rc-update add xdm default**
+24. **gentoo-vm / # /etc/init.d/xdm start**
 
 
 
