@@ -142,7 +142,7 @@ The following contains commands exactly as I typed them in order. I'll occasiona
    Note: During the reboot, I actually shut down my VM to remove the ISO disk from the boot menu. This is the boot menu now:<br>
       ![image](https://user-images.githubusercontent.com/47036723/158173094-943c3fc3-1ecc-4e3e-af40-18f09f13005d.png)
       
-# Post-Installation
+# Post-Installation (Setting Up Desktop)
 
 1. Start gentoo VM (and hope the login screen pops up)
    Should look like this:<br>![image](https://user-images.githubusercontent.com/47036723/158914164-a18e4a99-4189-46e4-83e6-39f00d2c7e33.png)
@@ -152,14 +152,25 @@ The following contains commands exactly as I typed them in order. I'll occasiona
    Uncomment: "%wheel ALL=(ALL) ALL
 5. **gentoo-vm / # useradd -m -G users,wheel,audio,video -s /bin/bash noob**
 6. **gentoo-vm / # passwd noob**
-7. **gentoo-vm / # reboot**
-8. **noob@gentoo-vm ~ $ sudo emerge -q gentoolkit**
-9. **noob@gentoo-vm ~ $ sudo rc-update add elogind boot**
-10. **noob@gentoo-vm ~ $ sudo rc-update add udev sysinit**
-11. **noob@gentoo-vm ~ $ sudo rc-update add dbus default**
-12. **noob@gentoo-vm ~ $ sudo emerge -q udisks**
-13. **noob@gentoo-vm ~ $ sudo emerge -q x11-base/xorg-drivers**
-14. **noob@gentoo-vm ~ $ sudo emerge -q kde-plasma/plasma-meta**<br>
+7. **gentoo-vm / # emerge -q gentoolkit**
+8. **gentoo-vm / # rc-update add elogind boot**
+9. **gentoo-vm / # rc-update add udev sysinit**
+10. **gentoo-vm / # rc-update add dbus default**
+11. **gentoo-vm / # emerge -q udisks**
+12. **gentoo-vm / # emerge -q x11-base/xorg-drivers**
+13. **gentoo-vm / # emerge -q kde-plasma/plasma-meta kde-apps/kdecore-meta www-client/firefox**<br>
    Note: You may get dependency errors. To fix this, respond yes to saving the config file then send command:<br>
       **dispatch-conf**<br>
       Type 'u' for the package dependency page<br>
+      Re-run the command<br>
+      This will take a while to execute<br>
+14. **gentoo-vm / # echo -e "[X11]\nDisplayCommand=/etc/sddm/scripts/Xsetup" > /etc/sddm.conf**
+15. **gentoo-vm / # mkdir -p /etc/sddm/scripts**
+16. **gentoo-vm / # echo "setxkbmap us" > /etc/sddm/scripts/Xsetup**
+17. **gentoo-vm / # chmod a+x /etc/sddm/scripts/Xsetup**
+18. **gentoo-vm / # echo -e "CHECKVT=7\nDISPLAYMANAGER=\"sddm\"" > /etc/conf.d/xdm**
+19. **gentoo-vm / # rc-update add xdm default**
+20. **gentoo-vm / # /etc/init.d/xdm start**
+
+
+
