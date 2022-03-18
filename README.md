@@ -55,7 +55,8 @@ The following contains commands exactly as I typed them in order. I'll occasiona
       b. Original file:<br>![image](https://user-images.githubusercontent.com/47036723/158042284-bd2e3f27-76df-4e76-af94-5262f9abda5f.png)<br>
       c. Edits:<br>![image](https://user-images.githubusercontent.com/47036723/158042349-15188150-2e74-416e-9a6b-daeadd1481b3.png)<br>
       d. **livecd ~ # ping -c3 www.gentoo.org**<br>
-   Note: Command worked this time. If there is a better solution, let me know.<br>![image](https://user-images.githubusercontent.com/47036723/158042681-7bda119f-2243-4c00-a41e-8bcd87393966.png)<br>
+      e. **livecd ~ # chattr +i /etc/resolv.conf**<br>
+   Note: Command worked this time. The chattr command ensures that whatever service that the file is attached to DOESN'T change it again. If there is a better solution, let me know.<br>![image](https://user-images.githubusercontent.com/47036723/158042681-7bda119f-2243-4c00-a41e-8bcd87393966.png)<br>
 2. **livecd ~ # lsblk**<br>
    Note: Below is what shows for my list of block devices<br>![image](https://user-images.githubusercontent.com/47036723/158043217-f2c64054-abd3-41d8-a83d-f1bb989a726f.png)
 3. **livecd ~ # fdisk /dev/vda**<br>
@@ -72,42 +73,42 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 11. **livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220227T170528Z.tar.xz --xattrs-include='*.*' --numeric-owner**<br>
 12. **livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf**<br>
    Note: Copy the make.conf file<br>![image](https://user-images.githubusercontent.com/47036723/158724449-dcd197d7-05b4-4dc1-9fbb-ecf630214816.png)
-14. **livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf**
-15. **livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**
-16. **livecd /mnt/gentoo # cat /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**<br>
+13. **livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf**
+14. **livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**
+15. **livecd /mnt/gentoo # cat /mnt/gentoo/etc/portage/repos.conf/gentoo.conf**<br>
    Output:<br>![image](https://user-images.githubusercontent.com/47036723/158044281-44cbc935-2db9-4d6f-bbc1-ef70c2f9b3b6.png)
-17. **livecd /mnt/gentoo # cp --dereference /etc/resolv.conf /mnt/gentoo/etc/**
+16. **livecd /mnt/gentoo # cp --dereference /etc/resolv.conf /mnt/gentoo/etc/**
    Note: Make sure the DNS information in the file is valid
-18. **livecd /mnt/gentoo # mount --types proc /proc /mnt/gentoo/proc**
-19. **livecd /mnt/gentoo # mount --rbind /sys /mnt/gentoo/sys**
-20. **livecd /mnt/gentoo # mount --make-rslave /mnt/gentoo/sys**
-21. **livecd /mnt/gentoo # mount --rbind /dev /mnt/gentoo/dev**
-22. **livecd /mnt/gentoo # mount --make-rslave /mnt/gentoo/dev**
-23. **livecd /mnt/gentoo # mount --bind /run /mnt/gentoo/run**
-24. **livecd /mnt/gentoo # mount --make-slave /mnt/gentoo/run**
-25. **livecd /mnt/gentoo # chroot /mnt/gentoo /bin/bash**
-26. **livecd / # source /etc/profile**
-27. **livecd / # export PS1="(chroot) ${PS1}"**
-28. **(chroot) livecd / # mount /dev/vda1 /boot**
-29. **(chroot) livecd / # emerge-webrsync**
-30. **(chroot) livecd / # emerge --sync --quiet**
-32. **(chroot) livecd / # eselect profile set 8**
-33. **(chroot) livecd / # emerge -vuDN @world**<br>
-35. **(chroot) livecd / # echo "America/Chicago" > /etc/timezone**
-36. **(chroot) livecd / # emerge --config sys-libs/timezone-data**
-37. **(chroot) livecd / # echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen**
-38. **(chroot) livecd / # locale-gen**
-40. **(chroot) livecd / # eselect locale set 4**
-41. **(chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"**
-42. **(chroot) livecd / # emerge -q --autounmask app-editors/vim sys-kernel/linux-firmware sys-kernel/gentoo-sources sys-apps/pciutils app-arch/lzop app-arch/lz4 dev-vcs/git sys-kernel/dracut**
-44. **(chroot) livecd / # eselect kernel set 1**<br>
-46. **(chroot) livecd / # cd /usr/src/linux**<br>
+17. **livecd /mnt/gentoo # mount --types proc /proc /mnt/gentoo/proc**
+18. **livecd /mnt/gentoo # mount --rbind /sys /mnt/gentoo/sys**
+19. **livecd /mnt/gentoo # mount --make-rslave /mnt/gentoo/sys**
+20. **livecd /mnt/gentoo # mount --rbind /dev /mnt/gentoo/dev**
+21. **livecd /mnt/gentoo # mount --make-rslave /mnt/gentoo/dev**
+22. **livecd /mnt/gentoo # mount --bind /run /mnt/gentoo/run**
+23. **livecd /mnt/gentoo # mount --make-slave /mnt/gentoo/run**
+24. **livecd /mnt/gentoo # chroot /mnt/gentoo /bin/bash**
+25. **livecd / # source /etc/profile**
+26. **livecd / # export PS1="(chroot) ${PS1}"**
+27. **(chroot) livecd / # mount /dev/vda1 /boot**
+28. **(chroot) livecd / # emerge-webrsync**
+29. **(chroot) livecd / # emerge --sync --quiet**
+30. **(chroot) livecd / # eselect profile set 8**
+31. **(chroot) livecd / # emerge -vuDN @world**<br>
+32. **(chroot) livecd / # echo "America/Chicago" > /etc/timezone**
+33. **(chroot) livecd / # emerge --config sys-libs/timezone-data**
+34. **(chroot) livecd / # echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen**
+35. **(chroot) livecd / # locale-gen**
+36. **(chroot) livecd / # eselect locale set 4**
+37. **(chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"**
+38. **(chroot) livecd / # emerge -q --autounmask app-editors/vim sys-kernel/linux-firmware sys-kernel/gentoo-sources sys-apps/pciutils app-arch/lzop app-arch/lz4 dev-vcs/git sys-kernel/dracut**
+39. **(chroot) livecd / # eselect kernel set 1**<br>
+40. **(chroot) livecd / # cd /usr/src/linux**<br>
    Note: I'm doing this the lazy way since I don't feel like setting up my kernel config again. DO NOT DO IT THIS WAY. Only reason I'm doing it is because I'm lazy lol.<br>
-   cd .. && (git clone https://github.com/Dishoungh/gentoo-config) && ((cat ./gentoo-config/kernel_config_v2.txt) > ./linux/.config) && rm -rf ./gentoo-config/ && cd linux<br>
-48. **(chroot) livecd /usr/src/linux # make menuconfig**<br>
-   Note: Since you've imported an old kernel config, still comb through and make sure the appropriate options are selected/deselected and SAVE to update the .config to align with the newer build
-47. **(chroot) livecd /usr/src/linux # make && make modules_install && make install**
-49. **(chroot) livecd /usr/src/linux # dracut --kver=5.16.14-gentoo**<br>
+   (git clone https://github.com/Dishoungh/gentoo-config) && ((cat ./gentoo-config/kernel_config_v2.txt) > ./linux/.config) && rm -rf ./gentoo-config/<br>
+41. **(chroot) livecd /usr/src/linux # make menuconfig**<br>
+   Note: If you've imported an old kernel config, still look through and make sure the appropriate options are selected/deselected and SAVE to update the .config to align with the newer build
+42. **(chroot) livecd /usr/src/linux # make && make modules_install && make install**
+43. **(chroot) livecd /usr/src/linux # dracut --kver=5.16.14-gentoo**<br>
    Note: Here is what shows up on /boot<br>![image](https://user-images.githubusercontent.com/47036723/158161486-1731096d-2053-4722-b556-e7a4c5c9159c.png)
 50. **(chroot) livecd /usr/src/linux # echo -e "/dev/vda1\t/boot\tvfat\tdefaults\t0 2\n/dev/vda2\tnone\tswap\tsw\t\t0 0\n/dev/vda\t/\text4\tnoatime\t\t0 1" >> /etc/fstab**
    Note: My fstab looks like this:<br>![image](https://user-images.githubusercontent.com/47036723/158912686-5fdb2b3a-7786-4ab4-bea8-98fe74fafdd5.png)
@@ -144,3 +145,5 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 # Post-Installation
 
 1. Start gentoo VM (and hope the login screen pops up)
+   Should look like this:<br>![image](https://user-images.githubusercontent.com/47036723/158914164-a18e4a99-4189-46e4-83e6-39f00d2c7e33.png)
+
