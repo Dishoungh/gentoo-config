@@ -177,5 +177,10 @@ The following contains commands exactly as I typed them in order. I'll occasiona
 23. **gentoo-vm / # rc-update add xdm default**
 24. **gentoo-vm / # /etc/init.d/xdm start**
 
+# Desktop Configuration
+You should have a Desktop login screen.
+1. Login
+2. Optional: Since I have a 2560x1440 monitor, that option isn't available (for some reason even though 1440p monitors are pretty common nowadays). To add that and have it be a permanent change, do this:<br>
+   **noob@gentoo-vm ~ $ sudo echo -e *<br>![image](https://user-images.githubusercontent.com/47036723/159077964-0391bec3-36c2-4c8e-b637-ed6ab66b1973.png)
 
 
