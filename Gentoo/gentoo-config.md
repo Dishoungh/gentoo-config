@@ -30,7 +30,7 @@ Basically a similar desktop to my Arch build. I don't really use much. Here's pr
 3. Steam (need to play games of course; as far as I remember, I had to install proton, wine, vulkan, vulkan-headers, and other things related to that)
 4. To be able to use QEMU/KVM + Virt-Manager to use virtual machines
 
-I'll try to build Gentoo to meet these requirements. My intended init system will be OpenRC since that is what I used for my vm last time and I will try to switch to pipewire (something I should have done a long time ago; I'm sick of PulseAudio). Most of the steps I use come from #2 in Resources.
+I'll try to build Gentoo to meet these requirements. My intended init system will be OpenRC since that is what I used for my vm last time and I will try to switch to pipewire (something I should have done a long time ago; I'm sick of PulseAudio). There are other stuff I would want to do with my Gentoo build, but that will be later. This are my goals for right now. Most of the steps I use come from #2 in Resources.
 
 # Part I: Booting into the USB Boot Media
 
@@ -51,9 +51,178 @@ I'll try to build Gentoo to meet these requirements. My intended init system wil
 12. livecd ~ # cd /mnt/gentoo/
 13. livecd /mnt/gentoo # wget https://mirror.leaseweb.com/gentoo/releases/amd64/autobuilds/20220710T170538Z/stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz
 14. livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz --xattrs-include='*.*' --numeric-owner
-15. nano /mnt/gentoo/etc/portage/make.conf
-    - make.conf: ![WIN_20220711_13_17_39_Pro](https://user-images.githubusercontent.com/47036723/178331224-279dc43a-0b45-4900-b8d1-fbbf3e16bcde.jpg)
-16. 
+15. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
+    - make.conf: ![WIN_20220711_14_37_14_Pro](https://user-images.githubusercontent.com/47036723/178344548-cc70b90d-a73e-4c35-9051-828154adce30.jpg)
+16. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
+17. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
+18. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
+19. livecd /mnt/gentoo # cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
+
+# Part II: Chroot
+1. livecd /mnt/gentoo # mount --types proc /proc /mnt/gentoo/proc
+2. livecd /mnt/gentoo # mount --rbind /sys /mnt/gentoo/sys
+3. livecd /mnt/gentoo # mount --make-rslave /mnt/gentoo/sys
+4. livecd /mnt/gentoo # mount --rbind /dev /mnt/gentoo/dev
+5. livecd /mnt/gentoo # mount --make-rslave /mnt/gentoo/dev
+6. livecd /mnt/gentoo # mount --bind /run /mnt/gentoo/run
+7. livecd /mnt/gentoo # mount --make-slave /mnt/gentoo/run
+8. livecd /mnt/gentoo # chroot /mnt/gentoo /bin/bash
+9. livecd / # source /etc/profile
+10. livecd / # export PS1="(chroot) ${PS1}"
+11. (chroot) livecd / # mount /dev/nvme0n1p1 /boot
+
+# Part III: Configuring Portage
+1. (chroot) livecd / # emerge-webrsync
+2. (chroot) livecd / # eselect profile set 8
+    - This selects default/linux/amd64/17.1/desktop/plasma (stable)
+3. (chroot) livecd / # emerge -aquvDN @world
+4. (chroot) livecd / # emerge -aq app-portage/cpuid2cpuflags
+5. (chroot) livecd / # cpuid2cpuflags
+6. (chroot) livecd / # echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
+7. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
+8. (chroot) livecd / # emerge --config sys-libs/timezone-data
+9. (chroot) livecd / # nano /etc/locale.gen
+10. (chroot) livecd / # locale-gen
+11. (chroot) livecd / # eselect locale set 6
+    - This selects en_US.utf8
+12. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
+
+# Part IV: Kernel Configuration
+
+Since manual configuration is very expansive and showing every single option will be way too tedious, even more than this already is. I'll just show what I think would be the most important settings, especially the ones I changed.
+
+"-X-" means that the option was automatically selected as built-in and I can't deselect the option (I think).
+
+"( )" means that the option is excluded from the kernel.
+
+"[*]" means that the option is built-in to the kernel.
+
+1. (chroot) livecd / # emerge -aq sys-kernel/linux-firmware sys-kernel/gentoo-sources sys-apps/pciutils app-editors/vim app-arch/lz4 dev-vcs/git sys-kernel/dracut
+2. (chroot) livecd / # eselect kernel set 1
+3. (chroot) livecd / # cd /usr/src/linux && make menuconfig
+    - General setup --->
+        - Kernel compression mode (LZ4) --->
+        - (nexus2) Default hostname
+        - Timers subsystem --->
+            - Timer tick handling (Periodic timer ticks (constant rate, no dynticks)) --->
+            - ( ) Old Idle dynticks config
+            - [*] High Resolution Timer Support
+        - [*] Initial RAM filesystem and RAM disk (initramfs/initrd) support
+        - ( ) Support initial ramdisk/ramfs compressed using gzip
+        - ( ) Support initial ramdisk/ramfs compressed using bzip2
+        - ( ) Support initial ramdisk/ramfs compressed using LZMA
+        - ( ) Support initial ramdisk/ramfs compressed using XZ
+        - ( ) Support initial ramdisk/ramfs compressed using LZO
+        - [*] Support initial ramdisk/ramfs compressed using LZ4
+        - ( ) Support initial ramdisk/ramfs compressed using ZSTD
+    - [*] 64-bit kernel
+    - Processor type and features --->
+        - [*] Symmetric multi-processing support
+        - [*] Support x2apic
+        - [*] AMD ACPI2Platform devices support
+        - [*] Linux guest support --->
+            - [*] Enable paravirtualization code
+            - [*] KVM Guest support (including kvmclock) (NEW)
+        - Processor family (Opteron/Athlon64/Hammer/K8) --->
+        - (16) Maximum number of CPUs
+        - [*] Multi-core scheduler support
+        - [*] Machine Check / overheating reporting
+        - [*] AMD MCE features
+        - Performance monitoring --->
+            - [*] Intel uncore performance events
+            - [*] Intel/AMD rapl performance events
+            - [*] Intel cstate performance events
+            - [*] AMD Processor Power Reporting Mechanism
+            - [*] AMD Uncore performance events
+        - [*] AMD microcode loading support
+        - -X- MTRR (Memory Type Range Register) support
+        - [*] EFI runtime service support
+        - [*] EFI stub support
+        - [*] EFI mixed-mode support
+    - Power management and ACPI options --->
+        - CPU Frequency scaling --->
+            - Default CPUFreq governor (userspace) ---> (For some reason, it won't let me change it to "ondemand", which is what the guide recommends for Ryzen)
+            - [*] 'ondemand' cpufreq policy governor
+            - [*] ACPI Processor P-States driver
+            - [*] Legacy cpb sysfs knob support for AMD CPUs
+            - ( ) AMD Opteron/Athlon64 PowerNow!
+            - [*] AMD frequency sensitivity feedback powersave bias
+    - Bus options (PCI etc.) --->
+    - Binary Emulations ---> 
+        - ( ) IA32 Emulation
+    - [*] Virtualization --->
+        - [*] Kernel-based Virtual Machine (KVM) support
+        - [*] KVM for AMD processors support
+    - General architecture-dependent options --->
+    - [*] Enable loadable module support --->
+    - -X- Enable the block layer --->
+        - Partition Types --->
+            - [*] Advanced partition selection
+            - [*] PC BIOS (MSDOS partition tables) support (NEW)
+            - [*] EFI GUID Partition support (NEW)
+    - IO Schedulers --->
+        - [*] BFQ I/O scheduler
+    - Executable file formats --->
+    - Memory Management options --->
+    - [*] Networking support --->
+        - Networking options --->
+            - [*] 802.1d Ethernet Bridging
+    - Device Drivers --->
+        - Generic Driver Options --->
+            - Firmware loader --->
+                - (amd-ucode/microcode_amd_fam17h.bin) Build named firmware blobs into the kernel binary
+                - (/lib/firmware) Firmware blobs root directory (NEW)
+        - NVME Support --->
+            - [*] NVM Express block device
+        - SCSI device support
+            - [*] SCSI disk support
+        - Network device support
+            - [*] Network core driver support
+            - [*] Universal TUN/TAP device driver support
+        - Character devices
+            - [*] IPMI top-level message handler
+        - Hardware Monitoring support
+            - [*] AMD Family 10h+ temperature sensor
+            - [*] AMD Family 15h processor power
+        - Graphics support --->
+            - [*] /dev/agpgart (AGP Support) --->
+            - -X- VGA Arbitration
+            - (3) Maximum number of GPUs
+            - [*] Virtio GPU driver
+            - [*] Simple framebuffer driver
+            - Frame buffer Devices --->
+                - [*] Support for frame buffer devices --->
+            - [*] Bootup logo --->
+                - [*] Standard 224-color Linux logo (NEW)
+        - HID support
+            - -X- HID bus support
+            - [*] Battery level reporting for HID devices
+        - [*] Virtualization drivers --->
+        - [*] VHOST drivers --->
+            - [*] Host kernel accelerator for virtio net
+        - [*] IOMMU Hardware Support --->
+            - [*] AMD IOMMU support
+            - [*] AMD IOMMU Version 2 driver
+    - File systems --->
+        - [*] Second extended fs support
+        - [*] The Extended 3 (ext3) filesystem
+        - [*] The Extended 4 (ext4) filesystem
+        - [*] Reiserfs support
+        - [*] JFS filesystem support
+        - [*] XFS filesystem support
+        - [*] Btrfs filesystem support
+        - DOS/FAT/EXFAT/NT Filesystems --->
+            - [*] MSDOS fs support
+            - [*] VFAT (Windows-95) fs support
+        - Pseudo filesystems
+            - -X- /proc file system support
+            - -X- Tmpfs virtual memory file system support
+            - [*] EFI Variable filesystem
+    - Security options --->
+    - -X- Cryptographic API --->
+    - Library routines --->
+    - Kernel hacking --->
+    - Gentoo Linux --->
 
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
@@ -63,3 +232,6 @@ I'll try to build Gentoo to meet these requirements. My intended init system wil
 5. [Ryzen Gentoo Wiki](https://wiki.gentoo.org/wiki/Ryzen)
 6. [MAKEOPTS](https://wiki.gentoo.org/wiki/MAKEOPTS)
 7. [Pipewire Packages](https://packages.gentoo.org/useflags/pipewire)
+8. [NVIDIA Drivers Wiki](https://wiki.gentoo.org/wiki/NVIDIA/nvidia-drivers)
+9. [Virt-Manager Wiki](https://wiki.gentoo.org/wiki/Virt-manager#Kernel)
+10. [QEMU Wiki](https://wiki.gentoo.org/wiki/QEMU#BIOS_and_UEFI_firmware)
