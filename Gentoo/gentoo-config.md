@@ -30,7 +30,7 @@ Basically a similar desktop to my Arch build. I don't really use much. Here's pr
 3. Steam (need to play games of course; as far as I remember, I had to install proton, wine, vulkan, vulkan-headers, and other things related to that)
 4. To be able to use QEMU/KVM + Virt-Manager to use virtual machines
 
-I'll try to build Gentoo to meet these requirements. My intended init system will be OpenRC since that is what I used for my vm last time. Most of the steps I use come from #2 in Resources.
+I'll try to build Gentoo to meet these requirements. My intended init system will be OpenRC since that is what I used for my vm last time and I will try to switch to pipewire (something I should have done a long time ago; I'm sick of PulseAudio). Most of the steps I use come from #2 in Resources.
 
 # Part I: Booting into the USB Boot Media
 
@@ -38,15 +38,28 @@ I'll try to build Gentoo to meet these requirements. My intended init system wil
 2. Used Rufus to make USB drive into boot media
 3. Booted into "LiveCD". This is what it looks like:
     - ![WIN_20220711_11_45_38_Pro](https://user-images.githubusercontent.com/47036723/178315698-909d3483-ee27-4078-9432-773a8db652f7.jpg)
-    
 4. livecd ~ # ping www.gentoo.org -c3
 5. livecd ~ # lsblk
     - ![WIN_20220711_12_04_46_Pro](https://user-images.githubusercontent.com/47036723/178319092-600d8d9e-3680-4ec5-9c02-eec2ff63f696.jpg)
-
 6. livecd ~ # fdisk /dev/nvme0n1
-    - 
+    - ![WIN_20220711_12_10_08_Pro](https://user-images.githubusercontent.com/47036723/178319900-f39c6671-f853-49a7-833b-7151332ffaf5.jpg)  
+7. livecd ~ # mkfs.vfat -F 32 /dev/nvme0n1p1
+8. livecd ~ # mkfs.ext4 /dev/nvme0n1p3
+9. livecd ~ # mkswap /dev/nvme0n1p2
+10. livecd ~ # swapon /dev/nvme0n1p2
+11. livecd ~ # mount /dev/nvme0n1p3 /mnt/gentoo
+12. livecd ~ # cd /mnt/gentoo/
+13. livecd /mnt/gentoo # wget https://mirror.leaseweb.com/gentoo/releases/amd64/autobuilds/20220710T170538Z/stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz
+14. livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz --xattrs-include='*.*' --numeric-owner
+15. nano /mnt/gentoo/etc/portage/make.conf
+    - make.conf: ![WIN_20220711_13_17_39_Pro](https://user-images.githubusercontent.com/47036723/178331224-279dc43a-0b45-4900-b8d1-fbbf3e16bcde.jpg)
+16. 
 
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
 2. [Gentoo AMD64 Full Installation Guide](https://wiki.gentoo.org/wiki/Handbook:AMD64/Full/Installation)
 3. [Gentoo VM Gentoo "Guide"](https://github.com/Dishoungh/gentoo-config/blob/master/Gentoo/gentoo-vm-config.md)
+4. [Tarball Directory](https://mirror.leaseweb.com/gentoo/releases/amd64/autobuilds/20220710T170538Z/)
+5. [Ryzen Gentoo Wiki](https://wiki.gentoo.org/wiki/Ryzen)
+6. [MAKEOPTS](https://wiki.gentoo.org/wiki/MAKEOPTS)
+7. [Pipewire Packages](https://packages.gentoo.org/useflags/pipewire)
