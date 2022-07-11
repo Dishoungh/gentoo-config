@@ -95,8 +95,6 @@ Since manual configuration is very expansive and showing every single option wil
 
 "( )" means that the option is excluded from the kernel.
 
-"[*]" means that the option is built-in to the kernel.
-
 1. (chroot) livecd / # emerge -aq sys-kernel/linux-firmware sys-kernel/gentoo-sources sys-apps/pciutils app-editors/vim app-arch/lz4 dev-vcs/git sys-kernel/dracut
 2. (chroot) livecd / # eselect kernel set 1
 3. (chroot) livecd / # cd /usr/src/linux && make menuconfig
