@@ -19,7 +19,7 @@ GPU: Nvidia Geforce GTX 1080 Ti
 Storage: Samsung 960 EVO (500GB M.2 SSD)
 Monitors: 3x 2560x1440p Monitors (G-Sync IPS 1ms)
 
-I have like 4 other storage drives but I'll be using those as extra storage drives for VMs and other stuff. I'm including the information about the 3 monitors I'm using just in case if it would be important.
+I have 3 other storage drives but I'll be using those as extra storage drives for VMs and other stuff. I'm including the information about the 3 monitors I'm using just in case if it would be important.
 
 # What I Want
 
@@ -37,9 +37,16 @@ I'll try to build Gentoo to meet these requirements. My intended init system wil
 1. Downloaded install-amd64-minimal-20220710T170538Z.iso from #1 in Resources
 2. Used Rufus to make USB drive into boot media
 3. Booted into "LiveCD". This is what it looks like:
+    - ![WIN_20220711_11_45_38_Pro](https://user-images.githubusercontent.com/47036723/178315698-909d3483-ee27-4078-9432-773a8db652f7.jpg)
+    
+4. livecd ~ # ping www.gentoo.org -c3
+5. livecd ~ # lsblk
+    - ![WIN_20220711_12_04_46_Pro](https://user-images.githubusercontent.com/47036723/178319092-600d8d9e-3680-4ec5-9c02-eec2ff63f696.jpg)
+
+6. livecd ~ # fdisk /dev/nvme0n1
     - 
 
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
 2. [Gentoo AMD64 Full Installation Guide](https://wiki.gentoo.org/wiki/Handbook:AMD64/Full/Installation)
-3. 
+3. [Gentoo VM Gentoo "Guide"](https://github.com/Dishoungh/gentoo-config/blob/master/Gentoo/gentoo-vm-config.md)
