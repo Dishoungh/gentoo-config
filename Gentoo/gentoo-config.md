@@ -32,6 +32,8 @@ Basically a similar desktop to my Arch build. I don't really use much. Here's pr
 
 I'll try to build Gentoo to meet these requirements. My intended init system will be OpenRC since that is what I used for my vm last time and I will try to switch to pipewire (something I should have done a long time ago; I'm sick of PulseAudio). There are other stuff I would want to do with my Gentoo build, but that will be later. This are my goals for right now. Most of the steps I use come from #2 in Resources.
 
+Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want to make my own. Why? Because I have no life. I don't know.
+
 # Part I: Booting into the USB Boot Media
 
 1. Downloaded install-amd64-minimal-20220710T170538Z.iso from #1 in Resources
@@ -172,11 +174,35 @@ Since manual configuration is very expansive and showing every single option wil
                 - (/lib/firmware) Firmware blobs root directory (NEW)
         - NVME Support --->
             - [*] NVM Express block device
+            - [*] NVMe multipath support
+            - [*] NVMe hardware monitoring
+            - [*] NVM Express over Fabrics FC host driver
+            - [*] NVM Express over Fabrics TCP host driver
         - SCSI device support
             - [*] SCSI disk support
+            - [*] SCSI low-level drivers
         - Network device support
             - [*] Network core driver support
             - [*] Universal TUN/TAP device driver support
+            - [*] Ethernet driver support --->
+                - [*] Intel (82586/82593/82596) devices
+                - [*] Intel devices
+                - [*] Intel(R) PRO/100+ support
+                - [*] Intel(R) PRO/1000 Gigabit Ethernet support
+                - [*] Intel(R) PRO/1000 PCI-Express Gigabit Ethernet support
+                - [*] Support HW cross-timestamp on PCH devices
+                - [*] Intel(R) 82575/82576 PCI-Express Gigabit Ethernet support
+                - [*] Intel(R) PCI-Express Gigabit adapters HWMON support
+                - [*] Intel(R) 82576 Virtual Function Ethernet support
+                - [*] Intel(R) PRO/10GbE support
+                - [*] Intel(R) 10GbE PCI Express adapters support
+                - [*] Intel(R) 10GbE PCI Express adapters HWMON support
+                - [*] Intel(R) 10GbE PCI Express Virtual Function Ethernet support
+                - [*] Intel(R) Ethernet Controller XL710 Family support
+                - [*] Intel(R) Ethernet Adaptive Virtual Function support
+                - [*] Intel(R) Ethernet Connection E800 Series Support
+                - [*] Intel(R) FM10000 Ethernet Switch Host Interface Support
+                - [*] Intel(R) Ethernet Controller I225-LM/I225-V support
         - Character devices
             - [*] IPMI top-level message handler
         - Hardware Monitoring support
@@ -196,6 +222,7 @@ Since manual configuration is very expansive and showing every single option wil
             - -X- HID bus support
             - [*] Battery level reporting for HID devices
         - [*] Virtualization drivers --->
+        - ( ) Virtio drivers
         - [*] VHOST drivers --->
             - [*] Host kernel accelerator for virtio net
         - [*] IOMMU Hardware Support --->
@@ -227,7 +254,7 @@ Since manual configuration is very expansive and showing every single option wil
 1. (chroot) livecd /usr/src/linux # blkid
     - This is what shows up: ![WIN_20220711_18_56_34_Pro](https://user-images.githubusercontent.com/47036723/178377956-64fbdf38-563c-4a5c-ad7b-a219f7ddf7a4.jpg)
 2. (chroot) livecd /usr/src/linux # vim /etc/fstab
-    - This is my fstab: ![WIN_20220711_19_25_18_Pro](https://user-images.githubusercontent.com/47036723/178380630-f299c74f-e11f-477e-9b27-5f8c9fa1fe2a.jpg)
+    - This is my fstab: ![WIN_20220711_20_12_57_Pro](https://user-images.githubusercontent.com/47036723/178386662-05648019-d776-4166-8fe6-c364c3196b4c.jpg)
 3. (chroot) livecd /usr/src/linux # vim /etc/conf.d/hostname (Named my PC "nexus2")
 4. (chroot) livecd /usr/src/linux # emerge -avq net-misc/dhcpcd
 5. (chroot) livecd /usr/src/linux # rc-update add dhcpcd default
@@ -250,6 +277,9 @@ Since manual configuration is very expansive and showing every single option wil
 19. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot
 20. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
     - Output: ![WIN_20220711_19_53_30_Pro](https://user-images.githubusercontent.com/47036723/178384886-5ff45bb4-3b39-48ae-a170-a72a902bcc6e.jpg)
+21. (chroot) livecd / # vim /etc/default/grub
+    - Uncommented the line: GRUB_DISABLE_LINUX_UUID=true
+    - Looks like this: ![WIN_20220711_20_10_08_Pro](https://user-images.githubusercontent.com/47036723/178386418-7d80ab7e-a8d4-488f-8d24-bfd2fb72c564.jpg)
 
 # Part VI: Unmounting and Reboot
 1. livecd /mnt/gentoo # exit
@@ -266,92 +296,7 @@ Since manual configuration is very expansive and showing every single option wil
         - ERROR: mount-ro failed to start
     - I'm unsure if these errors mean anything or if I should ignore them.
 
-# Part VII: Troubleshooting
-
-Booting in, I got a kernel panic about "Cannot open root device": ![WIN_20220711_20_02_37_Pro](https://user-images.githubusercontent.com/47036723/178385828-6704d553-045e-4437-9f3e-5d7fe77c3c6e.jpg)
-
-First attempt:
-
-1. Boot back into livecd
-2. livecd ~ # mount /dev/nvme0n1p3 /mnt/gentoo
-3. livecd ~ # nano /mnt/gentoo/etc/default/grub
-    - Uncommented the line: GRUB_DISABLE_LINUX_UUID=true
-    - Looks like this: ![WIN_20220711_20_10_08_Pro](https://user-images.githubusercontent.com/47036723/178386418-7d80ab7e-a8d4-488f-8d24-bfd2fb72c564.jpg)
-4. livecd ~ # nano /mnt/gentoo/etc/fstab
-    - Change UUIDs to labels (probably should have done this in the first place)
-    - Looks like this: ![WIN_20220711_20_12_57_Pro](https://user-images.githubusercontent.com/47036723/178386662-05648019-d776-4166-8fe6-c364c3196b4c.jpg)
-5. livecd ~ # umount -R /mnt/gentoo
-6. livecd ~ # reboot
-
-Still got the kernel panic: ![WIN_20220711_20_17_20_Pro](https://user-images.githubusercontent.com/47036723/178387113-54abcfb1-eefc-4829-ab4a-73a9fd253c62.jpg)
-
-I don't understand how a different UUID is being reported from the livecd versus the actual root partition. It was the same way with my Virtual Machine build. Since my virtual machine build's fstab had labels instead of UUIDs, I'll keep it that way.
-
-Second attempt:
-
-1. Boot back into livecd...again, but this time chroot back into root partition
-2. livecd ~ # mount /dev/nvme0n1p3 /mnt/gentoo && cd /mnt/gentoo
-3. livecd ~ # mount --types proc /proc /mnt/gentoo/proc
-4. livecd ~ # mount --rbind /sys /mnt/gentoo/sys
-5. livecd ~ # mount --make-rslave /mnt/gentoo/sys
-6. livecd ~ # mount --rbind /dev /mnt/gentoo/dev
-7. livecd ~ # mount --make-rslave /mnt/gentoo/dev
-8. livecd ~ # mount --bind /run /mnt/gentoo/run
-9. livecd ~ # mount --make-slave /mnt/gentoo/run
-10. livecd ~ # chroot /mnt/gentoo /bin/bash
-11. livecd ~ # source /etc/profile
-12. livecd ~ # export PS1="(chroot) ${PS1}"
-13. livecd ~ # mount /dev/nvme0n1p1 /boot
-14. (chroot) livecd / # emerge -auvDN @world
-15. (chroot) livecd / # cd /usr/src/linux && make menuconfig
-    - Device Drivers --->
-        - NVME Support --->
-            - [*] NVM Express block device
-            - [*] NVMe multipath support
-            - [*] NVMe hardware monitoring
-            - [*] NVM Express over Fabrics FC host driver
-            - [*] NVM Express over Fabrics TCP host driver
-        - SCSI device support --->
-            - [*] SCSI low-level drivers
-        - ( ) Virtio drivers
-16. (chroot) livecd /usr/src/linux # make && make modules_install && make install && dracut --kver=5.15.52-gentoo --force
-17. (chroot) livecd /usr/src/linux # cd / && grub-install --target=x86_64-efi --efi-directory=/boot && grub-mkconfig -o /boot/grub/grub.cfg
-18. Checked /boot/grub/grub.cfg and I see this:
-    - ![WIN_20220711_20_48_36_Pro](https://user-images.githubusercontent.com/47036723/178390940-300fc96b-5211-4ffe-aa86-de03275033ed.jpg)
-    - I'm not sure if this is what is causing a kernel panic.
-    - I still have the DISABLE UUID flag in the default/grub.
-    - If this doesn't work, I'll give up and ask for help lol
-19. (chroot) livecd / # exit
-20. livecd /mnt/gentoo # cd
-21. livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}
-22. livecd ~ # umount -R /mnt/gentoo
-23. reboot
-
-Fingers crossed
-
- I can boot, but there's now another problem:
- 
- ![WIN_20220711_20_58_11_Pro](https://user-images.githubusercontent.com/47036723/178392017-e07f5c44-0248-4b64-950a-1f64c7baaf87.jpg)
-
-If I was to guess, I think I forgot to include some Intel ethernet drivers for my motherboard. 
-
-My motherboard is an ASUS ROG STRIX X470-F Gaming motherboard and from their site, it's an Intel Gigabit ethernet port on the board. So, I probably have to check some option in the menuconfig. I'll do this later.
-
-24. Log into root partition and make menuconfig
-25. cd /usr/src/linux && make menuconfig
-    - Device Drivers --->
-        - Network device support --->
-            - Ethernet driver support --->
-                - I'm too lazy to type out all that so I'll just take a picture:
-                - ![WIN_20220711_21_40_27_Pro](https://user-images.githubusercontent.com/47036723/178396792-df0d625c-06d3-469f-ab1a-6bd43eca927d.jpg)
-26. make && make modules_install && make install && dracut --kver=5.15.52-gentoo --force
-27. reboot
-
-Fixed it
-
-![WIN_20220711_21_48_34_Pro](https://user-images.githubusercontent.com/47036723/178397852-8c4d4900-a803-4635-a4a5-1357bc379d6e.jpg)
-
-
+# Part VII: Making The Finishing Touches
 
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
