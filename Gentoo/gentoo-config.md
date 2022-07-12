@@ -329,7 +329,13 @@ Second attempt:
 
 Fingers crossed
 
+ I can boot, but there's now another problem:
  
+ ![WIN_20220711_20_58_11_Pro](https://user-images.githubusercontent.com/47036723/178392017-e07f5c44-0248-4b64-950a-1f64c7baaf87.jpg)
+
+If I was to guess, I think I forgot to include some Intel ethernet drivers for my motherboard. 
+
+My motherboard is an ASUS ROG STRIX X470-F Gaming motherboard and from their site, it's an Intel Gigabit ethernet port on the board. So, I probably have to check some option in the menuconfig. I'll do this later.
 
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
@@ -343,3 +349,4 @@ Fingers crossed
 9. [Virt-Manager Wiki](https://wiki.gentoo.org/wiki/Virt-manager#Kernel)
 10. [QEMU Wiki](https://wiki.gentoo.org/wiki/QEMU#BIOS_and_UEFI_firmware)
 11. [Xorg Guide](https://wiki.gentoo.org/wiki/Xorg/Guide#Make.conf)
+12. [ASUS ROG String X470-F Gaming Motherboard Page](https://rog.asus.com/us/motherboards/rog-strix/rog-strix-x470-f-gaming-model/)
