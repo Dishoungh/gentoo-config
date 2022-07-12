@@ -313,7 +313,7 @@ Second attempt:
             - [*] NVM Express over Fabrics TCP host driver
         - SCSI device support --->
             - [*] SCSI low-level drivers
-        - [ ] Virtio drivers
+        - ( ) Virtio drivers
 16. (chroot) livecd /usr/src/linux # make && make modules_install && make install && dracut --kver=5.15.52-gentoo --force
 17. (chroot) livecd /usr/src/linux # cd / && grub-install --target=x86_64-efi --efi-directory=/boot && grub-mkconfig -o /boot/grub/grub.cfg
 18. Checked /boot/grub/grub.cfg and I see this:
