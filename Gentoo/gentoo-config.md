@@ -337,6 +337,15 @@ If I was to guess, I think I forgot to include some Intel ethernet drivers for m
 
 My motherboard is an ASUS ROG STRIX X470-F Gaming motherboard and from their site, it's an Intel Gigabit ethernet port on the board. So, I probably have to check some option in the menuconfig. I'll do this later.
 
+24. Log into root partition and make menuconfig
+25. cd /usr/src/linux && make menuconfig
+    - Device Drivers --->
+        - Network device support --->
+            - Ethernet driver support --->
+                - I'm too lazy to type out all that so I'll just take a picture:
+                - ![WIN_20220711_21_40_27_Pro](https://user-images.githubusercontent.com/47036723/178396792-df0d625c-06d3-469f-ab1a-6bd43eca927d.jpg)
+
+
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
 2. [Gentoo AMD64 Full Installation Guide](https://wiki.gentoo.org/wiki/Handbook:AMD64/Full/Installation)
