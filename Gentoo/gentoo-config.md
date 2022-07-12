@@ -87,7 +87,7 @@ I'll try to build Gentoo to meet these requirements. My intended init system wil
     - This selects en_US.utf8
 12. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
 
-# Part IV: Kernel Configuration
+# Part IV: Kernel Configuration & Build
 
 Since manual configuration is very expansive and showing every single option will be way too tedious, even more than this already is. I'll just show what I think would be the most important settings, especially the ones I changed.
 
@@ -221,6 +221,115 @@ Since manual configuration is very expansive and showing every single option wil
     - Library routines --->
     - Kernel hacking --->
     - Gentoo Linux --->
+4. (chroot) livecd /usr/src/linux # make && make modules_install && make install && dracut --kver=5.15.52-gentoo
+
+# Part V: Fstab + Networking + Bootloader
+1. (chroot) livecd /usr/src/linux # blkid
+    - This is what shows up: ![WIN_20220711_18_56_34_Pro](https://user-images.githubusercontent.com/47036723/178377956-64fbdf38-563c-4a5c-ad7b-a219f7ddf7a4.jpg)
+2. (chroot) livecd /usr/src/linux # vim /etc/fstab
+    - This is my fstab: ![WIN_20220711_19_25_18_Pro](https://user-images.githubusercontent.com/47036723/178380630-f299c74f-e11f-477e-9b27-5f8c9fa1fe2a.jpg)
+3. (chroot) livecd /usr/src/linux # vim /etc/conf.d/hostname (Named my PC "nexus2")
+4. (chroot) livecd /usr/src/linux # emerge -avq net-misc/dhcpcd
+5. (chroot) livecd /usr/src/linux # rc-update add dhcpcd default
+6. (chroot) livecd /usr/src/linux # rc-service dhcpcd start
+7. (chroot) livecd /usr/src/linux # emerge --ask --noreplace net-misc/netifrc
+8. (chroot) livecd /usr/src/linux # vim /etc/conf.d/net
+    - My network interface is labeled "enp6s0"
+    - I just put "config_enp6s0="dhcp"" on the file
+9. (chroot) livecd /usr/src/linux # cd /etc/init.d
+10. (chroot) livecd /etc/init.d # ln -s net.lo net.enp6s0
+11. (chroot) livecd /etc/init.d # rc-update add net.enp6s0 default
+12. (chroot) livecd /etc/init.d # vim /etc/hosts
+    - This is my hosts file: ![image](https://user-images.githubusercontent.com/47036723/178381699-dc1a6fb7-38da-41ed-9333-84e285c6267f.png)
+13. (chroot) livecd /etc/init.d # passwd
+14. (chroot) livecd /etc/init.d # emerge -avq app-admin/sysklogd
+15. (chroot) livecd /etc/init.d # rc-update add sysklogd default
+16. (chroot) livecd /etc/init.d # emerge -aq net-misc/chrony && rc-update add chronyd default
+17. (chroot) livecd /etc/init.d # emerge -avq sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2
+18. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
+19. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot
+20. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
+    - Output: ![WIN_20220711_19_53_30_Pro](https://user-images.githubusercontent.com/47036723/178384886-5ff45bb4-3b39-48ae-a170-a72a902bcc6e.jpg)
+
+# Part VI: Unmounting and Reboot
+1. livecd /mnt/gentoo # exit
+2. livecd /mnt/gentoo # cd
+3. livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}
+4. livecd ~ # umount -R /mnt/gentoo
+5. reboot
+    - Everytime I reboot in this step, I get these errors: ![image](https://user-images.githubusercontent.com/47036723/178385309-b265935d-9fb5-4c25-bfd9-2f3767fb05b5.png)
+    - In case if you can't see it, the errors say:
+        - Unmounting /mnt/cdrom... in use but fuser finds nothing
+        - /lib/rc is not writable!
+        - Unable to save dependency cache
+        - Remounting /mnt/cdrom read only ... in use but fuser finds nothing
+        - ERROR: mount-ro failed to start
+    - I'm unsure if these errors mean anything or if I should ignore them.
+
+# Part VII: Troubleshooting
+
+Booting in, I got a kernel panic about "Cannot open root device": ![WIN_20220711_20_02_37_Pro](https://user-images.githubusercontent.com/47036723/178385828-6704d553-045e-4437-9f3e-5d7fe77c3c6e.jpg)
+
+First attempt:
+
+1. Boot back into livecd
+2. livecd ~ # mount /dev/nvme0n1p3 /mnt/gentoo
+3. livecd ~ # nano /mnt/gentoo/etc/default/grub
+    - Uncommented the line: GRUB_DISABLE_LINUX_UUID=true
+    - Looks like this: ![WIN_20220711_20_10_08_Pro](https://user-images.githubusercontent.com/47036723/178386418-7d80ab7e-a8d4-488f-8d24-bfd2fb72c564.jpg)
+4. livecd ~ # nano /mnt/gentoo/etc/fstab
+    - Change UUIDs to labels (probably should have done this in the first place)
+    - Looks like this: ![WIN_20220711_20_12_57_Pro](https://user-images.githubusercontent.com/47036723/178386662-05648019-d776-4166-8fe6-c364c3196b4c.jpg)
+5. livecd ~ # umount -R /mnt/gentoo
+6. livecd ~ # reboot
+
+Still got the kernel panic: ![WIN_20220711_20_17_20_Pro](https://user-images.githubusercontent.com/47036723/178387113-54abcfb1-eefc-4829-ab4a-73a9fd253c62.jpg)
+
+I don't understand how a different UUID is being reported from the livecd versus the actual root partition. It was the same way with my Virtual Machine build. Since my virtual machine build's fstab had labels instead of UUIDs, I'll keep it that way.
+
+Second attempt:
+
+1. Boot back into livecd...again, but this time chroot back into root partition
+2. livecd ~ # mount /dev/nvme0n1p3 /mnt/gentoo && cd /mnt/gentoo
+3. livecd ~ # mount --types proc /proc /mnt/gentoo/proc
+4. livecd ~ # mount --rbind /sys /mnt/gentoo/sys
+5. livecd ~ # mount --make-rslave /mnt/gentoo/sys
+6. livecd ~ # mount --rbind /dev /mnt/gentoo/dev
+7. livecd ~ # mount --make-rslave /mnt/gentoo/dev
+8. livecd ~ # mount --bind /run /mnt/gentoo/run
+9. livecd ~ # mount --make-slave /mnt/gentoo/run
+10. livecd ~ # chroot /mnt/gentoo /bin/bash
+11. livecd ~ # source /etc/profile
+12. livecd ~ # export PS1="(chroot) ${PS1}"
+13. livecd ~ # mount /dev/nvme0n1p1 /boot
+14. (chroot) livecd / # emerge -auvDN @world
+15. (chroot) livecd / # cd /usr/src/linux && make menuconfig
+    - Device Drivers --->
+        - NVME Support --->
+            - [*] NVM Express block device
+            - [*] NVMe multipath support
+            - [*] NVMe hardware monitoring
+            - [*] NVM Express over Fabrics FC host driver
+            - [*] NVM Express over Fabrics TCP host driver
+        - SCSI device support --->
+            - [*] SCSI low-level drivers
+        - [ ] Virtio drivers
+16. (chroot) livecd /usr/src/linux # make && make modules_install && make install && dracut --kver=5.15.52-gentoo --force
+17. (chroot) livecd /usr/src/linux # cd / && grub-install --target=x86_64-efi --efi-directory=/boot && grub-mkconfig -o /boot/grub/grub.cfg
+18. Checked /boot/grub/grub.cfg and I see this:
+    - ![WIN_20220711_20_48_36_Pro](https://user-images.githubusercontent.com/47036723/178390940-300fc96b-5211-4ffe-aa86-de03275033ed.jpg)
+    - I'm not sure if this is what is causing a kernel panic.
+    - I still have the DISABLE UUID flag in the default/grub.
+    - If this doesn't work, I'll give up and ask for help lol
+19. (chroot) livecd / # exit
+20. livecd /mnt/gentoo # cd
+21. livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}
+22. livecd ~ # umount -R /mnt/gentoo
+23. reboot
+
+Fingers crossed
+
+ 
 
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
@@ -233,3 +342,4 @@ Since manual configuration is very expansive and showing every single option wil
 8. [NVIDIA Drivers Wiki](https://wiki.gentoo.org/wiki/NVIDIA/nvidia-drivers)
 9. [Virt-Manager Wiki](https://wiki.gentoo.org/wiki/Virt-manager#Kernel)
 10. [QEMU Wiki](https://wiki.gentoo.org/wiki/QEMU#BIOS_and_UEFI_firmware)
+11. [Xorg Guide](https://wiki.gentoo.org/wiki/Xorg/Guide#Make.conf)
