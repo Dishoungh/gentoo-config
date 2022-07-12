@@ -344,6 +344,13 @@ My motherboard is an ASUS ROG STRIX X470-F Gaming motherboard and from their sit
             - Ethernet driver support --->
                 - I'm too lazy to type out all that so I'll just take a picture:
                 - ![WIN_20220711_21_40_27_Pro](https://user-images.githubusercontent.com/47036723/178396792-df0d625c-06d3-469f-ab1a-6bd43eca927d.jpg)
+26. make && make modules_install && make install && dracut --kver=5.15.52-gentoo --force
+27. reboot
+
+Fixed it
+
+![WIN_20220711_21_48_34_Pro](https://user-images.githubusercontent.com/47036723/178397852-8c4d4900-a803-4635-a4a5-1357bc379d6e.jpg)
+
 
 
 # Resources
