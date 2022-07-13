@@ -77,13 +77,13 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 
 # Part III: Configuring Portage and Kernel
 1. (chroot) livecd / # emerge-webrsync && emerge --sync
-2. (chroot) livecd / # emerge -avq sys-kernel/gentoo-kernel-bin app-portage/cpuid2cpuflags sys-kernel/linux-firmware sys-apps/pciutils dev-vcs/git app-editors/vim
+2. (chroot) livecd / # emerge -avq sys-kernel/gentoo-kernel-bin app-portage/cpuid2cpuflags sys-kernel/linux-firmware sys-apps/pciutils
 3. (chroot) livecd / # echo " * / * $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
 4. (chroot) livecd / # emerge -e
 5. (chroot) livecd / # eselect profile set 8
     - This selects default/linux/amd64/17.1/desktop/plasma (stable)
 6. (chroot) livecd / # emerge -aquvDN @world
-7. (chroot) livecd / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta
+7. (chroot) livecd / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta dev-vcs/git app-editors/vim
 8. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 9. (chroot) livecd / # emerge --config sys-libs/timezone-data
 10. (chroot) livecd / # nano /etc/locale.gen
