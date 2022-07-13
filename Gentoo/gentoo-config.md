@@ -54,7 +54,7 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 13. livecd /mnt/gentoo # wget https://mirror.leaseweb.com/gentoo/releases/amd64/autobuilds/20220710T170538Z/stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz
 14. livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz --xattrs-include='*.*' --numeric-owner
 15. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
-    - make.conf: ![WIN_20220713_05_30_46_Pro](https://user-images.githubusercontent.com/47036723/178713530-ed9290d4-aac8-42d8-9e01-b8b27c1e82bf.jpg)
+    - make.conf: ![WIN_20220713_06_25_16_Pro](https://user-images.githubusercontent.com/47036723/178723132-aee46710-8298-46f6-b7f0-1558a6619ed8.jpg)
 16. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 17. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 18. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
@@ -300,7 +300,7 @@ Since manual configuration is very expansive and showing every single option wil
     - Looks like this: ![WIN_20220711_20_10_08_Pro](https://user-images.githubusercontent.com/47036723/178386418-7d80ab7e-a8d4-488f-8d24-bfd2fb72c564.jpg)
 
 # Part VI: Unmounting and Reboot
-1. livecd /mnt/gentoo # exit
+1. livecd / # exit
 2. livecd /mnt/gentoo # cd
 3. livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}
 4. livecd ~ # umount -R /mnt/gentoo
@@ -350,6 +350,10 @@ After making some troubleshooting fixes, I'm in my root partition
 
 
 # Part VIII: Making Finishing Touches
+1. Need to make some finishing touches to get my desktop to how I want it
+2. Task #1: Configure Displays
+    - Went into System Settings to set Dark Mode (of course)
+    - 
 emerge -vq app-emulation/libvirt app-emulation/virt-manager 
 8. usermod -aG libvirt dishoungh
     - Uncomment these lines from /etc/libvirt/libvirtd.conf
