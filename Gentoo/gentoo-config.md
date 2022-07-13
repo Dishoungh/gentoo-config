@@ -338,12 +338,12 @@ After making some troubleshooting fixes, I'm in my root partition
 13. nexus2 / # vim /etc/sddm.conf
     - Looks like this: ![WIN_20220713_05_36_03_Pro](https://user-images.githubusercontent.com/47036723/178714511-985ce5f4-6a1e-409c-84a2-8fe904a27be3.jpg)
 14. nexus2 / # mkdir -p /etc/sddm/scripts
-15. nexus2 / # vim /etc/sddm/sciprts/Xsetup
+15. nexus2 / # vim /etc/sddm/scripts/Xsetup
     - Looks like this: ![WIN_20220713_05_38_33_Pro](https://user-images.githubusercontent.com/47036723/178714883-714c386e-cff7-4707-a178-ca891a8237a2.jpg)
 16. nexus2 / # chmod a+x /etc/sddm/scripts/Xsetup
 17. nexus2 / # vim /etc/conf.d/display-manager
     - Looks like this: ![WIN_20220713_05_42_23_Pro](https://user-images.githubusercontent.com/47036723/178715488-527b9ce4-eda7-4798-b086-32c3b2eb2bee.jpg)
-18. nexus2 / # rc-update add displayer-manager default
+18. nexus2 / # rc-update add display-manager default
 19. nexus2 / # rc-service display-manager start
 20. Got a desktop. Yay!
     - ![WIN_20220713_05_51_07_Pro](https://user-images.githubusercontent.com/47036723/178717107-03fbb7c1-f293-48a4-af5e-bcbd4e568840.jpg)
@@ -352,7 +352,26 @@ After making some troubleshooting fixes, I'm in my root partition
 # Part VIII: Troubleshooting
 Not too long after getting my desktop, I broke it trying to configure it. My desktop froze. After forcing a reboot, I get a black screen when trying to log in.
 
-1. 
+1. Booted into livecd
+2. livecd ~ # mount /dev/nvme0n1p3 /mnt/gentoo
+3. livecd ~ # cd /mnt/gentoo
+4. Chrooted into rootfs
+5. (chroot) livecd / # rc-update del display-manager default
+6. Exit and reboot
+7. I'm in command line now. I need to address my Nvidia graphics issue and multiple displays issue in here.
+8. nexus2 ~ # mkdir /etc/X11/xorg.conf.d
+9. nexus2 ~ # vim /etc/X11/xorg.conf.d/nvidia_left.conf
+10. nexus2 ~ # vim /etc/X11/xorg.conf.d/nvidia_mid.conf
+11. nexus2 ~ # vim /etc/X11/xorg.conf.d/nvidia_right.conf
+    - This is what this looks like: ![WIN_20220713_07_44_56_Pro](https://user-images.githubusercontent.com/47036723/178736686-a9b3357c-b833-43f3-a244-905e6cedbf57.jpg)
+    - ![WIN_20220713_07_45_14_Pro](https://user-images.githubusercontent.com/47036723/178736719-5b7fbd13-83b8-475d-8841-0eaa2393dc34.jpg)
+    - ![WIN_20220713_07_45_30_Pro](https://user-images.githubusercontent.com/47036723/178736752-8185f7a4-4398-439d-a8a1-16a9c861c97c.jpg)
+12. nexus2 ~ # mkdir /etc/modules-load.d
+13. nexus2 ~ # echo "nvidia-drm" > /etc/modules-load.d/nvidia-drm.conf
+14. nexus2 ~ # echo "options nvidia-drm modeset=1" > /etc/modprobe.d/nvidia-drm.conf
+15. nexus2 ~ # rc-update add display-manager default
+16. nexus2 ~ # rc-service display-manager start
+
 
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
