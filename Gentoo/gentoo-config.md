@@ -56,7 +56,7 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 13. livecd /mnt/gentoo # wget https://mirror.leaseweb.com/gentoo/releases/amd64/autobuilds/20220710T170538Z/stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz
 14. livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz --xattrs-include='*.*' --numeric-owner
 15. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
-    - make.conf: ![WIN_20220713_10_41_46_Pro](https://user-images.githubusercontent.com/47036723/178774922-18364ab3-5a81-4efc-8939-2e5e40716cfb.jpg)
+    - make.conf: ![WIN_20220713_13_46_17_Pro](https://user-images.githubusercontent.com/47036723/178808306-f800a010-0ccf-49b8-9c88-735a3fd25a18.jpg)
 16. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 17. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 18. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
@@ -75,15 +75,15 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 10. livecd / # export PS1="(chroot) ${PS1}"
 11. (chroot) livecd / # mount /dev/nvme0n1p1 /boot
 
-# Part III: Configuring Portage
+# Part III: Configuring Portage and Kernel
 1. (chroot) livecd / # emerge-webrsync && emerge --sync
-2. (chroot) livecd / # emerge -avq sys-kernel/gentoo-kernel-bin
-3. (chroot) livecd / # eselect profile set 8
+2. (chroot) livecd / # emerge -avq sys-kernel/gentoo-kernel-bin app-portage/cpuid2cpuflags sys-kernel/linux-firmware sys-apps/pciutils dev-vcs/git app-editors/vim
+3. (chroot) livecd / # echo " * / * $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
+4. (chroot) livecd / # emerge -e
+5. (chroot) livecd / # eselect profile set 8
     - This selects default/linux/amd64/17.1/desktop/plasma (stable)
-4. (chroot) livecd / # emerge -avq app-portage/cpuid2cpuflags
-5. (chroot) livecd / # cpuid2cpuflags
-6. (chroot) livecd / # echo " * / * $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
-7. (chroot) livecd / # emerge -aquvDN @world
+6. (chroot) livecd / # emerge -aquvDN @world
+7. (chroot) livecd / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta
 8. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 9. (chroot) livecd / # emerge --config sys-libs/timezone-data
 10. (chroot) livecd / # nano /etc/locale.gen
@@ -91,15 +91,10 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 12. (chroot) livecd / # eselect locale set 6
     - This selects en_US.utf8
 13. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
+14. (chroot) livecd / # emerge -c
+15. (chroot) livecd / # emerge -a @module-rebuild
 
-# Part IV: Kernel Configuration & Build
-
-I'm using a pre-compiled distribution kernel this time.
-1. (chroot) livecd / # emerge -avq sys-kernel/linux-firmware sys-kernel/gentoo-kernel-bin sys-apps/pciutils dev-vcs/git app-editors/vim
-2. (chroot) livecd / # emerge -c
-3. (chroot) livecd / # emerge -a @module-rebuild
-
-# Part V: Fstab + Networking + Bootloader
+# Part IV: Fstab + Networking + Bootloader
 1. (chroot) livecd / # blkid
     - This is what shows up: ![WIN_20220711_18_56_34_Pro](https://user-images.githubusercontent.com/47036723/178377956-64fbdf38-563c-4a5c-ad7b-a219f7ddf7a4.jpg)
 2. (chroot) livecd / # vim /etc/fstab
@@ -130,7 +125,7 @@ I'm using a pre-compiled distribution kernel this time.
     - Uncommented the line: GRUB_DISABLE_LINUX_UUID=true
     - Looks like this: ![WIN_20220711_20_10_08_Pro](https://user-images.githubusercontent.com/47036723/178386418-7d80ab7e-a8d4-488f-8d24-bfd2fb72c564.jpg)
 
-# Part VI: Unmounting and Reboot
+# Part V: Unmounting and Reboot
 1. livecd / # exit
 2. livecd /mnt/gentoo # cd
 3. livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}
@@ -145,7 +140,7 @@ I'm using a pre-compiled distribution kernel this time.
         - ERROR: mount-ro failed to start
     - I'm unsure if these errors mean anything or if I should ignore them.
 
-# Part VII: Getting a Desktop Environment (KDE Plasma)
+# Part VI: Getting to a Desktop Environment (KDE Plasma)
 After making some troubleshooting fixes, I'm in my root partition
 ![WIN_20220712_18_40_12_Pro](https://user-images.githubusercontent.com/47036723/178616342-8a624653-ffd6-491d-893b-35bc48ebca71.jpg)
 
