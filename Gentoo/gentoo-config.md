@@ -13,11 +13,11 @@ Since my stuff is all messed up, I'll do this in the same way I did to build my 
 
 # Hardware (UEFI of course)
 
-CPU: Ryzen 7 2700X (8 Cores / 16 Threads)
-RAM: 32 GB (DDR4-3200)
-GPU: Nvidia Geforce GTX 1080 Ti
-Storage: Samsung 960 EVO (500GB M.2 SSD)
-Monitors: 3x 2560x1440p Monitors (G-Sync IPS 1ms)
+- CPU: Ryzen 7 2700X (8 Cores / 16 Threads)
+- RAM: 32 GB (DDR4-3200)
+- GPU: Nvidia Geforce GTX 1080 Ti
+- Storage: Samsung 960 EVO (500GB M.2 SSD)
+- Monitors: 3x 2560x1440p Monitors (G-Sync IPS 1ms)
 
 I have 3 other storage drives but I'll be using those as extra storage drives for VMs and other stuff. I'm including the information about the 3 monitors I'm using just in case if it would be important.
 
@@ -167,6 +167,24 @@ Since manual configuration is very expansive and showing every single option wil
     - [*] Networking support --->
         - Networking options --->
             - [*] 802.1d Ethernet Bridging
+            - [*] Network packet filtering framework (Netfilter) --->
+                - [*] Advanced netfilter configuration
+                - Core Netfilter Configuration --->
+                    - [*] "conntrack" connection tracking match support
+                    - [*] CHECKSUM target support
+                - IP: Netfilter Configuration --->
+                    - [*] iptables NAT support 
+                - [*] Ethernet Bridge tables (ebtables) support --->
+                    - [*] ebt: nat table support
+                    - [*] ebt: mark filter support
+            - [*] QoS and/or fair queueing --->
+                - [*] Hierarchical Token Bucket (HTB)
+                - [*] Stochastic Fairness Queueing (SFQ)
+                - [*] Ingress/classifier-action Qdisc
+                - [*] Netfilter mark (FW)
+                - [*] Universal 32bit comparisons w/ hashing (U32)
+                - [*] Actions
+                - [*] Traffic Policing
     - Device Drivers --->
         - Generic Driver Options --->
             - Firmware loader --->
@@ -296,7 +314,53 @@ Since manual configuration is very expansive and showing every single option wil
         - ERROR: mount-ro failed to start
     - I'm unsure if these errors mean anything or if I should ignore them.
 
-# Part VII: Making The Finishing Touches
+# Part VII: Getting a Desktop Environment (KDE Plasma)
+After making some troubleshooting fixes, I'm in my root partition
+![WIN_20220712_18_40_12_Pro](https://user-images.githubusercontent.com/47036723/178616342-8a624653-ffd6-491d-893b-35bc48ebca71.jpg)
+
+1. nexus2 ~ # cd /
+2. nexus2 / # emerge -vq app-admin/sudo
+3. nexus2 / # vim /etc/sudoers
+    - Uncomment "%wheel ALL=(ALL:ALL) ALL"
+    - Uncomment "%sudo ALL=(ALL:ALL) ALL"
+    - What it looks like: ![WIN_20220712_19_26_27_Pro](https://user-images.githubusercontent.com/47036723/178623078-6a19d1f6-5919-4607-96fc-9864a316d19e.jpg)
+4. nexus2 / # useradd -m -G users,wheel,audio,video -s /bin/bash dishoungh
+5. nexus2 / # passwd dishoungh
+6. nexus2 / # emerge -avq app-portage/gentoolkit 
+7. nexus2 / # rc-update add elogind boot
+8. nexus2 / # rc-update add udev sysinit
+9. nexus2 / # rc-update add dbus default
+10. nexus2 / # emerge -avq sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-drivers/nvidia-drivers x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm
+    - I needed to make some changes to my USE flags in my make.conf
+    - My current make.conf looks like this: 
+    - nexus2 / # emerge -uvDN @world
+    - Tried the emerge command again and it worked
+12. nexus2 / # usermod -aG video sddm
+13. nexus2 / # vim /etc/sddm.conf
+    - Looks like this:
+14. nexus2 / # mkdir -p /etc/sddm/scripts
+15. nexus2 / # vim /etc/sddm/sciprts/Xsetup
+    - Looks like this:
+16. nexus2 / # chmod a+x /etc/sddm/scripts/Xsetup
+17. nexus2 / # vim /etc/conf.d/display-manager
+    - Looks like this:
+18. nexus2 / # rc-update add displayer-manager default
+19. nexus2 / # rc-service display-manager start
+20. nexus2 / # vim /etc/conf.d/xdm
+    - Looks like this:
+21. nexus2 / # rc-update add xdm default
+22. nexus2 / # /etc/init.d/xdm start
+
+# Part VIII: Making Finishing Touches
+emerge -vq app-emulation/libvirt app-emulation/virt-manager 
+8. usermod -aG libvirt dishoungh
+    - Uncomment these lines from /etc/libvirt/libvirtd.conf
+        - auth_unix_ro = "none"
+        - auth_unix_rw = "none"
+        - unix_sock_group = "libvirt"
+        - unix_sock_ro_perms = "0777"
+        - unix_sock_rw_perms = "0770"
+11. x11-base/xorg-drivers x11-drivers/nvidia-drivers www-client/firefox-bin kde-plasma/plasma-meta kde-apps/kdecore-meta gui-libs/display-manager-init kde-apps/ark kde-apps/filelight kde-apps/kate kde-apps/kdenlive kde-apps/spectacle media-video/pipewire x11-misc/sddm games-util/steam-launcher virtual/wine media-video/obs-studio media-video/vlc
 
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
@@ -311,3 +375,7 @@ Since manual configuration is very expansive and showing every single option wil
 10. [QEMU Wiki](https://wiki.gentoo.org/wiki/QEMU#BIOS_and_UEFI_firmware)
 11. [Xorg Guide](https://wiki.gentoo.org/wiki/Xorg/Guide#Make.conf)
 12. [ASUS ROG String X470-F Gaming Motherboard Page](https://rog.asus.com/us/motherboards/rog-strix/rog-strix-x470-f-gaming-model/)
+13. [Gentoolkit Wiki](https://wiki.gentoo.org/wiki/Gentoolkit)
+14. [KDE Apps](https://packages.gentoo.org/categories/kde-apps)
+15. [Steam](https://wiki.gentoo.org/wiki/Steam#Prerequisites)
+16. [Wine](https://wiki.gentoo.org/wiki/Wine)
