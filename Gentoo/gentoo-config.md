@@ -54,7 +54,7 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 13. livecd /mnt/gentoo # wget https://mirror.leaseweb.com/gentoo/releases/amd64/autobuilds/20220710T170538Z/stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz
 14. livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz --xattrs-include='*.*' --numeric-owner
 15. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
-    - make.conf: ![WIN_20220711_14_37_14_Pro](https://user-images.githubusercontent.com/47036723/178344548-cc70b90d-a73e-4c35-9051-828154adce30.jpg)
+    - make.conf: ![WIN_20220713_05_30_46_Pro](https://user-images.githubusercontent.com/47036723/178713530-ed9290d4-aac8-42d8-9e01-b8b27c1e82bf.jpg)
 16. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 17. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 18. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
@@ -331,25 +331,23 @@ After making some troubleshooting fixes, I'm in my root partition
 8. nexus2 / # rc-update add udev sysinit
 9. nexus2 / # rc-update add dbus default
 10. nexus2 / # emerge -avq sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-drivers/nvidia-drivers x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm
-    - I needed to make some changes to my USE flags in my make.conf
-    - My current make.conf looks like this: 
+    - I needed to make some changes to my USE flags in my make.conf by adding (pipewire-alsa and minimal)
     - nexus2 / # emerge -uvDN @world
     - Tried the emerge command again and it worked
 12. nexus2 / # usermod -aG video sddm
 13. nexus2 / # vim /etc/sddm.conf
-    - Looks like this:
+    - Looks like this: ![WIN_20220713_05_36_03_Pro](https://user-images.githubusercontent.com/47036723/178714511-985ce5f4-6a1e-409c-84a2-8fe904a27be3.jpg)
 14. nexus2 / # mkdir -p /etc/sddm/scripts
 15. nexus2 / # vim /etc/sddm/sciprts/Xsetup
-    - Looks like this:
+    - Looks like this: ![WIN_20220713_05_38_33_Pro](https://user-images.githubusercontent.com/47036723/178714883-714c386e-cff7-4707-a178-ca891a8237a2.jpg)
 16. nexus2 / # chmod a+x /etc/sddm/scripts/Xsetup
 17. nexus2 / # vim /etc/conf.d/display-manager
-    - Looks like this:
+    - Looks like this: ![WIN_20220713_05_42_23_Pro](https://user-images.githubusercontent.com/47036723/178715488-527b9ce4-eda7-4798-b086-32c3b2eb2bee.jpg)
 18. nexus2 / # rc-update add displayer-manager default
 19. nexus2 / # rc-service display-manager start
-20. nexus2 / # vim /etc/conf.d/xdm
-    - Looks like this:
-21. nexus2 / # rc-update add xdm default
-22. nexus2 / # /etc/init.d/xdm start
+20. Got a desktop. Yay!
+    - ![WIN_20220713_05_51_07_Pro](https://user-images.githubusercontent.com/47036723/178717107-03fbb7c1-f293-48a4-af5e-bcbd4e568840.jpg)
+
 
 # Part VIII: Making Finishing Touches
 emerge -vq app-emulation/libvirt app-emulation/virt-manager 
@@ -361,6 +359,7 @@ emerge -vq app-emulation/libvirt app-emulation/virt-manager
         - unix_sock_ro_perms = "0777"
         - unix_sock_rw_perms = "0770"
 11. x11-base/xorg-drivers x11-drivers/nvidia-drivers www-client/firefox-bin kde-plasma/plasma-meta kde-apps/kdecore-meta gui-libs/display-manager-init kde-apps/ark kde-apps/filelight kde-apps/kate kde-apps/kdenlive kde-apps/spectacle media-video/pipewire x11-misc/sddm games-util/steam-launcher virtual/wine media-video/obs-studio media-video/vlc
+12. 
 
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
@@ -371,11 +370,12 @@ emerge -vq app-emulation/libvirt app-emulation/virt-manager
 6. [MAKEOPTS](https://wiki.gentoo.org/wiki/MAKEOPTS)
 7. [Pipewire Packages](https://packages.gentoo.org/useflags/pipewire)
 8. [NVIDIA Drivers Wiki](https://wiki.gentoo.org/wiki/NVIDIA/nvidia-drivers)
-9. [Virt-Manager Wiki](https://wiki.gentoo.org/wiki/Virt-manager#Kernel)
+9. [Virt-Manager Wiki](https://wiki.gentoo.org/wiki/Virt-manager)
 10. [QEMU Wiki](https://wiki.gentoo.org/wiki/QEMU#BIOS_and_UEFI_firmware)
 11. [Xorg Guide](https://wiki.gentoo.org/wiki/Xorg/Guide#Make.conf)
 12. [ASUS ROG String X470-F Gaming Motherboard Page](https://rog.asus.com/us/motherboards/rog-strix/rog-strix-x470-f-gaming-model/)
 13. [Gentoolkit Wiki](https://wiki.gentoo.org/wiki/Gentoolkit)
 14. [KDE Apps](https://packages.gentoo.org/categories/kde-apps)
-15. [Steam](https://wiki.gentoo.org/wiki/Steam#Prerequisites)
+15. [Steam](https://wiki.gentoo.org/wiki/Steam)
 16. [Wine](https://wiki.gentoo.org/wiki/Wine)
+17. [SDDM](https://wiki.gentoo.org/wiki/SDDM)
