@@ -228,9 +228,12 @@ Since manual configuration is very expansive and showing every single option wil
             - [*] AMD Family 15h processor power
         - Graphics support --->
             - [*] /dev/agpgart (AGP Support) --->
+                - [*] AMD Opteron/Athlon64 on-CPU GART support
+                - [*] Intel 440LX/BX/GX, I8xx and E7x05 chipset support
+                - [*] SiS chipset support
+                - [*] VIA chipset support
             - -X- VGA Arbitration
             - (3) Maximum number of GPUs
-            - [*] Virtio GPU driver
             - [*] Simple framebuffer driver
             - Frame buffer Devices --->
                 - [*] Support for frame buffer devices --->
@@ -359,13 +362,8 @@ Not too long after getting my desktop, I broke it trying to configure it. My des
 5. (chroot) livecd / # rc-update del display-manager default
 6. Exit and reboot
 7. I'm in command line now. I need to address my Nvidia graphics issue and multiple displays issue in here.
-8. nexus2 ~ # mkdir /etc/X11/xorg.conf.d
-9. nexus2 ~ # vim /etc/X11/xorg.conf.d/nvidia_left.conf
-10. nexus2 ~ # vim /etc/X11/xorg.conf.d/nvidia_mid.conf
-11. nexus2 ~ # vim /etc/X11/xorg.conf.d/nvidia_right.conf
-    - This is what this looks like: ![WIN_20220713_07_44_56_Pro](https://user-images.githubusercontent.com/47036723/178736686-a9b3357c-b833-43f3-a244-905e6cedbf57.jpg)
-    - ![WIN_20220713_07_45_14_Pro](https://user-images.githubusercontent.com/47036723/178736719-5b7fbd13-83b8-475d-8841-0eaa2393dc34.jpg)
-    - ![WIN_20220713_07_45_30_Pro](https://user-images.githubusercontent.com/47036723/178736752-8185f7a4-4398-439d-a8a1-16a9c861c97c.jpg)
+8. nexus2 ~ # vim /etc/X11/xorg.conf
+    - This is what this looks like: 
 12. nexus2 ~ # mkdir /etc/modules-load.d
 13. nexus2 ~ # echo "nvidia-drm" > /etc/modules-load.d/nvidia-drm.conf
 14. nexus2 ~ # echo "options nvidia-drm modeset=1" > /etc/modprobe.d/nvidia-drm.conf
@@ -391,3 +389,5 @@ Not too long after getting my desktop, I broke it trying to configure it. My des
 15. [Steam](https://wiki.gentoo.org/wiki/Steam)
 16. [Wine](https://wiki.gentoo.org/wiki/Wine)
 17. [SDDM](https://wiki.gentoo.org/wiki/SDDM)
+18. [VLC](https://wiki.gentoo.org/wiki/VLC)
+19. [KDE](https://wiki.gentoo.org/wiki/KDE)
