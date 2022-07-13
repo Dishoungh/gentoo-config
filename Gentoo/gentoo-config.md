@@ -56,7 +56,7 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 13. livecd /mnt/gentoo # wget https://mirror.leaseweb.com/gentoo/releases/amd64/autobuilds/20220710T170538Z/stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz
 14. livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz --xattrs-include='*.*' --numeric-owner
 15. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
-    - make.conf: ![WIN_20220713_13_46_17_Pro](https://user-images.githubusercontent.com/47036723/178808306-f800a010-0ccf-49b8-9c88-735a3fd25a18.jpg)
+    - make.conf: ![image](https://user-images.githubusercontent.com/47036723/178809079-50f4dc9f-a914-4f21-ad40-3f940237419f.png)
 16. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 17. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 18. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
