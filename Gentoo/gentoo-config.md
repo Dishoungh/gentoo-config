@@ -349,21 +349,10 @@ After making some troubleshooting fixes, I'm in my root partition
     - ![WIN_20220713_05_51_07_Pro](https://user-images.githubusercontent.com/47036723/178717107-03fbb7c1-f293-48a4-af5e-bcbd4e568840.jpg)
 
 
-# Part VIII: Making Finishing Touches
-1. Need to make some finishing touches to get my desktop to how I want it
-2. Task #1: Configure Displays
-    - Went into System Settings to set Dark Mode (of course)
-    - 
-emerge -vq app-emulation/libvirt app-emulation/virt-manager 
-8. usermod -aG libvirt dishoungh
-    - Uncomment these lines from /etc/libvirt/libvirtd.conf
-        - auth_unix_ro = "none"
-        - auth_unix_rw = "none"
-        - unix_sock_group = "libvirt"
-        - unix_sock_ro_perms = "0777"
-        - unix_sock_rw_perms = "0770"
-11. x11-base/xorg-drivers x11-drivers/nvidia-drivers www-client/firefox-bin kde-plasma/plasma-meta kde-apps/kdecore-meta gui-libs/display-manager-init kde-apps/ark kde-apps/filelight kde-apps/kate kde-apps/kdenlive kde-apps/spectacle media-video/pipewire x11-misc/sddm games-util/steam-launcher virtual/wine media-video/obs-studio media-video/vlc
-12. 
+# Part VIII: Troubleshooting
+Not too long after getting my desktop, I broke it trying to configure it. My desktop froze. After forcing a reboot, I get a black screen when trying to log in.
+
+1. 
 
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
