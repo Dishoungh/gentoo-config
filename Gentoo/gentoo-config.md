@@ -155,15 +155,7 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 2. livecd /mnt/gentoo # cd
 3. livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}
 4. livecd ~ # umount -R /mnt/gentoo
-5. reboot
-    - Everytime I reboot in this step, I get these errors: ![image](https://user-images.githubusercontent.com/47036723/178385309-b265935d-9fb5-4c25-bfd9-2f3767fb05b5.png)
-    - In case if you can't see it, the errors say:
-        - Unmounting /mnt/cdrom... in use but fuser finds nothing
-        - /lib/rc is not writable!
-        - Unable to save dependency cache
-        - Remounting /mnt/cdrom read only ... in use but fuser finds nothing
-        - ERROR: mount-ro failed to start
-    - I'm unsure if these errors mean anything or if I should ignore them.
+5. livecd ~ # poweroff
 
 # Part VII: Getting KDE Plamsa + Installing General Applications
 After making some troubleshooting fixes, I'm in my root partition
@@ -179,7 +171,7 @@ After making some troubleshooting fixes, I'm in my root partition
     - */*::steam-overlay
     - This unmasks the discord-bin and steam packages
 6. ne
-7. nexus2 / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta dev-vcs/git app-editors/vim www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-drivers/nvidia-drivers x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin games-util/lutris x11-apps/setxkbmap app-eselect/eselect-repository kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta media-video/vlc media-video/obs-studio games-util/steam-meta virtual-wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake media-tv/plex-media-server app-emulation/vkd3d-proton
+7. nexus2 / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta dev-vcs/git app-editors/vim www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-drivers/nvidia-drivers x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin games-util/lutris x11-apps/setxkbmap app-eselect/eselect-repository kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta media-video/vlc media-video/obs-studio games-util/steam-meta virtual-wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake media-tv/plex-media-server app-emulation/vkd3d-proton media-video/pipewire
 7. nexus2 / # usermod -aG video sddm
 8. nexus2 / # usermod -aG libvirt dishoungh
 9. nexus2 / # vim /etc/libvirt/libvirtd.conf
