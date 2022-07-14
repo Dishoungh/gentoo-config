@@ -38,7 +38,7 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 
 # Part I: Booting into the USB Boot Media
 
-1. Downloaded install-amd64-minimal-20220710T170538Z.iso from #1 in Resources
+1. Downloaded install-amd64-minimal-20220710T170538Z.iso
 2. Used Rufus to make USB drive into boot media
 3. Booted into LiveCD.
 4. livecd ~ # ping www.gentoo.org -c3
@@ -92,7 +92,7 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 3. livecd / # emerge -avq app-portage/cpuid2cpuflags
 4. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
 5. livecd / # emerge -1 sys-libs/glibc && emerge -uqDN @world
-6. livecd / # emerge -avq sys-kernel/gentoo-kernel-bin  sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager app-admin/superadduser
+6. livecd / # emerge -avq sys-kernel/gentoo-kernel-bin  sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager app-admin/superadduser x11-drivers/nvidia-drivers
 7. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 8. (chroot) livecd / # emerge --config sys-libs/timezone-data
 9. (chroot) livecd / # nano /etc/locale.gen
@@ -179,7 +179,7 @@ I don't know what I did wrong.
     - net-im/discord-bin
     - */*::steam-overlay
     - This unmasks the discord-bin and steam packages
-7. nexus2 / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta dev-vcs/git app-editors/vim www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-drivers/nvidia-drivers x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin games-util/lutris x11-apps/setxkbmap app-eselect/eselect-repository kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta media-video/vlc media-video/obs-studio games-util/steam-meta virtual-wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake media-tv/plex-media-server app-emulation/vkd3d-proton media-video/pipewire app-misc/screen
+7. nexus2 / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta dev-vcs/git app-editors/vim www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin games-util/lutris x11-apps/setxkbmap app-eselect/eselect-repository kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta media-video/vlc media-video/obs-studio games-util/steam-meta virtual-wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake media-tv/plex-media-server app-emulation/vkd3d-proton media-video/pipewire app-misc/screen
 7. nexus2 / # usermod -aG video sddm
 8. nexus2 / # usermod -aG libvirt dishoungh
 9. nexus2 / # vim /etc/libvirt/libvirtd.conf
