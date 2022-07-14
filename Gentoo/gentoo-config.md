@@ -56,8 +56,18 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 13. livecd /mnt/gentoo # wget https://mirror.leaseweb.com/gentoo/releases/amd64/autobuilds/20220710T170538Z/stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz
 14. livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz --xattrs-include="\*.\*" --numeric-owner
 15. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
-    - make.conf: ![WIN_20220713_19_11_38_Pro](https://user-images.githubusercontent.com/47036723/178956164-ac5023ed-22dc-470d-a231-00aaa4b20533.jpg)
-    - Last 4 USE lfags are elogind, dbus, osmesa, and vulkan
+    - CHOST="x86_64-pc-linux-gnu"
+    - COMMON_FLAGS="-O2 -march=znver1 -pipe"
+    - MAKEOPTS="-j16 -l14"
+    - PORTAGE_NICENESS=19
+    - EMERGE_DEFAULT_OPTS="--jobs=16 --load-average=14 --with-bdeps=y --complete-graph=y"
+    - ACCEPT_KEYWORDS="amd64"
+    - ACCEPT_LICENSE="*"
+    - VIDEO_CARDS="nvidia"
+    - ABI_X86="64 32"
+    - QEMU_SOFTMMU_TARGETS="arm x86_64 sparc"
+    - QEMU_USER_TARGETS="x86_64"
+    - USE="-systemd -gnome networkmanager sddm pipewire dist-kernel X kde pipewire-alsa minimal xinerama -gpm elogind dbus osmesa vulkan"
 16. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 17. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 18. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
@@ -164,45 +174,33 @@ After making some troubleshooting fixes, I'm in my root partition
     - This selects default/linux/amd64/17.1/desktop/plasma (stable)
 3. nexus2 / # emerge -uDNpv @world
 4. nexus2 / # emerge -uvDN @world
-5. nexus2 / # nano /etc/portage/package.accept_keywords/discord
+5. nexus2 / # nano /etc/portage/package.accept_keywords
     - net-im/discord-bin
-    - This unmasks the discord-bin package
-6. nexus2 / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta dev-vcs/git app-editors/vim www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-drivers/nvidia-drivers x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm
-    - I needed to make some changes to my USE flags in my make.conf by adding (pipewire-alsa and minimal)
-    - nexus2 / # emerge -uvDN @world
-    - Tried the emerge command again and it worked
-12. nexus2 / # usermod -aG video sddm
-13. nexus2 / # vim /etc/sddm.conf
+    - */*::steam-overlay
+    - This unmasks the discord-bin and steam packages
+6. ne
+7. nexus2 / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta dev-vcs/git app-editors/vim www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-drivers/nvidia-drivers x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin games-util/lutris x11-apps/setxkbmap app-eselect/eselect-repository kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta media-video/vlc media-video/obs-studio games-util/steam-meta virtual-wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake media-tv/plex-media-server app-emulation/vkd3d-proton
+7. nexus2 / # usermod -aG video sddm
+8. nexus2 / # usermod -aG libvirt dishoungh
+9. nexus2 / # vim /etc/libvirt/libvirtd.conf
+    - Uncomment these lines
+        - auth_unix_ro = "none"
+        - auth_unix_rw = "none"
+        - unix_sock_group = "libvirt"
+        - unix_sock_ro_perms = "0777"
+        - unix_sock_rw_perms = "0770"
+10. nexus2 / # rc-service libvirtd start
+11. nexus2 / # rc-update add libvirtd default
+8. nexus2 / # vim /etc/sddm.conf
     - Looks like this: ![WIN_20220713_05_36_03_Pro](https://user-images.githubusercontent.com/47036723/178714511-985ce5f4-6a1e-409c-84a2-8fe904a27be3.jpg)
-14. nexus2 / # mkdir -p /etc/sddm/scripts
-15. nexus2 / # vim /etc/sddm/scripts/Xsetup
+9. nexus2 / # mkdir -p /etc/sddm/scripts
+10. nexus2 / # vim /etc/sddm/scripts/Xsetup
     - Looks like this: ![WIN_20220713_05_38_33_Pro](https://user-images.githubusercontent.com/47036723/178714883-714c386e-cff7-4707-a178-ca891a8237a2.jpg)
-16. nexus2 / # chmod a+x /etc/sddm/scripts/Xsetup
-17. nexus2 / # vim /etc/conf.d/display-manager
+11. nexus2 / # chmod a+x /etc/sddm/scripts/Xsetup
+12. nexus2 / # vim /etc/conf.d/display-manager
     - Looks like this: ![WIN_20220713_05_42_23_Pro](https://user-images.githubusercontent.com/47036723/178715488-527b9ce4-eda7-4798-b086-32c3b2eb2bee.jpg)
-18. nexus2 / # rc-update add display-manager default
-19. nexus2 / # rc-service display-manager start
-20. Got a desktop. Yay!
-    - ![WIN_20220713_05_51_07_Pro](https://user-images.githubusercontent.com/47036723/178717107-03fbb7c1-f293-48a4-af5e-bcbd4e568840.jpg)
-
-
-# Part VIII: Troubleshooting
-Not too long after getting my desktop, I broke it trying to configure it. My desktop froze. After forcing a reboot, I get a black screen when trying to log in.
-
-1. Booted into livecd
-2. livecd ~ # mount /dev/nvme0n1p3 /mnt/gentoo
-3. livecd ~ # cd /mnt/gentoo
-4. Chrooted into rootfs
-5. (chroot) livecd / # rc-update del display-manager default
-6. Exit and reboot
-7. I'm in command line now. I need to address my Nvidia graphics issue and multiple displays issue in here.
-8. nexus2 ~ # vim /etc/X11/xorg.conf
-    - This is what this looks like: 
-12. nexus2 ~ # mkdir /etc/modules-load.d
-13. nexus2 ~ # echo "nvidia-drm" > /etc/modules-load.d/nvidia-drm.conf
-14. nexus2 ~ # echo "options nvidia-drm modeset=1" > /etc/modprobe.d/nvidia-drm.conf
-15. nexus2 ~ # rc-update add display-manager default
-16. nexus2 ~ # rc-service display-manager start
+13. nexus2 / # rc-update add display-manager default
+14. nexus2 / # rc-service display-manager start
 
 
 # Resources
