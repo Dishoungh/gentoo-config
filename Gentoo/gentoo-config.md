@@ -163,9 +163,13 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 4. livecd ~ # umount -R /mnt/gentoo
 5. livecd ~ # reboot
 
+# Part VII: Troubleshooting
+After rebooting into my root partition, I get a black screen after getting this:
+![image](https://user-images.githubusercontent.com/47036723/179024616-c88015c5-63f1-45e7-995a-54ff4e6a7270.png)
 
+I don't know what I did wrong.
 
-# Part VII: Getting KDE Plamsa + Installing General Applications
+# Part ???: Getting KDE Plamsa + Installing General Applications
 1. nexus2 ~ # cd /
 2. nexus2 / # eselect profile set 8
     - This selects default/linux/amd64/17.1/desktop/plasma (stable)
