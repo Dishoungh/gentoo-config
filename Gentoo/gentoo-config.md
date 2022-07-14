@@ -40,8 +40,7 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 
 1. Downloaded install-amd64-minimal-20220710T170538Z.iso from #1 in Resources
 2. Used Rufus to make USB drive into boot media
-3. Booted into "LiveCD". This is what it looks like:
-    - ![WIN_20220711_11_45_38_Pro](https://user-images.githubusercontent.com/47036723/178315698-909d3483-ee27-4078-9432-773a8db652f7.jpg)
+3. Booted into LiveCD.
 4. livecd ~ # ping www.gentoo.org -c3
 5. livecd ~ # lsblk
     - ![WIN_20220711_12_04_46_Pro](https://user-images.githubusercontent.com/47036723/178319092-600d8d9e-3680-4ec5-9c02-eec2ff63f696.jpg)
@@ -93,48 +92,55 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 3. livecd / # emerge -avq app-portage/cpuid2cpuflags
 4. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
 5. livecd / # emerge -1 sys-libs/glibc && emerge -uqDN @world
-6. livecd / # emerge -avq sys-kernel/gentoo-kernel-bin  sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd app-misc/screen sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager app-admin/superadduser
+6. livecd / # emerge -avq sys-kernel/gentoo-kernel-bin  sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager app-admin/superadduser
 7. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 8. (chroot) livecd / # emerge --config sys-libs/timezone-data
 9. (chroot) livecd / # nano /etc/locale.gen
+    - Uncomment:
+        - en_US ISO-8859-1
+        - en_US.UTF-8 UTF-8
 10. (chroot) livecd / # locale-gen
 11. (chroot) livecd / # eselect locale set 6
     - This selects en_US.utf8
 12. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
 
 # Part IV: Fstab + Networking
-1. (chroot) livecd / # blkid
-    - This is what shows up: ![WIN_20220711_18_56_34_Pro](https://user-images.githubusercontent.com/47036723/178377956-64fbdf38-563c-4a5c-ad7b-a219f7ddf7a4.jpg)
-2. (chroot) livecd / # vim /etc/fstab
-    - This is my fstab: ![WIN_20220711_20_12_57_Pro](https://user-images.githubusercontent.com/47036723/178386662-05648019-d776-4166-8fe6-c364c3196b4c.jpg)
-3. (chroot) livecd / # vim /etc/conf.d/hostname (Named my PC "nexus2")
-5. (chroot) livecd / # rc-update add dhcpcd default
-6. (chroot) livecd / # rc-service dhcpcd start
-7. (chroot) livecd / # emerge --ask --noreplace net-misc/netifrc
-8. (chroot) livecd / # vim /etc/conf.d/net
-    - My network interface is labeled "enp6s0"
-    - I just put "config_enp6s0="dhcp"" on the file
-9. (chroot) livecd / # cd /etc/init.d
-10. (chroot) livecd /etc/init.d # ln -s net.lo net.enp6s0
-11. (chroot) livecd /etc/init.d # rc-update add net.enp6s0 default
-12. (chroot) livecd /etc/init.d # vim /etc/hosts
-    - This is my hosts file: ![image](https://user-images.githubusercontent.com/47036723/178381699-dc1a6fb7-38da-41ed-9333-84e285c6267f.png)
-13. (chroot) livecd /etc/init.d # passwd
-14. (chroot) livecd /etc/init.d # rc-update add sysklogd default
-15. (chroot) livecd /etc/init.d # rc-update add NetworkManager default
-16. (chroot) livecd /etc/init.d # rc-update add chronyd default
-17. (chroot) livecd /etc/init.d # rc-update add elogind boot
-18. (chroot) livecd /etc/init.d # rc-update add udev sysinit
-19. (chroot) livecd /etc/init.d # rc-update add dbus default
+1. (chroot) livecd / # nano /etc/fstab
+    - \# Boot Partition (/dev/nvme0n1p1)
+    - UUID={nvme0n1p1}    /boot   vfat    defaults    1 2
+    - \# Swap Partition (/dev/nvme0n1p2)
+    - UUID={nvme0n1p2}    none    swap    sw          0 0
+    - \# Root Partition (/dev/nvme0n1p3)
+    - UUID={nvme0n1p3}    /       ext4    noatime     0 1
+2. (chroot) livecd / # nano /etc/conf.d/hostname
+    - hostname="nexus2"
+3. (chroot) livecd / # rc-update add dhcpcd default
+4. (chroot) livecd / # rc-service dhcpcd start
+    - /sbin/dhcpcd may be already running so it may spit out an error about the DHCP Client Daemon already running. Don't worry about it if you get this error.
+5. (chroot) livecd / # emerge --ask --noreplace net-misc/netifrc
+6. (chroot) livecd / # nano /etc/conf.d/net
+    - config_{INTERFACE}="dhcp"
+    - You can find {INTERFACE} with "ls /sys/class/net"
+7. (chroot) livecd / # cd /etc/init.d
+8. (chroot) livecd /etc/init.d # ln -s net.lo net.enp6s0
+9. (chroot) livecd /etc/init.d # rc-update add net.enp6s0 default
+10. (chroot) livecd /etc/init.d # nano /etc/hosts
+    - 127.0.0.1     nexus2.homenetwork      nexus2  localhost
+    - ::1           localhost
+11. (chroot) livecd /etc/init.d # passwd
+12. (chroot) livecd /etc/init.d # rc-update add sysklogd default
+13. (chroot) livecd /etc/init.d # rc-update add NetworkManager default
+14. (chroot) livecd /etc/init.d # rc-update add chronyd default
+15. (chroot) livecd /etc/init.d # rc-update add elogind boot
+16. (chroot) livecd /etc/init.d # rc-update add udev sysinit
+17. (chroot) livecd /etc/init.d # rc-update add dbus default
 
 # Part V: Bootloader and User Administration
 1. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
 2. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot
 3. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
-    - Output: ![WIN_20220711_19_53_30_Pro](https://user-images.githubusercontent.com/47036723/178384886-5ff45bb4-3b39-48ae-a170-a72a902bcc6e.jpg)
-4. (chroot) livecd / # vim /etc/default/grub
-    - Uncommented the line: GRUB_DISABLE_LINUX_UUID=true
-    - Looks like this: ![WIN_20220711_20_10_08_Pro](https://user-images.githubusercontent.com/47036723/178386418-7d80ab7e-a8d4-488f-8d24-bfd2fb72c564.jpg)
+4. (chroot) livecd / # nano /etc/default/grub
+    - Uncomment the line: GRUB_DISABLE_LINUX_UUID=true
 5. (chroot) livecd / # superadduser
     - Login name: dishoungh
     - Enter
@@ -151,16 +157,15 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
     - Enter New Password: (PASSWORD)
 
 # Part VI: Unmounting and Reboot
-1. livecd / # exit
+1. (chroot) livecd / # exit
 2. livecd /mnt/gentoo # cd
 3. livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}
 4. livecd ~ # umount -R /mnt/gentoo
-5. livecd ~ # poweroff
+5. livecd ~ # reboot
+
+
 
 # Part VII: Getting KDE Plamsa + Installing General Applications
-After making some troubleshooting fixes, I'm in my root partition
-![WIN_20220712_18_40_12_Pro](https://user-images.githubusercontent.com/47036723/178616342-8a624653-ffd6-491d-893b-35bc48ebca71.jpg)
-
 1. nexus2 ~ # cd /
 2. nexus2 / # eselect profile set 8
     - This selects default/linux/amd64/17.1/desktop/plasma (stable)
@@ -170,8 +175,7 @@ After making some troubleshooting fixes, I'm in my root partition
     - net-im/discord-bin
     - */*::steam-overlay
     - This unmasks the discord-bin and steam packages
-6. ne
-7. nexus2 / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta dev-vcs/git app-editors/vim www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-drivers/nvidia-drivers x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin games-util/lutris x11-apps/setxkbmap app-eselect/eselect-repository kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta media-video/vlc media-video/obs-studio games-util/steam-meta virtual-wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake media-tv/plex-media-server app-emulation/vkd3d-proton media-video/pipewire
+7. nexus2 / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta dev-vcs/git app-editors/vim www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-drivers/nvidia-drivers x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin games-util/lutris x11-apps/setxkbmap app-eselect/eselect-repository kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta media-video/vlc media-video/obs-studio games-util/steam-meta virtual-wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake media-tv/plex-media-server app-emulation/vkd3d-proton media-video/pipewire app-misc/screen
 7. nexus2 / # usermod -aG video sddm
 8. nexus2 / # usermod -aG libvirt dishoungh
 9. nexus2 / # vim /etc/libvirt/libvirtd.conf
