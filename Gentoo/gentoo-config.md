@@ -54,9 +54,10 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 11. livecd ~ # mount /dev/nvme0n1p3 /mnt/gentoo
 12. livecd ~ # cd /mnt/gentoo/
 13. livecd /mnt/gentoo # wget https://mirror.leaseweb.com/gentoo/releases/amd64/autobuilds/20220710T170538Z/stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz
-14. livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz --xattrs-include='*.*' --numeric-owner
+14. livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz --xattrs-include="\*.\*" --numeric-owner
 15. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
-    - make.conf: ![image](https://user-images.githubusercontent.com/47036723/178833391-59974633-47f1-40e9-863e-a797577567bb.png)
+    - make.conf: ![WIN_20220713_19_11_38_Pro](https://user-images.githubusercontent.com/47036723/178956164-ac5023ed-22dc-470d-a231-00aaa4b20533.jpg)
+    - Last 4 USE lfags are elogind, dbus, osmesa, and vulkan
 16. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 17. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 18. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
@@ -77,30 +78,26 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 
 # Part III: Configuring Portage and Kernel
 1. (chroot) livecd / # emerge-webrsync && emerge --sync
-2. (chroot) livecd / # emerge -avq sys-kernel/gentoo-kernel-bin app-portage/cpuid2cpuflags sys-kernel/linux-firmware sys-apps/pciutils
-3. (chroot) livecd / # echo " * / * $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
-4. (chroot) livecd / # emerge -ae @world
-5. (chroot) livecd / # eselect profile set 8
-    - This selects default/linux/amd64/17.1/desktop/plasma (stable)
-6. (chroot) livecd / # emerge -aquvDN @world
-7. (chroot) livecd / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta dev-vcs/git app-editors/vim
-8. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
-9. (chroot) livecd / # emerge --config sys-libs/timezone-data
-10. (chroot) livecd / # nano /etc/locale.gen
-11. (chroot) livecd / # locale-gen
-12. (chroot) livecd / # eselect locale set 6
+2. (chroot) livecd / # nano /etc/portage/package.use/pambase
+    - sys-auth/pambase passwdqc
+3. livecd / # emerge -avq app-portage/cpuid2cpuflags
+4. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
+5. livecd / # emerge -1 sys-libs/glibc && emerge -uqDN @world
+6. livecd / # emerge -avq sys-kernel/gentoo-kernel-bin  sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd app-misc/screen sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager app-admin/superadduser
+7. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
+8. (chroot) livecd / # emerge --config sys-libs/timezone-data
+9. (chroot) livecd / # nano /etc/locale.gen
+10. (chroot) livecd / # locale-gen
+11. (chroot) livecd / # eselect locale set 6
     - This selects en_US.utf8
-13. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
-14. (chroot) livecd / # emerge -c
-15. (chroot) livecd / # emerge -a @module-rebuild
+12. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
 
-# Part IV: Fstab + Networking + Bootloader
+# Part IV: Fstab + Networking
 1. (chroot) livecd / # blkid
     - This is what shows up: ![WIN_20220711_18_56_34_Pro](https://user-images.githubusercontent.com/47036723/178377956-64fbdf38-563c-4a5c-ad7b-a219f7ddf7a4.jpg)
 2. (chroot) livecd / # vim /etc/fstab
     - This is my fstab: ![WIN_20220711_20_12_57_Pro](https://user-images.githubusercontent.com/47036723/178386662-05648019-d776-4166-8fe6-c364c3196b4c.jpg)
 3. (chroot) livecd / # vim /etc/conf.d/hostname (Named my PC "nexus2")
-4. (chroot) livecd / # emerge -avq net-misc/dhcpcd
 5. (chroot) livecd / # rc-update add dhcpcd default
 6. (chroot) livecd / # rc-service dhcpcd start
 7. (chroot) livecd / # emerge --ask --noreplace net-misc/netifrc
@@ -113,19 +110,37 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 12. (chroot) livecd /etc/init.d # vim /etc/hosts
     - This is my hosts file: ![image](https://user-images.githubusercontent.com/47036723/178381699-dc1a6fb7-38da-41ed-9333-84e285c6267f.png)
 13. (chroot) livecd /etc/init.d # passwd
-14. (chroot) livecd /etc/init.d # emerge -avq app-admin/sysklogd
-15. (chroot) livecd /etc/init.d # rc-update add sysklogd default
-16. (chroot) livecd /etc/init.d # emerge -aq net-misc/chrony && rc-update add chronyd default
-17. (chroot) livecd /etc/init.d # emerge -avq sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2
-18. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
-19. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot
-20. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
+14. (chroot) livecd /etc/init.d # rc-update add sysklogd default
+15. (chroot) livecd /etc/init.d # rc-update add NetworkManager default
+16. (chroot) livecd /etc/init.d # rc-update add chronyd default
+17. (chroot) livecd /etc/init.d # rc-update add elogind boot
+18. (chroot) livecd /etc/init.d # rc-update add udev sysinit
+19. (chroot) livecd /etc/init.d # rc-update add dbus default
+
+# Part V: Bootloader and User Administration
+1. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
+2. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot
+3. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
     - Output: ![WIN_20220711_19_53_30_Pro](https://user-images.githubusercontent.com/47036723/178384886-5ff45bb4-3b39-48ae-a170-a72a902bcc6e.jpg)
-21. (chroot) livecd / # vim /etc/default/grub
+4. (chroot) livecd / # vim /etc/default/grub
     - Uncommented the line: GRUB_DISABLE_LINUX_UUID=true
     - Looks like this: ![WIN_20220711_20_10_08_Pro](https://user-images.githubusercontent.com/47036723/178386418-7d80ab7e-a8d4-488f-8d24-bfd2fb72c564.jpg)
+5. (chroot) livecd / # superadduser
+    - Login name: dishoungh
+    - Enter
+    - Enter
+    - Additional groups (comma separated) []: wheel,video,audio
+    - Enter
+    - Enter
+    - Enter
+    - Enter
+    - Enter
+    - Enter
+    - Enter
+    - Enter
+    - Enter New Password: (PASSWORD)
 
-# Part V: Unmounting and Reboot
+# Part VI: Unmounting and Reboot
 1. livecd / # exit
 2. livecd /mnt/gentoo # cd
 3. livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}
@@ -140,23 +155,19 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
         - ERROR: mount-ro failed to start
     - I'm unsure if these errors mean anything or if I should ignore them.
 
-# Part VI: Getting to a Desktop Environment (KDE Plasma)
+# Part VII: Getting KDE Plamsa + Installing General Applications
 After making some troubleshooting fixes, I'm in my root partition
 ![WIN_20220712_18_40_12_Pro](https://user-images.githubusercontent.com/47036723/178616342-8a624653-ffd6-491d-893b-35bc48ebca71.jpg)
 
 1. nexus2 ~ # cd /
-2. nexus2 / # emerge -vq app-admin/sudo
-3. nexus2 / # vim /etc/sudoers
-    - Uncomment "%wheel ALL=(ALL:ALL) ALL"
-    - Uncomment "%sudo ALL=(ALL:ALL) ALL"
-    - What it looks like: ![WIN_20220712_19_26_27_Pro](https://user-images.githubusercontent.com/47036723/178623078-6a19d1f6-5919-4607-96fc-9864a316d19e.jpg)
-4. nexus2 / # useradd -m -G users,wheel,audio,video -s /bin/bash dishoungh
-5. nexus2 / # passwd dishoungh
-6. nexus2 / # emerge -avq app-portage/gentoolkit 
-7. nexus2 / # rc-update add elogind boot
-8. nexus2 / # rc-update add udev sysinit
-9. nexus2 / # rc-update add dbus default
-10. nexus2 / # emerge -avq sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-drivers/nvidia-drivers x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm
+2. nexus2 / # eselect profile set 8
+    - This selects default/linux/amd64/17.1/desktop/plasma (stable)
+3. nexus2 / # emerge -uDNpv @world
+4. nexus2 / # emerge -uvDN @world
+5. nexus2 / # nano /etc/portage/package.accept_keywords/discord
+    - net-im/discord-bin
+    - This unmasks the discord-bin package
+6. nexus2 / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta dev-vcs/git app-editors/vim www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-drivers/nvidia-drivers x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm
     - I needed to make some changes to my USE flags in my make.conf by adding (pipewire-alsa and minimal)
     - nexus2 / # emerge -uvDN @world
     - Tried the emerge command again and it worked
