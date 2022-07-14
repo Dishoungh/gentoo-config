@@ -54,7 +54,8 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 12. livecd ~ # cd /mnt/gentoo/
 13. livecd /mnt/gentoo # wget https://mirror.leaseweb.com/gentoo/releases/amd64/autobuilds/20220710T170538Z/stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz
 14. livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz --xattrs-include="\*.\*" --numeric-owner
-15. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
+15. livecd /mnt/gentoo # rm -f ./stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz
+16. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
     - CHOST="x86_64-pc-linux-gnu"
     - COMMON_FLAGS="-O2 -march=znver1 -pipe"
     - MAKEOPTS="-j16 -l14"
@@ -66,11 +67,11 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
     - ABI_X86="64 32"
     - QEMU_SOFTMMU_TARGETS="arm x86_64 sparc"
     - QEMU_USER_TARGETS="x86_64"
-    - USE="-systemd -gnome networkmanager sddm pipewire dist-kernel X kde pipewire-alsa minimal xinerama -gpm elogind dbus osmesa vulkan"
-16. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
-17. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
-18. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
-19. livecd /mnt/gentoo # cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
+    - USE="-systemd -gnome networkmanager sddm pipewire dist-kernel X kde pipewire-alsa xinerama -gpm elogind dbus osmesa vulkan"
+17. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
+18. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
+19. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
+20. livecd /mnt/gentoo # cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
 
 # Part II: Chroot
 1. livecd /mnt/gentoo # mount --types proc /proc /mnt/gentoo/proc
@@ -87,27 +88,29 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 
 # Part III: Configuring Portage and Kernel
 1. (chroot) livecd / # emerge-webrsync && emerge --sync
-2. (chroot) livecd / # nano /etc/portage/package.use/pambase
+2. (chroot) livecd / # rm -rf /etc/portage/package.use/ && rm -rf /etc/portage/package.accept_keywords/ && rm -rf /etc/portage/package.mask/
+3. (chroot) livecd / # touch /etc/portage/package.use && touch /etc/portage/package.accept_keywords && touch /etc/portage/package.mask
+4. (chroot) livecd / # nano /etc/portage/package.use
     - sys-auth/pambase passwdqc
-3. livecd / # emerge -avq app-portage/cpuid2cpuflags
-4. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
-5. livecd / # emerge -1 sys-libs/glibc && emerge -uqDN @world
-6. livecd / # emerge -avq sys-kernel/gentoo-kernel-bin  sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager app-admin/superadduser x11-drivers/nvidia-drivers
-7. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
-8. (chroot) livecd / # emerge --config sys-libs/timezone-data
-9. (chroot) livecd / # nano /etc/locale.gen
+5. livecd / # emerge -avq app-portage/cpuid2cpuflags
+6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
+7. livecd / # emerge -1 sys-libs/glibc && emerge -uqDN @world
+8. livecd / # emerge -avq sys-kernel/gentoo-kernel-bin  sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager x11-drivers/nvidia-drivers
+9. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
+10. (chroot) livecd / # emerge --config sys-libs/timezone-data
+11. (chroot) livecd / # nano /etc/locale.gen
     - Uncomment:
         - en_US ISO-8859-1
         - en_US.UTF-8 UTF-8
-10. (chroot) livecd / # locale-gen
-11. (chroot) livecd / # eselect locale set 6
+12. (chroot) livecd / # locale-gen
+13. (chroot) livecd / # eselect locale set 6
     - This selects en_US.utf8
-12. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
+14. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
 
 # Part IV: Fstab + Networking
 1. (chroot) livecd / # nano /etc/fstab
     - \# Boot Partition (/dev/nvme0n1p1)
-    - UUID={nvme0n1p1}    /boot   vfat    defaults    1 2
+    - /dev    /boot   vfat    defaults    1 2
     - \# Swap Partition (/dev/nvme0n1p2)
     - UUID={nvme0n1p2}    none    swap    sw          0 0
     - \# Root Partition (/dev/nvme0n1p3)
@@ -135,73 +138,85 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 16. (chroot) livecd /etc/init.d # rc-update add udev sysinit
 17. (chroot) livecd /etc/init.d # rc-update add dbus default
 
-# Part V: Bootloader and User Administration
-1. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
-2. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot
-3. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
-4. (chroot) livecd / # nano /etc/default/grub
+# Part V: Bootloader and Reboot
+1. (chroot) livecd /etc/init.d # emerge --config gentoo-kernel-bin
+2. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
+3. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot
+4. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
+5. (chroot) livecd / # nano /etc/default/grub
     - Uncomment the line: GRUB_DISABLE_LINUX_UUID=true
-5. (chroot) livecd / # superadduser
-    - Login name: dishoungh
-    - Enter
-    - Enter
-    - Additional groups (comma separated) []: wheel,video,audio
-    - Enter
-    - Enter
-    - Enter
-    - Enter
-    - Enter
-    - Enter
-    - Enter
-    - Enter
-    - Enter New Password: (PASSWORD)
+6. (chroot) livecd / # exit
+7. livecd /mnt/gentoo # cd
+8. livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}
+9. livecd ~ # umount -R /mnt/gentoo
+10. livecd ~ # reboot
 
-# Part VI: Unmounting and Reboot
-1. (chroot) livecd / # exit
-2. livecd /mnt/gentoo # cd
-3. livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}
-4. livecd ~ # umount -R /mnt/gentoo
-5. livecd ~ # reboot
-
-# Part VII: Troubleshooting
-After rebooting into my root partition, I get a black screen after getting this:
-![image](https://user-images.githubusercontent.com/47036723/179024616-c88015c5-63f1-45e7-995a-54ff4e6a7270.png)
-
-I don't know what I did wrong.
-
-# Part ???: Getting KDE Plamsa + Installing General Applications
+# Part VI: User Administration and Desktop Installation
 1. nexus2 ~ # cd /
-2. nexus2 / # eselect profile set 8
+2. nexus2 / # useradd -m -G users,wheel,audio -s /bin/bash dishoungh
+3. nexus2 / # passwd dishoungh
+4. nexus2 / # emerge -avq app-admin/sudo app-editors/vim
+5. nexus2 / # vim /etc/sudoers
+    - %wheel ALL=(ALL:ALL) ALL
+    - dishoungh  ALL=(root) NOPASSWD: /sbin/reboot
+    - dishoungh  ALL=(root) NOPASSWD: /sbin/halt
+    - dishoungh  ALL=(root) NOPASSWD: /sbin/poweroff
+    - dishoungh  ALL=(root) NOPASSWD: /sbin/shutdown
+6. nexus2 / # eselect profile set 8
     - This selects default/linux/amd64/17.1/desktop/plasma (stable)
-3. nexus2 / # emerge -uDNpv @world
-4. nexus2 / # emerge -uvDN @world
-5. nexus2 / # nano /etc/portage/package.accept_keywords
+7. nexus2 / # emerge -uDNpv @world
+8. nexus2 / # emerge -uvDN @world
+9. nexus2 / # vim /etc/portage/package.accept_keywords
+    - \# app-admin
+    - app-admin/bitwarden-desktop-bin
+    
+    - \# app-emulation
+    - app-emulation/vkd3d-proton
+    
+    - \# games-util
+    - games-util/lutris
+    - games-util/game-device-udev-rules
+
+    - \# media-tv
+    - media-tv/plex-media-server
+
+    - \# media-video
+    - media-video/makemkv
+    - media-video/obs-studio
+
+    - \# net-im
     - net-im/discord-bin
+    
+    - \# steam-overlay
     - */*::steam-overlay
-    - This unmasks the discord-bin and steam packages
-7. nexus2 / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta dev-vcs/git app-editors/vim www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin games-util/lutris x11-apps/setxkbmap app-eselect/eselect-repository kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta media-video/vlc media-video/obs-studio games-util/steam-meta virtual-wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake media-tv/plex-media-server app-emulation/vkd3d-proton media-video/pipewire app-misc/screen
-7. nexus2 / # usermod -aG video sddm
-8. nexus2 / # usermod -aG libvirt dishoungh
-9. nexus2 / # vim /etc/libvirt/libvirtd.conf
+10. nexus2 / # emerge -avq app-eselect/eselect-repository dev-vcs/git
+11. nexus2 / # eselect repository enable steam-overlay && emerge --sync
+12. nexus2 / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin games-util/lutris x11-apps/setxkbmap kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake media-tv/plex-media-server app-emulation/vkd3d-proton media-video/pipewire app-misc/screen net-misc/openssh net-fs/samba
+    - To rectify "The following USE changes are necessary to proceed" do this:
+        - Add the USE flags needed in the /etc/portage/package.use file
+13. nexus2 / # usermod -aG video sddm
+14. nexus2 / # usermod -aG libvirt dishoungh
+15. nexus2 / # vim /etc/libvirt/libvirtd.conf
     - Uncomment these lines
         - auth_unix_ro = "none"
         - auth_unix_rw = "none"
         - unix_sock_group = "libvirt"
         - unix_sock_ro_perms = "0777"
         - unix_sock_rw_perms = "0770"
-10. nexus2 / # rc-service libvirtd start
-11. nexus2 / # rc-update add libvirtd default
-8. nexus2 / # vim /etc/sddm.conf
+16. nexus2 / # rc-service libvirtd start
+17. nexus2 / # rc-update add libvirtd default
+18. nexus2 / # vim /etc/sddm.conf
     - Looks like this: ![WIN_20220713_05_36_03_Pro](https://user-images.githubusercontent.com/47036723/178714511-985ce5f4-6a1e-409c-84a2-8fe904a27be3.jpg)
-9. nexus2 / # mkdir -p /etc/sddm/scripts
-10. nexus2 / # vim /etc/sddm/scripts/Xsetup
+19. nexus2 / # mkdir -p /etc/sddm/scripts
+20. nexus2 / # vim /etc/sddm/scripts/Xsetup
     - Looks like this: ![WIN_20220713_05_38_33_Pro](https://user-images.githubusercontent.com/47036723/178714883-714c386e-cff7-4707-a178-ca891a8237a2.jpg)
-11. nexus2 / # chmod a+x /etc/sddm/scripts/Xsetup
-12. nexus2 / # vim /etc/conf.d/display-manager
+21. nexus2 / # chmod a+x /etc/sddm/scripts/Xsetup
+22. nexus2 / # vim /etc/conf.d/display-manager
     - Looks like this: ![WIN_20220713_05_42_23_Pro](https://user-images.githubusercontent.com/47036723/178715488-527b9ce4-eda7-4798-b086-32c3b2eb2bee.jpg)
-13. nexus2 / # rc-update add display-manager default
-14. nexus2 / # rc-service display-manager start
+23. nexus2 / # rc-update add display-manager default
+24. nexus2 / # rc-service display-manager start
 
+# Part VII: Post Installation
 
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
