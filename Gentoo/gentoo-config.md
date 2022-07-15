@@ -205,13 +205,6 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
         - unix_sock_rw_perms = "0770"
 16. nexus2 / # rc-service libvirtd start
 17. nexus2 / # rc-update add libvirtd default
-18. nexus2 / # vim /etc/sddm.conf
-    - [X11]
-    - DisplayCommand=/etc/sddm/scripts/Xsetup
-19. nexus2 / # mkdir -p /etc/sddm/scripts
-20. nexus2 / # vim /etc/sddm/scripts/Xsetup
-    - setxkbmap us
-21. nexus2 / # chmod a+x /etc/sddm/scripts/Xsetup
 22. nexus2 / # vim /etc/conf.d/display-manager
     - CHECKVT=7
     - DISPLAYMANAGER="sddm"
