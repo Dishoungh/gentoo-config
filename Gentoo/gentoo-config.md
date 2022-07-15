@@ -206,13 +206,15 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 16. nexus2 / # rc-service libvirtd start
 17. nexus2 / # rc-update add libvirtd default
 18. nexus2 / # vim /etc/sddm.conf
-    - Looks like this: ![WIN_20220713_05_36_03_Pro](https://user-images.githubusercontent.com/47036723/178714511-985ce5f4-6a1e-409c-84a2-8fe904a27be3.jpg)
+    - [X11]
+    - DisplayCommand=/etc/sddm/scripts/Xsetup
 19. nexus2 / # mkdir -p /etc/sddm/scripts
 20. nexus2 / # vim /etc/sddm/scripts/Xsetup
-    - Looks like this: ![WIN_20220713_05_38_33_Pro](https://user-images.githubusercontent.com/47036723/178714883-714c386e-cff7-4707-a178-ca891a8237a2.jpg)
+    - setxkbmap us
 21. nexus2 / # chmod a+x /etc/sddm/scripts/Xsetup
 22. nexus2 / # vim /etc/conf.d/display-manager
-    - Looks like this: ![WIN_20220713_05_42_23_Pro](https://user-images.githubusercontent.com/47036723/178715488-527b9ce4-eda7-4798-b086-32c3b2eb2bee.jpg)
+    - CHECKVT=7
+    - DISPLAYMANAGER="sddm"
 23. nexus2 / # rc-update add display-manager default
 24. nexus2 / # rc-service display-manager start
 
