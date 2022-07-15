@@ -110,7 +110,7 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 # Part IV: Fstab + Networking
 1. (chroot) livecd / # nano /etc/fstab
     - \# Boot Partition (/dev/nvme0n1p1)
-    - /dev    /boot   vfat    defaults    1 2
+    - UUID={nvme0n1p1}    /boot   vfat    defaults    1 2
     - \# Swap Partition (/dev/nvme0n1p2)
     - UUID={nvme0n1p2}    none    swap    sw          0 0
     - \# Root Partition (/dev/nvme0n1p3)
