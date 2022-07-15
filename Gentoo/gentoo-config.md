@@ -136,7 +136,8 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 14. (chroot) livecd /etc/init.d # rc-update add chronyd default
 15. (chroot) livecd /etc/init.d # rc-update add elogind boot
 16. (chroot) livecd /etc/init.d # rc-update add udev sysinit
-17. (chroot) livecd /etc/init.d # rc-update add dbus default
+17. (chroot) livecd /etc/init.d # /etc/init.d/dbus start
+18. (chroot) livecd /etc/init.d # rc-update add dbus default
 
 # Part V: Bootloader and Reboot
 1. (chroot) livecd /etc/init.d # emerge --config gentoo-kernel-bin
@@ -212,6 +213,13 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 24. nexus2 / # rc-service display-manager start
 
 # Part VII: Post Installation
+
+I get a display but I got a lot of bugs to work out with my build.
+
+1. No audio. Need to use Pipewire for my audio.
+2. Many apps can't launch
+3. Misaligned monitors
+4. Can't use sudo commands or switch to root
 
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
