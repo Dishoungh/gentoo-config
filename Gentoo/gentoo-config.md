@@ -214,12 +214,21 @@ Yes, my kernel will be custom. Yes, I know there are pre-made kernels but I want
 
 # Part VII: Post Installation
 
-I get a display but I got a lot of bugs to work out with my build.
+Reboot
 
-1. No audio. Need to use Pipewire for my audio.
-2. Many apps can't launch
-3. Misaligned monitors
-4. Can't use sudo commands or switch to root
+Fixing some issues:
+
+1. Can't use sudo
+2. Have volume wheel change speaker audio, not microphone audio
+3. Can't use AudioEngine D1 DAC. I can see my DAC through discord but for some reason I can't seem to access my audio devices through System Settings
+4. Need to figure out how to snapshot because I know I will mess something up lol
+5. Steam won't launch
+6. PCSX2 doesn't work lol - Failing to load GS plugins
+7. Dolphin (Gamecube emulator) doesn't work - Failing to load video renderer (I'm not noticing that on my System Monitor app as well)
+8. KVM can't start. It's apparent I need to mess around with my kernel config
+9. Kdenlive crashes (won't start)
+10. I'm starting to think something is conflicting with my GPU because apparently KDE can't see it though it is installed
+11. My screen locker is bugged
 
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
