@@ -6,8 +6,6 @@
 - Storage: Samsung 960 EVO (500GB M.2 SSD)
 - Monitors: 3x 2560x1440p Monitors (G-Sync IPS 1ms)
 
-I have 3 other storage drives but I'll be using those as extra storage drives for VMs and other stuff. I'm including the information about the 3 monitors I'm using just in case if it would be important.
-
 # Part I: Booting into the USB Boot Media
 
 1. Downloaded install-amd64-minimal-20220710T170538Z.iso
