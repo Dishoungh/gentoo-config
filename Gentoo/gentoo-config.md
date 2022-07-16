@@ -187,34 +187,6 @@
 
 Reboot
 
-All the packages I have
-- Ungoogled Chromium Binary
-- Ark
-- Audacity
-- Bitwarden
-- Discord
-- Dolphin (File Explorer)
-- Dolphin Emulator
-- Filelight
-- FontForge
-- Gwenview
-- Handbrake
-- Kate
-- Kdenlive
-- Konsole
-- Libreoffice
-- MakeMKV
-- OBS Studio
-- Okular
-- PCSX2
-- KsysGuard
-- Vim
-- Virt-Manager
-- VLC
-- steam
-- nvidia, nvidia-utils, nvidia-lts
-- vkd3d, vulkan-headers, vulkan-icd-loader, wine, proton, libdxvk
-
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
 2. [Gentoo AMD64 Full Installation Guide](https://wiki.gentoo.org/wiki/Handbook:AMD64/Full/Installation)
