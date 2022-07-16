@@ -1,5 +1,8 @@
 # Part I: Booting into USB Boot Media
-1. 
+1. Get ISO from https://archlinux.org/download/
+2. Burn iso into USB drive and boot into it
+  - I struggled to get into boot by getting stuck in a black screen. If this happens, get into the grub command line and add "nomodeset" at the end of the line starting with "linux" (before "initrd").
+3. 
 
 - Ungoogled Chromium Binary
 - Ark
