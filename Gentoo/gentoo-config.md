@@ -65,7 +65,7 @@
 5. livecd / # emerge -avq app-portage/cpuid2cpuflags
 6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
 7. livecd / # emerge -1 sys-libs/glibc && emerge -uqDN @world
-8. livecd / # emerge -avq sys-kernel/gentoo-kernel-bin  sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager x11-drivers/nvidia-drivers
+8. livecd / # emerge -avq sys-kernel/gentoo-kernel-bin  sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager x11-drivers/nvidia-drivers sys-apps/usbutils
 9. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 10. (chroot) livecd / # emerge --config sys-libs/timezone-data
 11. (chroot) livecd / # nano /etc/locale.gen
@@ -133,6 +133,7 @@
     - dishoungh  ALL=(root) NOPASSWD: /sbin/halt
     - dishoungh  ALL=(root) NOPASSWD: /sbin/poweroff
     - dishoungh  ALL=(root) NOPASSWD: /sbin/shutdown
+    - Add alias command='sudo command' lines in /home/(USER)/.bashrc
 6. nexus2 / # eselect profile set 8
     - This selects default/linux/amd64/17.1/desktop/plasma (stable)
 7. nexus2 / # emerge -uDNpv @world
@@ -162,7 +163,7 @@
     - */*::steam-overlay
 10. nexus2 / # emerge -avq app-eselect/eselect-repository dev-vcs/git
 11. nexus2 / # eselect repository enable steam-overlay && emerge --sync
-12. nexus2 / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin games-util/lutris x11-apps/setxkbmap kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake media-tv/plex-media-server app-emulation/vkd3d-proton media-video/pipewire app-misc/screen net-misc/openssh net-fs/samba sys-apps/usbutils media-sound/audacity app-misc/neofetch
+12. nexus2 / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin games-util/lutris x11-apps/setxkbmap kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-video/pipewire app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch
     - To rectify "The following USE changes are necessary to proceed" do this:
         - Add the USE flags needed in the /etc/portage/package.use file
 13. nexus2 / # usermod -aG video sddm
@@ -185,20 +186,6 @@
 # Part VII: Post Installation
 
 Reboot
-
-Fixing some issues:
-
-1. Can't use sudo
-2. Have volume wheel change speaker audio, not microphone audio
-3. Can't use AudioEngine D1 DAC. I can see my DAC through discord but for some reason I can't seem to access my audio devices through System Settings
-4. Need to figure out how to snapshot because I know I will mess something up lol
-5. Steam won't launch
-6. PCSX2 doesn't work lol - Failing to load GS plugins
-7. Dolphin (Gamecube emulator) doesn't work - Failing to load video renderer (I'm not noticing that on my System Monitor app as well)
-8. KVM can't start. It's apparent I need to mess around with my kernel config
-9. Kdenlive crashes (won't start)
-10. I'm starting to think something is conflicting with my GPU because apparently KDE can't see it though it is installed
-11. My screen locker is bugged
 
 # Resources
 1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
