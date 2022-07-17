@@ -10,22 +10,24 @@
   - nvme0n1p1 - Boot - 512MB
   - nvme0n1p2 - Swap - 32GB
   - nvme0n1p3 - Root - Remainder
-3. root@archiso ~ # mkfs.ext4 /dev/nvme0n1p3
+3. root@archiso ~ # mkfs.fat -F 32 /dev/nvme0n1p1
 4. root@archiso ~ # mkswap /dev/nvme0n1p2
-5. root@archiso ~ # mkfs.fat -F 32 /dev/nvme0n1p1
-6. root@archiso ~ # mount /dev/nvme0n1p3 /mnt
-7. root@archiso ~ # mount --mkdir /dev/nvme0n1p1 /mnt/boot
-8. root@archiso ~ # swapon /dev/nvme0n1p2
+5. root@archiso ~ # swapon /dev/nvme0n1p2
+6. root@archiso ~ # mkfs.ext4 /dev/nvme0n1p3
+7. root@archiso ~ # mkdir /mnt/boot
+8. root@archiso ~ # mkdir /mnt/etc
+9. root@archiso ~ # mount /dev/nvme0n1p3 /mnt
+10. root@archiso ~ # mount /dev/nvme0n1p1 /mnt/boot
+11. root@archiso ~ # genfstab -U -p /mnt >> /mnt/etc/fstab
 
 # Part III: Installing Base System
-1. root@archiso ~ # pacstrap /mnt base linux linux-firmware
-2. root@archiso ~ # genfstab -U /mnt >> /mnt/etc/fstab
-3. root@archiso ~ # arch-chroot /mnt
-4. [root@archiso /] # ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime
-5. [root@archiso /] # hwclock --systohc
-6. [root@archiso /] # pacman -S linux linux-headers linux-lts linux-lts-headers vim base-devel openssh networkmanager
-7. [root@archiso /] # systemctl enable sshd
-8. [root@archiso /] # systemctl enable NetworkManager
+1. root@archiso ~ # pacstrap -i /mnt base linux linux-firmware
+2. root@archiso ~ # arch-chroot /mnt
+3. [root@archiso /] # ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime
+4. [root@archiso /] # hwclock --systohc
+5. [root@archiso /] # pacman -S linux linux-headers linux-lts linux-lts-headers vim base-devel openssh networkmanager git sudo
+5. [root@archiso /] # systemctl enable sshd
+6. [root@archiso /] # systemctl enable NetworkManager
 
 # Part IV: Networking and User Administration
 1. [root@archiso /] # vim /etc/locale.gen
@@ -35,27 +37,32 @@
   - LANG=en_US.UTF-8
 4. [root@archiso /] # vim /etc/hostname
   - nexus2
+5. [root@archiso /] # vim /etc/hosts
+  - 127.0.0.1 localhost
+  - ::1       localhost
+  - 127.0.1.1 nexus2
 5. [root@archiso /] # passwd
-6. [root@archiso /] # useradd -m -g users -G wheel,audio,video dishoungh
+6. [root@archiso /] # useradd -m -g users -G wheel,audio,video,optical dishoungh
 7. [root@archiso /] # passwd dishoungh
-8. [root@archiso /] # pacman -S sudo
-9. [root@archiso /] # visudo
+8. [root@archiso /] # visudo
   - Uncomment %wheel ALL=(ALL) ALL
 
 # Part V: Bootloader & Exit
-1. [root@archiso /] # pacman -s grub dosfstools os-prober mtools amd-ucode
-2. [root@archiso /] # mkdir /boot/EFI
-3. [root@archiso /] # mount /dev/nvme0n1p1 /boot/EFI
-4. [root@archiso /] # grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
-5. [root@archiso /] # grub-mkconfig -o /boot/grub/grub.cfg
-6. [root@archiso /] # exit
-7. [root@archiso /] # umount -R /mnt
-8. [root@archiso /] # reboot
+1. [root@archiso /] # pacman -S grub dosfstools os-prober mtools amd-ucode efibootmgr
+2. [root@archiso /] #
+2. [root@archiso /] # grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+3. [root@archiso /] # grub-mkconfig -o /boot/grub/grub.cfg
+4. [root@archiso /] # exit
+5. [root@archiso /] # umount -R /mnt
+6. [root@archiso /] # reboot
 
 # Part VI: Desktop Installation
+1. [root@archlinux ~] # pacman -S xorg-server mesa nvidia nvidia-settings nvidia-lts nvidia-libgl vulkan-icd-loader fish sddm plasma konsole dolphin vulkan-headers vkd3d 
+2. [root@archlinux ~] # systemctl enable sddm
+3. [root@archlinux ~] # reboot
 
 # Part VII: Post-Installation
-
+1. Install the rest of this
 
 - Ungoogled Chromium Binary
 - Ark
@@ -82,8 +89,7 @@
 - VLC
 - steam
 - nvidia, nvidia-utils, nvidia-lts
-- vkd3d, vulkan-headers, vulkan-icd-loader, wine, proton, libdxvk
-- pipewire, lib32-pipewire
+- vkd3d, vulkan-headers, vulkan-icd-loader, wine, proton, libdxvk, wine
 
 Follow these guides:
 1. [Installation Guide](https://wiki.archlinux.org/title/Installation_guide)
