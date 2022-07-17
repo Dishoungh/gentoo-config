@@ -18,6 +18,7 @@
 8. root@archiso ~ # mkdir /mnt/etc
 9. root@archiso ~ # mount /dev/nvme0n1p3 /mnt
 10. root@archiso ~ # mount /dev/nvme0n1p1 /mnt/boot
+  - Make sure your lsblk shows your root partition being mounted on /mnt and your boot partition being mounted on /mnt/boot
 11. root@archiso ~ # genfstab -U -p /mnt >> /mnt/etc/fstab
 
 # Part III: Installing Base System
@@ -57,39 +58,27 @@
 6. [root@archiso /] # reboot
 
 # Part VI: Desktop Installation
-1. [root@archlinux ~] # pacman -S xorg-server mesa nvidia nvidia-settings nvidia-lts nvidia-libgl vulkan-icd-loader fish sddm plasma konsole dolphin vulkan-headers vkd3d 
-2. [root@archlinux ~] # systemctl enable sddm
-3. [root@archlinux ~] # reboot
+1. [root@archlinux ~] # vim /etc/pacman.conf
+  - Uncomment
+    - [multilib]
+    - Include = /etc/pacman.d/mirrorlist
+2. [root@archlinux ~] # pacman -Syyy 
+3. [root@archlinux ~] # pacman -S xorg-server mesa nvidia nvidia-settings nvidia-lts nvidia-libgl vulkan-icd-loader fish sddm plasma konsole dolphin vulkan-headers vkd3d firefox discord steam audacity ark bitwarden dolphin-emu filelight gwenview handbrake kate kdenlive libreoffice-still obs-studio pcsx2 okular vlc libvirt qemu-full virt-manager desmume wine samba wget rsync nasm lib32-libxkbcommon lib32-libvpx steam-native-runtime
+4. [root@archlinux ~] # systemctl enable sddm
+5. [root@archlinux ~] # reboot
 
 # Part VII: Post-Installation
-1. Install the rest of this
-
-- Ungoogled Chromium Binary
-- Ark
-- Audacity
-- Bitwarden
-- Discord
-- Dolphin (File Explorer)
-- Dolphin Emulator
-- Filelight
-- FontForge
-- Gwenview
-- Handbrake
-- Kate
-- Kdenlive
-- Konsole
-- Libreoffice
-- MakeMKV
-- OBS Studio
-- Okular
-- PCSX2
-- KsysGuard
-- Vim
-- Virt-Manager
-- VLC
-- steam
-- nvidia, nvidia-utils, nvidia-lts
-- vkd3d, vulkan-headers, vulkan-icd-loader, wine, proton, libdxvk, wine
+1. To automount secondary drives on Fstab
+  - UUID=(UUID) /media/(UUID) ext4 defaults 0 2
+2. dishoungh@nexus2 ~> mkdir custom_packages && cd custom_packages
+3. dishoungh@nexus2 ~> git clone https://aur.archlinux.org/proton.git
+4. dishoungh@nexus2 ~> git clone https://aur.archlinux.org/timeshift.git
+5. dishoungh@nexus2 ~> git clone https://aur.archlinux.org/makemkv.git
+6. Make all those packages
+  - You may come into missing dependencies. Just install those dependencies.
+  - To rectify GPG errors: gpg --recv-key (KEY)
+7. To enable VMs
+  - 
 
 Follow these guides:
 1. [Installation Guide](https://wiki.archlinux.org/title/Installation_guide)
