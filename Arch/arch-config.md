@@ -63,7 +63,7 @@
     - [multilib]
     - Include = /etc/pacman.d/mirrorlist
 2. [root@archlinux ~] # pacman -Syyy 
-3. [root@archlinux ~] # pacman -S xorg-server mesa nvidia nvidia-settings nvidia-lts nvidia-libgl vulkan-icd-loader fish sddm plasma konsole dolphin vulkan-headers vkd3d firefox discord steam audacity ark bitwarden dolphin-emu filelight gwenview handbrake kate kdenlive libreoffice-still obs-studio pcsx2 okular vlc libvirt qemu-full virt-manager desmume wine samba wget rsync nasm lib32-libxkbcommon lib32-libvpx steam-native-runtime
+3. [root@archlinux ~] # pacman -S xorg-server mesa nvidia nvidia-settings nvidia-lts nvidia-libgl vulkan-icd-loader fish sddm plasma konsole dolphin vulkan-headers vkd3d firefox discord steam audacity ark bitwarden dolphin-emu filelight gwenview handbrake kate kdenlive libreoffice-still obs-studio pcsx2 okular vlc libvirt qemu-desktop virt-manager dnsmasq vde2 edk2-ovmf bridge-utils openbsd-netcat desmume wine samba wget rsync nasm lib32-libxkbcommon lib32-libvpx steam-native-runtime ebtables iptables-nft libguestfs virt-viewer
 4. [root@archlinux ~] # systemctl enable sddm
 5. [root@archlinux ~] # reboot
 
@@ -78,7 +78,16 @@
   - You may come into missing dependencies. Just install those dependencies.
   - To rectify GPG errors: gpg --recv-key (KEY)
 7. To enable VMs
-  - 
+  - sudo systemctl enable libvirtd.service
+  - sudo systemctl start libvirtd.service
+  - sudo systemctl status libvirtd.service
+  - sudo vim /etc/libvirt/libvirtd.conf
+  - unix_sock_group = "libvirt"
+  - unix_sock_rw_perms = "0770"
+  - sudo usermod -aG libvirt dishoungh
+  - newgrp libvirt
+  - sudo systemctl restart libvirtd.service
+  - sudo modprobe kvm-amd
 
 Follow these guides:
 1. [Installation Guide](https://wiki.archlinux.org/title/Installation_guide)
