@@ -63,7 +63,7 @@
     - [multilib]
     - Include = /etc/pacman.d/mirrorlist
 2. [root@archlinux ~] # pacman -Syyy 
-3. [root@archlinux ~] # pacman -S xorg-server mesa nvidia nvidia-settings nvidia-lts nvidia-libgl vulkan-icd-loader fish sddm plasma konsole dolphin vulkan-headers vkd3d firefox discord steam audacity ark bitwarden dolphin-emu filelight gwenview handbrake kate kdenlive libreoffice-still obs-studio pcsx2 okular vlc libvirt qemu-desktop virt-manager dnsmasq vde2 edk2-ovmf bridge-utils openbsd-netcat desmume wine samba wget rsync nasm lib32-libxkbcommon lib32-libvpx steam-native-runtime ebtables iptables-nft libguestfs virt-viewer
+3. [root@archlinux ~] # pacman -S xorg-server mesa nvidia nvidia-settings nvidia-lts nvidia-libgl vulkan-icd-loader fish sddm plasma konsole dolphin vulkan-headers vkd3d firefox discord steam audacity ark bitwarden dolphin-emu filelight gwenview handbrake kate kdenlive libreoffice-still obs-studio pcsx2 okular vlc libvirt qemu-desktop virt-manager dnsmasq vde2 edk2-ovmf bridge-utils openbsd-netcat desmume wine samba wget rsync nasm lib32-libxkbcommon lib32-libvpx steam-native-runtime ebtables iptables-nft libguestfs virt-viewer spectacle
 4. [root@archlinux ~] # systemctl enable sddm
 5. [root@archlinux ~] # reboot
 
