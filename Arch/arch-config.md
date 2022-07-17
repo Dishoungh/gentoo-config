@@ -82,12 +82,13 @@
   - sudo systemctl start libvirtd.service
   - sudo systemctl status libvirtd.service
   - sudo vim /etc/libvirt/libvirtd.conf
-  - unix_sock_group = "libvirt"
-  - unix_sock_rw_perms = "0770"
+    - unix_sock_group = "libvirt"
+    - unix_sock_rw_perms = "0770"
   - sudo usermod -aG libvirt dishoungh
   - newgrp libvirt
   - sudo systemctl restart libvirtd.service
   - sudo modprobe kvm-amd
+  - reboot
 
 Follow these guides:
 1. [Installation Guide](https://wiki.archlinux.org/title/Installation_guide)
