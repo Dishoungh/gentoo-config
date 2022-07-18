@@ -258,7 +258,7 @@ Since manual configuration is very expansive and showing every single option wil
     - Gentoo Linux --->
 4. (chroot) livecd /usr/src/linux # make && make modules_install && make install && dracut --kver=(VERSION)-gentoo
 
-# Part IV: Fstab + Networking
+# Part V: Fstab + Networking
 1. (chroot) livecd / # nano /etc/fstab
     - \# Boot Partition (/dev/nvme0n1p1)
     - UUID={BOOT}    /boot   vfat    defaults    1 2
@@ -290,7 +290,7 @@ Since manual configuration is very expansive and showing every single option wil
 17. (chroot) livecd /etc/init.d # /etc/init.d/dbus start
 18. (chroot) livecd /etc/init.d # rc-update add dbus default
 
-# Part V: Bootloader and Reboot
+# Part VI: Bootloader and Reboot
 1. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
 2. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot
 3. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
@@ -300,7 +300,7 @@ Since manual configuration is very expansive and showing every single option wil
 7. livecd ~ # umount -R /mnt/gentoo
 8. livecd ~ # reboot
 
-# Part VI: User Administration and Desktop Installation
+# Part VII: User Administration and Desktop Installation
 1. nexus2 ~ # cd /
 2. nexus2 / # useradd -m -G users,wheel,audio -s /bin/bash dishoungh
 3. nexus2 / # passwd dishoungh
@@ -361,7 +361,7 @@ Since manual configuration is very expansive and showing every single option wil
 23. nexus2 / # rc-update add display-manager default
 24. nexus2 / # rc-service display-manager start
 
-# Part VII: Post Installation
+# Part VIII: Post Installation
 
 Reboot
 
