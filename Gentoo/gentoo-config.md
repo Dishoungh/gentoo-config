@@ -8,23 +8,21 @@
 
 # Part I: Booting into the USB Boot Media
 
-1. Downloaded install-amd64-minimal-20220710T170538Z.iso
+1. Downloaded iso image from https://www.gentoo.org/downloads/
 2. Used Rufus to make USB drive into boot media
 3. Booted into LiveCD.
 4. livecd ~ # ping www.gentoo.org -c3
 5. livecd ~ # lsblk
-    - ![WIN_20220711_12_04_46_Pro](https://user-images.githubusercontent.com/47036723/178319092-600d8d9e-3680-4ec5-9c02-eec2ff63f696.jpg)
-6. livecd ~ # fdisk /dev/nvme0n1
-    - ![WIN_20220711_12_10_08_Pro](https://user-images.githubusercontent.com/47036723/178319900-f39c6671-f853-49a7-833b-7151332ffaf5.jpg)  
-7. livecd ~ # mkfs.vfat -F 32 /dev/nvme0n1p1
-8. livecd ~ # mkfs.ext4 /dev/nvme0n1p3
-9. livecd ~ # mkswap /dev/nvme0n1p2
-10. livecd ~ # swapon /dev/nvme0n1p2
-11. livecd ~ # mount /dev/nvme0n1p3 /mnt/gentoo
+6. livecd ~ # fdisk (DEVICE)
+7. livecd ~ # mkfs.vfat -F 32 (BOOT)
+8. livecd ~ # mkfs.ext4 (ROOT)
+9. livecd ~ # mkswap (SWAP)
+10. livecd ~ # swapon (SWAP)
+11. livecd ~ # mount (ROOT) /mnt/gentoo
 12. livecd ~ # cd /mnt/gentoo/
-13. livecd /mnt/gentoo # wget https://mirror.leaseweb.com/gentoo/releases/amd64/autobuilds/20220710T170538Z/stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz
-14. livecd /mnt/gentoo # tar xpvf ./stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz --xattrs-include="\*.\*" --numeric-owner
-15. livecd /mnt/gentoo # rm -f ./stage3-amd64-desktop-openrc-20220710T170538Z.tar.xz
+13. livecd /mnt/gentoo # links https://www.gentoo.org/downloads/mirrors
+14. livecd /mnt/gentoo # tar xpvf ./stage3-\*.tar.xz --xattrs-include="\*.\*" --numeric-owner
+15. livecd /mnt/gentoo # rm -f ./stage3-amd64-*
 16. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
     - CHOST="x86_64-pc-linux-gnu"
     - COMMON_FLAGS="-O2 -march=znver1 -pipe"
@@ -54,9 +52,11 @@
 8. livecd /mnt/gentoo # chroot /mnt/gentoo /bin/bash
 9. livecd / # source /etc/profile
 10. livecd / # export PS1="(chroot) ${PS1}"
-11. (chroot) livecd / # mount /dev/nvme0n1p1 /boot
+11. (chroot) livecd / # mount (BOOT) /boot
+12. (chroot) livecd / # lsblk
+    - Check to make sure the boot and root partitions are properly mounted
 
-# Part III: Configuring Portage and Kernel
+# Part III: Configuring Portage and Installing Core Packages
 1. (chroot) livecd / # emerge-webrsync && emerge --sync
 2. (chroot) livecd / # rm -rf /etc/portage/package.use/ && rm -rf /etc/portage/package.accept_keywords/ && rm -rf /etc/portage/package.mask/
 3. (chroot) livecd / # touch /etc/portage/package.use && touch /etc/portage/package.accept_keywords && touch /etc/portage/package.mask
@@ -65,7 +65,7 @@
 5. livecd / # emerge -avq app-portage/cpuid2cpuflags
 6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
 7. livecd / # emerge -1 sys-libs/glibc && emerge -uqDN @world
-8. livecd / # emerge -avq sys-kernel/gentoo-kernel-bin  sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager x11-drivers/nvidia-drivers sys-apps/usbutils
+8. livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager x11-drivers/nvidia-drivers sys-apps/usbutils app-editors/vim
 9. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 10. (chroot) livecd / # emerge --config sys-libs/timezone-data
 11. (chroot) livecd / # nano /etc/locale.gen
@@ -77,14 +77,195 @@
     - This selects en_US.utf8
 14. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
 
+# Part IV: Kernel Configuration & Build
+Since manual configuration is very expansive and showing every single option will be way too tedious, even more than this already is. I'll just show what I think would be the most important settings, especially the ones I changed.
+
+"-X-" means that the option was automatically selected as built-in and I can't deselect the option (I think).
+
+"( )" means that the option is excluded from the kernel.
+
+1. (chroot) livecd / # emerge -aq sys-kernel/linux-firmware sys-kernel/gentoo-sources sys-apps/pciutils app-editors/vim app-arch/lz4 dev-vcs/git sys-kernel/dracut
+2. (chroot) livecd / # eselect kernel set 1
+3. (chroot) livecd / # cd /usr/src/linux && make menuconfig
+    - General setup --->
+        - Kernel compression mode (LZ4) --->
+        - (nexus2) Default hostname
+        - Timers subsystem --->
+            - Timer tick handling (Periodic timer ticks (constant rate, no dynticks)) --->
+            - ( ) Old Idle dynticks config
+            - [*] High Resolution Timer Support
+        - [*] Initial RAM filesystem and RAM disk (initramfs/initrd) support
+        - ( ) Support initial ramdisk/ramfs compressed using gzip
+        - ( ) Support initial ramdisk/ramfs compressed using bzip2
+        - ( ) Support initial ramdisk/ramfs compressed using LZMA
+        - ( ) Support initial ramdisk/ramfs compressed using XZ
+        - ( ) Support initial ramdisk/ramfs compressed using LZO
+        - [*] Support initial ramdisk/ramfs compressed using LZ4
+        - ( ) Support initial ramdisk/ramfs compressed using ZSTD
+    - [*] 64-bit kernel
+    - Processor type and features --->
+        - [*] Symmetric multi-processing support
+        - [*] Support x2apic
+        - [*] AMD ACPI2Platform devices support
+        - [*] Linux guest support --->
+            - [*] Enable paravirtualization code
+            - [*] KVM Guest support (including kvmclock) (NEW)
+        - Processor family (Opteron/Athlon64/Hammer/K8) --->
+        - (16) Maximum number of CPUs
+        - [*] Multi-core scheduler support
+        - [*] Machine Check / overheating reporting
+        - [*] AMD MCE features
+        - Performance monitoring --->
+            - [*] Intel uncore performance events
+            - [*] Intel/AMD rapl performance events
+            - [*] Intel cstate performance events
+            - [*] AMD Processor Power Reporting Mechanism
+            - [*] AMD Uncore performance events
+        - [*] AMD microcode loading support
+        - -X- MTRR (Memory Type Range Register) support
+        - [*] EFI runtime service support
+        - [*] EFI stub support
+        - [*] EFI mixed-mode support
+    - Power management and ACPI options --->
+        - CPU Frequency scaling --->
+            - Default CPUFreq governor (userspace) ---> (For some reason, it won't let me change it to "ondemand", which is what the guide recommends for Ryzen)
+            - [*] 'ondemand' cpufreq policy governor
+            - [*] ACPI Processor P-States driver
+            - [*] Legacy cpb sysfs knob support for AMD CPUs
+            - ( ) AMD Opteron/Athlon64 PowerNow!
+            - [*] AMD frequency sensitivity feedback powersave bias
+    - Bus options (PCI etc.) --->
+    - Binary Emulations ---> 
+        - ( ) IA32 Emulation
+    - [*] Virtualization --->
+        - [*] Kernel-based Virtual Machine (KVM) support
+        - [*] KVM for AMD processors support
+    - General architecture-dependent options --->
+    - [*] Enable loadable module support --->
+    - -X- Enable the block layer --->
+        - Partition Types --->
+            - [*] Advanced partition selection
+            - [*] PC BIOS (MSDOS partition tables) support (NEW)
+            - [*] EFI GUID Partition support (NEW)
+    - IO Schedulers --->
+        - [*] BFQ I/O scheduler
+    - Executable file formats --->
+    - Memory Management options --->
+    - [*] Networking support --->
+        - Networking options --->
+            - [*] 802.1d Ethernet Bridging
+            - [*] Network packet filtering framework (Netfilter) --->
+                - [*] Advanced netfilter configuration
+                - Core Netfilter Configuration --->
+                    - [*] "conntrack" connection tracking match support
+                    - [*] CHECKSUM target support
+                - IP: Netfilter Configuration --->
+                    - [*] iptables NAT support 
+                - [*] Ethernet Bridge tables (ebtables) support --->
+                    - [*] ebt: nat table support
+                    - [*] ebt: mark filter support
+            - [*] QoS and/or fair queueing --->
+                - [*] Hierarchical Token Bucket (HTB)
+                - [*] Stochastic Fairness Queueing (SFQ)
+                - [*] Ingress/classifier-action Qdisc
+                - [*] Netfilter mark (FW)
+                - [*] Universal 32bit comparisons w/ hashing (U32)
+                - [*] Actions
+                - [*] Traffic Policing
+    - Device Drivers --->
+        - Generic Driver Options --->
+            - Firmware loader --->
+                - (amd-ucode/microcode_amd_fam17h.bin) Build named firmware blobs into the kernel binary
+                - (/lib/firmware) Firmware blobs root directory (NEW)
+        - NVME Support --->
+            - [*] NVM Express block device
+            - [*] NVMe multipath support
+            - [*] NVMe hardware monitoring
+            - [*] NVM Express over Fabrics FC host driver
+            - [*] NVM Express over Fabrics TCP host driver
+        - SCSI device support
+            - [*] SCSI disk support
+            - [*] SCSI low-level drivers
+        - Network device support
+            - [*] Network core driver support
+            - [*] Universal TUN/TAP device driver support
+            - [*] Ethernet driver support --->
+                - [*] Intel (82586/82593/82596) devices
+                - [*] Intel devices
+                - [*] Intel(R) PRO/100+ support
+                - [*] Intel(R) PRO/1000 Gigabit Ethernet support
+                - [*] Intel(R) PRO/1000 PCI-Express Gigabit Ethernet support
+                - [*] Support HW cross-timestamp on PCH devices
+                - [*] Intel(R) 82575/82576 PCI-Express Gigabit Ethernet support
+                - [*] Intel(R) PCI-Express Gigabit adapters HWMON support
+                - [*] Intel(R) 82576 Virtual Function Ethernet support
+                - [*] Intel(R) PRO/10GbE support
+                - [*] Intel(R) 10GbE PCI Express adapters support
+                - [*] Intel(R) 10GbE PCI Express adapters HWMON support
+                - [*] Intel(R) 10GbE PCI Express Virtual Function Ethernet support
+                - [*] Intel(R) Ethernet Controller XL710 Family support
+                - [*] Intel(R) Ethernet Adaptive Virtual Function support
+                - [*] Intel(R) Ethernet Connection E800 Series Support
+                - [*] Intel(R) FM10000 Ethernet Switch Host Interface Support
+                - [*] Intel(R) Ethernet Controller I225-LM/I225-V support
+        - Character devices
+            - [*] IPMI top-level message handler
+        - Hardware Monitoring support
+            - [*] AMD Family 10h+ temperature sensor
+            - [*] AMD Family 15h processor power
+        - Graphics support --->
+            - [*] /dev/agpgart (AGP Support) --->
+                - [*] AMD Opteron/Athlon64 on-CPU GART support
+                - [*] Intel 440LX/BX/GX, I8xx and E7x05 chipset support
+                - [*] SiS chipset support
+                - [*] VIA chipset support
+            - -X- VGA Arbitration
+            - (3) Maximum number of GPUs
+            - [*] Simple framebuffer driver
+            - Frame buffer Devices --->
+                - [*] Support for frame buffer devices --->
+            - [*] Bootup logo --->
+                - [*] Standard 224-color Linux logo (NEW)
+        - HID support
+            - -X- HID bus support
+            - [*] Battery level reporting for HID devices
+        - [*] Virtualization drivers --->
+        - ( ) Virtio drivers
+        - [*] VHOST drivers --->
+            - [*] Host kernel accelerator for virtio net
+        - [*] IOMMU Hardware Support --->
+            - [*] AMD IOMMU support
+            - [*] AMD IOMMU Version 2 driver
+    - File systems --->
+        - [*] Second extended fs support
+        - [*] The Extended 3 (ext3) filesystem
+        - [*] The Extended 4 (ext4) filesystem
+        - [*] Reiserfs support
+        - [*] JFS filesystem support
+        - [*] XFS filesystem support
+        - [*] Btrfs filesystem support
+        - DOS/FAT/EXFAT/NT Filesystems --->
+            - [*] MSDOS fs support
+            - [*] VFAT (Windows-95) fs support
+        - Pseudo filesystems
+            - -X- /proc file system support
+            - -X- Tmpfs virtual memory file system support
+            - [*] EFI Variable filesystem
+    - Security options --->
+    - -X- Cryptographic API --->
+    - Library routines --->
+    - Kernel hacking --->
+    - Gentoo Linux --->
+4. (chroot) livecd /usr/src/linux # make && make modules_install && make install && dracut --kver=(VERSION)-gentoo
+
 # Part IV: Fstab + Networking
 1. (chroot) livecd / # nano /etc/fstab
     - \# Boot Partition (/dev/nvme0n1p1)
-    - UUID={nvme0n1p1}    /boot   vfat    defaults    1 2
+    - UUID={BOOT}    /boot   vfat    defaults    1 2
     - \# Swap Partition (/dev/nvme0n1p2)
-    - UUID={nvme0n1p2}    none    swap    sw          0 0
+    - UUID={SWAP}    none    swap    sw          0 0
     - \# Root Partition (/dev/nvme0n1p3)
-    - UUID={nvme0n1p3}    /       ext4    noatime     0 1
+    - UUID={ROOT}    /       ext4    noatime     0 1
 2. (chroot) livecd / # nano /etc/conf.d/hostname
     - hostname="nexus2"
 3. (chroot) livecd / # rc-update add dhcpcd default
@@ -110,17 +291,14 @@
 18. (chroot) livecd /etc/init.d # rc-update add dbus default
 
 # Part V: Bootloader and Reboot
-1. (chroot) livecd /etc/init.d # emerge --config gentoo-kernel-bin
-2. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
-3. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot
-4. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
-5. (chroot) livecd / # nano /etc/default/grub
-    - Uncomment the line: GRUB_DISABLE_LINUX_UUID=true
-6. (chroot) livecd / # exit
-7. livecd /mnt/gentoo # cd
-8. livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}
-9. livecd ~ # umount -R /mnt/gentoo
-10. livecd ~ # reboot
+1. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
+2. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot
+3. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
+4. (chroot) livecd / # exit
+5. livecd /mnt/gentoo # cd
+6. livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}
+7. livecd ~ # umount -R /mnt/gentoo
+8. livecd ~ # reboot
 
 # Part VI: User Administration and Desktop Installation
 1. nexus2 ~ # cd /
@@ -163,7 +341,7 @@
     - */*::steam-overlay
 10. nexus2 / # emerge -avq app-eselect/eselect-repository dev-vcs/git
 11. nexus2 / # eselect repository enable steam-overlay && emerge --sync
-12. nexus2 / # emerge -avq x11-base/xorg-x11 media-fonts/fonts-meta www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin games-util/lutris x11-apps/setxkbmap kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-video/pipewire app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch
+12. nexus2 / # emerge -avq x11-base/xorg-x11 app-shells/fish media-fonts/fonts-meta www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-desktop x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-video/pipewire app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch kde-plasma/systemsettings kde-plasma/plasma-workspace-wallpapers kde-plasma/powerdevil kde-plasma/systemmonitor kde-plasma/plasma-nm kde-plasma/libkscreen kde-plasma/kwin kde-plasma/kwayland-server kde-plasma/ksystemstats kde-plasma/kscreen kde-plasma/kscreenlocker kde-plasma/kdeplasma-addons kde-plasma/kmenuedit kde-plasma/drkonqi kde-plasma/hotkeys kde-plasma/kgamma kde-plasma/kde-gtk-config kde-plasma/kdecoration kde-plasma/discover kde-apps/ark kde-apps/dolphin kde-apps/filelight kde-apps/gwenview kde-apps/kate kde-apps/kdenlive kde-apps/konsole kde-apps/okular kde-apps/spectacle
     - To rectify "The following USE changes are necessary to proceed" do this:
         - Add the USE flags needed in the /etc/portage/package.use file
 13. nexus2 / # usermod -aG video sddm
@@ -187,23 +365,3 @@
 
 Reboot
 
-# Resources
-1. [Gentoo Downloads Page](https://www.gentoo.org/downloads/)
-2. [Gentoo AMD64 Full Installation Guide](https://wiki.gentoo.org/wiki/Handbook:AMD64/Full/Installation)
-3. [Gentoo VM Gentoo "Guide"](https://github.com/Dishoungh/gentoo-config/blob/master/Gentoo/gentoo-vm-config.md)
-4. [Tarball Directory](https://mirror.leaseweb.com/gentoo/releases/amd64/autobuilds/20220710T170538Z/)
-5. [Ryzen Gentoo Wiki](https://wiki.gentoo.org/wiki/Ryzen)
-6. [MAKEOPTS](https://wiki.gentoo.org/wiki/MAKEOPTS)
-7. [Pipewire Packages](https://packages.gentoo.org/useflags/pipewire)
-8. [NVIDIA Drivers Wiki](https://wiki.gentoo.org/wiki/NVIDIA/nvidia-drivers)
-9. [Virt-Manager Wiki](https://wiki.gentoo.org/wiki/Virt-manager)
-10. [QEMU Wiki](https://wiki.gentoo.org/wiki/QEMU#BIOS_and_UEFI_firmware)
-11. [Xorg Guide](https://wiki.gentoo.org/wiki/Xorg/Guide#Make.conf)
-12. [ASUS ROG String X470-F Gaming Motherboard Page](https://rog.asus.com/us/motherboards/rog-strix/rog-strix-x470-f-gaming-model/)
-13. [Gentoolkit Wiki](https://wiki.gentoo.org/wiki/Gentoolkit)
-14. [KDE Apps](https://packages.gentoo.org/categories/kde-apps)
-15. [Steam](https://wiki.gentoo.org/wiki/Steam)
-16. [Wine](https://wiki.gentoo.org/wiki/Wine)
-17. [SDDM](https://wiki.gentoo.org/wiki/SDDM)
-18. [VLC](https://wiki.gentoo.org/wiki/VLC)
-19. [KDE](https://wiki.gentoo.org/wiki/KDE)
