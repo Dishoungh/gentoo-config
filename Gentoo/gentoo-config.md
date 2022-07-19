@@ -26,16 +26,16 @@
 16. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
     - CHOST="x86_64-pc-linux-gnu"
     - COMMON_FLAGS="-O2 -march=znver1 -pipe"
-    - MAKEOPTS="-j16 -l14"
+    - MAKEOPTS="-j16 -l16"
     - PORTAGE_NICENESS=19
-    - EMERGE_DEFAULT_OPTS="--jobs=16 --load-average=14 --with-bdeps=y --complete-graph=y"
-    - ACCEPT_KEYWORDS="amd64"
+    - EMERGE_DEFAULT_OPTS="--jobs=16 --load-average=16 --with-bdeps=y --complete-graph=y"
+    - ACCEPT_KEYWORDS="~amd64"
     - ACCEPT_LICENSE="*"
     - VIDEO_CARDS="nvidia"
     - ABI_X86="64 32"
     - QEMU_SOFTMMU_TARGETS="arm x86_64 sparc"
     - QEMU_USER_TARGETS="x86_64"
-    - USE="-systemd -gnome networkmanager sddm pipewire dist-kernel X kde pipewire-alsa xinerama -gpm elogind dbus osmesa vulkan"
+    - USE=""
 17. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 18. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 19. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
@@ -62,20 +62,21 @@
 3. (chroot) livecd / # touch /etc/portage/package.use && touch /etc/portage/package.accept_keywords && touch /etc/portage/package.mask
 4. (chroot) livecd / # nano /etc/portage/package.use
     - sys-auth/pambase -passwdqc
-5. livecd / # emerge -avq app-portage/cpuid2cpuflags
+5. (chroot) livecd / # emerge -avq app-portage/cpuid2cpuflags
 6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
-7. livecd / # emerge -1 sys-libs/glibc && emerge -uqDN @world
-8. livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager x11-drivers/nvidia-drivers sys-apps/usbutils app-editors/vim
-9. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
-10. (chroot) livecd / # emerge --config sys-libs/timezone-data
-11. (chroot) livecd / # nano /etc/locale.gen
+7. (chroot) livecd / # emerge -1 sys-libs/glibc && emerge -uqDN @world
+8. (chroot) livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager x11-drivers/nvidia-drivers sys-apps/usbutils app-editors/vim
+9. (chroot) livecd / # emerge -c
+10. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
+11. (chroot) livecd / # emerge --config sys-libs/timezone-data
+12. (chroot) livecd / # nano /etc/locale.gen
     - Uncomment:
         - en_US ISO-8859-1
         - en_US.UTF-8 UTF-8
-12. (chroot) livecd / # locale-gen
-13. (chroot) livecd / # eselect locale set 6
+13. (chroot) livecd / # locale-gen
+14. (chroot) livecd / # eselect locale set 6
     - This selects en_US.utf8
-14. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
+15. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
 
 # Part IV: Kernel Configuration & Build
 Since manual configuration is very expansive and showing every single option will be way too tedious, even more than this already is. I'll just show what I think would be the most important settings, especially the ones I changed.
