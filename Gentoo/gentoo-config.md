@@ -65,11 +65,11 @@
 5. (chroot) livecd / # emerge -avq app-portage/cpuid2cpuflags
 6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
 7. (chroot) livecd / # emerge -1 sys-libs/glibc && emerge -uqDN @world
-8. (chroot) livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager x11-drivers/nvidia-drivers sys-apps/usbutils app-editors/vim
-9. (chroot) livecd / # emerge -c
+8. (chroot) livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git
+9. (chroot) livecd / # emerge -ac
 10. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 11. (chroot) livecd / # emerge --config sys-libs/timezone-data
-12. (chroot) livecd / # nano /etc/locale.gen
+12. (chroot) livecd / # vim /etc/locale.gen
     - Uncomment:
         - en_US ISO-8859-1
         - en_US.UTF-8 UTF-8
@@ -85,14 +85,13 @@ Since manual configuration is very expansive and showing every single option wil
 
 "( )" means that the option is excluded from the kernel.
 
-1. (chroot) livecd / # emerge -aq sys-kernel/linux-firmware sys-kernel/gentoo-sources sys-apps/pciutils app-editors/vim app-arch/lz4 dev-vcs/git sys-kernel/dracut
-2. (chroot) livecd / # eselect kernel set 1
-3. (chroot) livecd / # cd /usr/src/linux && make menuconfig
+1. (chroot) livecd / # eselect kernel set 1
+2. (chroot) livecd / # cd /usr/src/linux && make menuconfig
     - General setup --->
         - Kernel compression mode (LZ4) --->
         - (nexus2) Default hostname
         - Timers subsystem --->
-            - Timer tick handling (Periodic timer ticks (constant rate, no dynticks)) --->
+            - Timer tick handling (Idle dynticks system (tickless idle)) --->
             - ( ) Old Idle dynticks config
             - [*] High Resolution Timer Support
         - [*] Initial RAM filesystem and RAM disk (initramfs/initrd) support
@@ -257,29 +256,30 @@ Since manual configuration is very expansive and showing every single option wil
     - Library routines --->
     - Kernel hacking --->
     - Gentoo Linux --->
-4. (chroot) livecd /usr/src/linux # make && make modules_install && make install && dracut --kver=(VERSION)-gentoo
+3. (chroot) livecd /usr/src/linux # emerge -avq x11-drivers/nvidia-drivers
+4. (chroot) livecd /usr/src/linux # make && make modules_install && make install && dracut --kver=(VERSION)-gentoo --force && cd /
 
 # Part V: Fstab + Networking
-1. (chroot) livecd / # nano /etc/fstab
-    - \# Boot Partition (/dev/nvme0n1p1)
-    - UUID={BOOT}    /boot   vfat    defaults    1 2
-    - \# Swap Partition (/dev/nvme0n1p2)
-    - UUID={SWAP}    none    swap    sw          0 0
-    - \# Root Partition (/dev/nvme0n1p3)
-    - UUID={ROOT}    /       ext4    noatime     0 1
-2. (chroot) livecd / # nano /etc/conf.d/hostname
+1. (chroot) livecd / # vim /etc/fstab
+    - \# Boot Partition
+    - UUID={BOOT}    /boot   vfat    defaults    1 2 (1A87-D70E)
+    - \# Swap Partition
+    - UUID={SWAP}    none    swap    sw          0 0 (5008388a-206d-4c75-95cf-f615b9e2cd34)
+    - \# Root Partition
+    - UUID={ROOT}    /       ext4    noatime     0 1 (d6c4d16a-792a-485d-9189-1f5fb333c499)
+2. (chroot) livecd / # vim /etc/conf.d/hostname
     - hostname="nexus2"
 3. (chroot) livecd / # rc-update add dhcpcd default
 4. (chroot) livecd / # rc-service dhcpcd start
     - /sbin/dhcpcd may be already running so it may spit out an error about the DHCP Client Daemon already running. Don't worry about it if you get this error.
 5. (chroot) livecd / # emerge --ask --noreplace net-misc/netifrc
-6. (chroot) livecd / # nano /etc/conf.d/net
+6. (chroot) livecd / # vim /etc/conf.d/net
     - config_{INTERFACE}="dhcp"
     - You can find {INTERFACE} with "ls /sys/class/net"
 7. (chroot) livecd / # cd /etc/init.d
 8. (chroot) livecd /etc/init.d # ln -s net.lo net.enp6s0
 9. (chroot) livecd /etc/init.d # rc-update add net.enp6s0 default
-10. (chroot) livecd /etc/init.d # nano /etc/hosts
+10. (chroot) livecd /etc/init.d # vim /etc/hosts
     - 127.0.0.1     nexus2.homenetwork      nexus2  localhost
     - ::1           localhost
 11. (chroot) livecd /etc/init.d # passwd
@@ -303,9 +303,9 @@ Since manual configuration is very expansive and showing every single option wil
 
 # Part VII: User Administration and Desktop Installation
 1. nexus2 ~ # cd /
-2. nexus2 / # useradd -m -G users,wheel,audio -s /bin/bash dishoungh
+2. nexus2 / # useradd -m -G users,wheel,audio  dishoungh
 3. nexus2 / # passwd dishoungh
-4. nexus2 / # emerge -avq app-admin/sudo app-editors/vim
+4. nexus2 / # emerge -avq app-admin/sudo
 5. nexus2 / # vim /etc/sudoers
     - %wheel ALL=(ALL:ALL) ALL
     - dishoungh  ALL=(root) NOPASSWD: /sbin/reboot
@@ -316,7 +316,7 @@ Since manual configuration is very expansive and showing every single option wil
 6. nexus2 / # eselect profile set 8
     - This selects default/linux/amd64/17.1/desktop/plasma (stable)
 7. nexus2 / # emerge -uDNpv @world
-8. nexus2 / # emerge -uvDN @world
+8. nexus2 / # emerge -auvDN @world
 9. nexus2 / # vim /etc/portage/package.accept_keywords
     - \# app-admin
     - app-admin/bitwarden-desktop-bin
@@ -347,15 +347,16 @@ Since manual configuration is very expansive and showing every single option wil
         - Add the USE flags needed in the /etc/portage/package.use file
 13. nexus2 / # usermod -aG video sddm
 14. nexus2 / # usermod -aG libvirt dishoungh
-15. nexus2 / # vim /etc/libvirt/libvirtd.conf
+15. nexus2 / # usermod -s /usr/bin/fish dishoungh
+16. nexus2 / # vim /etc/libvirt/libvirtd.conf
     - Uncomment these lines
         - auth_unix_ro = "none"
         - auth_unix_rw = "none"
         - unix_sock_group = "libvirt"
         - unix_sock_ro_perms = "0777"
         - unix_sock_rw_perms = "0770"
-16. nexus2 / # rc-service libvirtd start
-17. nexus2 / # rc-update add libvirtd default
+17. nexus2 / # rc-service libvirtd start
+18. nexus2 / # rc-update add libvirtd default
 22. nexus2 / # vim /etc/conf.d/display-manager
     - CHECKVT=7
     - DISPLAYMANAGER="sddm"
