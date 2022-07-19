@@ -61,7 +61,7 @@
 2. (chroot) livecd / # rm -rf /etc/portage/package.use/ && rm -rf /etc/portage/package.accept_keywords/ && rm -rf /etc/portage/package.mask/
 3. (chroot) livecd / # touch /etc/portage/package.use && touch /etc/portage/package.accept_keywords && touch /etc/portage/package.mask
 4. (chroot) livecd / # nano /etc/portage/package.use
-    - sys-auth/pambase passwdqc
+    - sys-auth/pambase -passwdqc
 5. livecd / # emerge -avq app-portage/cpuid2cpuflags
 6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
 7. livecd / # emerge -1 sys-libs/glibc && emerge -uqDN @world
