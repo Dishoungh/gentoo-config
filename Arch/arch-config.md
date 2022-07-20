@@ -50,8 +50,7 @@
 
 # Part V: Bootloader & Exit
 1. [root@archiso /] # pacman -S grub dosfstools os-prober mtools amd-ucode efibootmgr
-2. [root@archiso /] #
-2. [root@archiso /] # grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+2. [root@archiso /] # grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=ARCH --removable
 3. [root@archiso /] # grub-mkconfig -o /boot/grub/grub.cfg
 4. [root@archiso /] # exit
 5. [root@archiso /] # umount -R /mnt
