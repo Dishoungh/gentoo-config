@@ -293,7 +293,7 @@ Since manual configuration is very expansive and showing every single option wil
 
 # Part VI: Bootloader and Reboot
 1. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
-2. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot
+2. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GENTOO --removable
 3. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
 4. (chroot) livecd / # exit
 5. livecd /mnt/gentoo # cd
