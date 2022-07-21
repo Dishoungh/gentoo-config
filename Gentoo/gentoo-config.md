@@ -35,7 +35,7 @@
     - ABI_X86="64 32"
     - QEMU_SOFTMMU_TARGETS="arm x86_64 sparc"
     - QEMU_USER_TARGETS="x86_64"
-    - USE=""
+    - USE="-systemd -gnome networkmanager sddm pipewire X kde pipewire-alsa xinerama -gpm elogind dbus osmesa vulkan -verify-sig"
 17. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 18. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 19. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
@@ -57,26 +57,27 @@
     - Check to make sure the boot and root partitions are properly mounted
 
 # Part III: Configuring Portage and Installing Core Packages
-1. (chroot) livecd / # emerge-webrsync && emerge --sync
-2. (chroot) livecd / # rm -rf /etc/portage/package.use/ && rm -rf /etc/portage/package.accept_keywords/ && rm -rf /etc/portage/package.mask/
-3. (chroot) livecd / # touch /etc/portage/package.use && touch /etc/portage/package.accept_keywords && touch /etc/portage/package.mask
+1. (chroot) livecd / # emerge-webrsync && emerge --sync --quiet
+2. (chroot) livecd / # rm -rf /etc/portage/package.use/ /etc/portage/package.accept_keywords/ /etc/portage/package.mask/
+3. (chroot) livecd / # touch /etc/portage/package.use /etc/portage/package.accept_keywords /etc/portage/package.mask
 4. (chroot) livecd / # nano /etc/portage/package.use
     - sys-auth/pambase -passwdqc
 5. (chroot) livecd / # emerge -avq app-portage/cpuid2cpuflags
 6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
-7. (chroot) livecd / # emerge -1 sys-libs/glibc && emerge -uqDN @world
-8. (chroot) livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git
-9. (chroot) livecd / # emerge -ac
-10. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
-11. (chroot) livecd / # emerge --config sys-libs/timezone-data
-12. (chroot) livecd / # vim /etc/locale.gen
+7. (chroot) livecd / # emerge -1 sys-libs/glibc
+8. (chroot)) livecd / # emerge -uqDN @world
+9. (chroot) livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-fs/zfs sys-fs/zfs sys-fs/btrfs-progs sys-fs/jfsutils sys-fs/reiserfsprogs sys-fs/xfsprogs sys-boot/grub:2 sys-boot/efibootmgr sys-boot/os-prober net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git sys-process/cronie
+10. (chroot) livecd / # emerge -ac
+11. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
+12. (chroot) livecd / # emerge --config sys-libs/timezone-data
+13. (chroot) livecd / # vim /etc/locale.gen
     - Uncomment:
         - en_US ISO-8859-1
         - en_US.UTF-8 UTF-8
-13. (chroot) livecd / # locale-gen
-14. (chroot) livecd / # eselect locale set 6
+14. (chroot) livecd / # locale-gen
+15. (chroot) livecd / # eselect locale set 6
     - This selects en_US.utf8
-15. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
+16. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
 
 # Part IV: Kernel Configuration & Build
 Since manual configuration is very expansive and showing every single option will be way too tedious, even more than this already is. I'll just show what I think would be the most important settings, especially the ones I changed.
@@ -88,6 +89,7 @@ Since manual configuration is very expansive and showing every single option wil
 1. (chroot) livecd / # eselect kernel set 1
 2. (chroot) livecd / # cd /usr/src/linux && make menuconfig
     - General setup --->
+        - [*] Compile also drivers which will not load
         - Kernel compression mode (LZ4) --->
         - (nexus2) Default hostname
         - Timers subsystem --->
@@ -186,6 +188,11 @@ Since manual configuration is very expansive and showing every single option wil
         - SCSI device support
             - [*] SCSI disk support
             - [*] SCSI low-level drivers
+        - [*] Serial ATA and Parallel ATA drivers (libata) --->
+            - [*] Platform AHCI SATA support
+            - [*] APM X-Gene 6.0Gbps AHCI SATA host controller support
+            - [*] AMD Seattle 6.0Gbps AHCI SATA host controller support
+            - [*] Generic ATA Support
         - Network device support
             - [*] Network core driver support
             - [*] Universal TUN/TAP device driver support
@@ -290,6 +297,7 @@ Since manual configuration is very expansive and showing every single option wil
 16. (chroot) livecd /etc/init.d # rc-update add udev sysinit
 17. (chroot) livecd /etc/init.d # /etc/init.d/dbus start
 18. (chroot) livecd /etc/init.d # rc-update add dbus default
+19. (chroot) livecd /etc/init.d # rc-update add cronie default
 
 # Part VI: Bootloader and Reboot
 1. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
