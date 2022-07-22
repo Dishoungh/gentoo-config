@@ -80,7 +80,7 @@
 16. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
 
 # Part IV: Kernel Configuration & Build
-Since manual configuration is very expansive and showing every single option will be way too tedious, even more than this already is. I'll just show what I think would be the most important settings, especially the ones I changed.
+Since manual configuration is very expansive and showing every single option will be way too tedious, even more than this already is. I'll just show what I think would be the most important settings, especially the ones I changed. You can see my entire [kernel config file here](https://github.com/Dishoungh/gentoo-config/blob/master/Gentoo/kernel-config.txt).
 
 "-X-" means that the option was automatically selected as built-in and I can't deselect the option (I think).
 
