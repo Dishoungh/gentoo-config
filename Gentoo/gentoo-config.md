@@ -269,17 +269,17 @@ Since manual configuration is very expansive and showing every single option wil
 # Part V: Fstab + Networking
 1. (chroot) livecd / # vim /etc/fstab
     - \# Boot Partition
-    - UUID={BOOT}    /boot   vfat    defaults    1 2 (1A87-D70E)
+    - UUID={BOOT}    /boot   vfat    defaults    1 2
     - \# Swap Partition
-    - UUID={SWAP}    none    swap    sw          0 0 (5008388a-206d-4c75-95cf-f615b9e2cd34)
+    - UUID={SWAP}    none    swap    sw          0 0
     - \# Root Partition
-    - UUID={ROOT}    /       ext4    noatime     0 1 (d6c4d16a-792a-485d-9189-1f5fb333c499)
+    - UUID={ROOT}    /       ext4    noatime     0 1
 2. (chroot) livecd / # vim /etc/conf.d/hostname
     - hostname="nexus2"
 3. (chroot) livecd / # rc-update add dhcpcd default
 4. (chroot) livecd / # rc-service dhcpcd start
     - /sbin/dhcpcd may be already running so it may spit out an error about the DHCP Client Daemon already running. Don't worry about it if you get this error.
-5. (chroot) livecd / # emerge --ask --noreplace net-misc/netifrc
+5. (chroot) livecd / # emerge -an net-misc/netifrc
 6. (chroot) livecd / # vim /etc/conf.d/net
     - config_{INTERFACE}="dhcp"
     - You can find {INTERFACE} with "ls /sys/class/net"
