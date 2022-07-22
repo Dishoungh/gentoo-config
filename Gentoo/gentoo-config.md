@@ -27,7 +27,7 @@
     - CHOST="x86_64-pc-linux-gnu"
     - COMMON_FLAGS="-O2 -march=znver1 -pipe"
     - MAKEOPTS="-j16 -l16"
-    - PORTAGE_NICENESS=19
+    - PORTAGE_NICENESS=1
     - EMERGE_DEFAULT_OPTS="--jobs=16 --load-average=16 --with-bdeps=y --complete-graph=y"
     - ACCEPT_KEYWORDS="~amd64"
     - ACCEPT_LICENSE="*"
@@ -58,7 +58,7 @@
 
 # Part III: Configuring Portage and Installing Core Packages
 1. (chroot) livecd / # emerge-webrsync && emerge --sync --quiet
-2. (chroot) livecd / # rm -rf /etc/portage/package.use/ /etc/portage/package.accept_keywords/ /etc/portage/package.mask/
+2. (chroot) livecd / # rm -rf /etc/portage/package.*/
 3. (chroot) livecd / # touch /etc/portage/package.use /etc/portage/package.accept_keywords /etc/portage/package.mask
 4. (chroot) livecd / # nano /etc/portage/package.use
     - sys-auth/pambase -passwdqc
