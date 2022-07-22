@@ -3,7 +3,7 @@
 - CPU: Ryzen 7 2700X (8 Cores / 16 Threads)
 - RAM: 32 GB (DDR4-3200)
 - GPU: Nvidia Geforce GTX 1080 Ti
-- Storage: Samsung 960 EVO (500GB M.2 SSD)
+- Storage: Samsung 850 EVO (250GB SATA SSD)
 - Monitors: 3x 2560x1440p Monitors (G-Sync IPS 1ms)
 
 # Part I: Booting into the USB Boot Media
