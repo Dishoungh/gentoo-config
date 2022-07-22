@@ -255,12 +255,12 @@ Since manual configuration is very expansive and showing every single option wil
             - [*] AMD IOMMU Version 2 driver
             - [*] Virtio IOMMU driver
     - File systems --->
-        - [ ] Second extended fs support
-        - [ ] The Extended 3 (ext3) filesystem
+        - ( ) Second extended fs support
+        - ( ) The Extended 3 (ext3) filesystem
         - [*] The Extended 4 (ext4) filesystem
-        - [ ] Reiserfs support
-        - [ ] JFS filesystem support
-        - [ ] XFS filesystem support
+        - ( ) Reiserfs support
+        - ( ) JFS filesystem support
+        - ( ) XFS filesystem support
         - [*] Btrfs filesystem support
         - DOS/FAT/EXFAT/NT Filesystems --->
             - [*] MSDOS fs support
