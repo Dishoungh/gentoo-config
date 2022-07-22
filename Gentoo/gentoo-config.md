@@ -66,7 +66,7 @@
 6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
 7. (chroot) livecd / # emerge -1 sys-libs/glibc
 8. (chroot)) livecd / # emerge -uqDN @world
-9. (chroot) livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-fs/zfs sys-fs/zfs sys-fs/btrfs-progs sys-fs/jfsutils sys-fs/reiserfsprogs sys-fs/xfsprogs sys-boot/grub:2 sys-boot/efibootmgr sys-boot/os-prober net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git sys-process/cronie
+9. (chroot) livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-fs/btrfs-progs sys-boot/grub:2 sys-boot/efibootmgr sys-boot/os-prober net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git sys-process/cronie
 10. (chroot) livecd / # emerge -ac
 11. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 12. (chroot) livecd / # emerge --config sys-libs/timezone-data
@@ -231,8 +231,6 @@ Since manual configuration is very expansive and showing every single option wil
             - [*] Simple framebuffer driver
             - Frame buffer Devices --->
                 - [*] Support for frame buffer devices --->
-            - [*] Bootup logo --->
-                - [*] Standard 224-color Linux logo (NEW)
         - HID support
             - -X- HID bus support
             - [*] Battery level reporting for HID devices
@@ -244,12 +242,12 @@ Since manual configuration is very expansive and showing every single option wil
             - [*] AMD IOMMU support
             - [*] AMD IOMMU Version 2 driver
     - File systems --->
-        - [*] Second extended fs support
-        - [*] The Extended 3 (ext3) filesystem
+        - [ ] Second extended fs support
+        - [ ] The Extended 3 (ext3) filesystem
         - [*] The Extended 4 (ext4) filesystem
-        - [*] Reiserfs support
-        - [*] JFS filesystem support
-        - [*] XFS filesystem support
+        - [ ] Reiserfs support
+        - [ ] JFS filesystem support
+        - [ ] XFS filesystem support
         - [*] Btrfs filesystem support
         - DOS/FAT/EXFAT/NT Filesystems --->
             - [*] MSDOS fs support
