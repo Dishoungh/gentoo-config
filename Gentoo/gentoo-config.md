@@ -37,7 +37,7 @@ Keep in mind, this really isn't an "install guide". This is a trace of everythin
     - ABI_X86="64 32"
     - QEMU_SOFTMMU_TARGETS="arm x86_64 sparc"
     - QEMU_USER_TARGETS="x86_64"
-    - USE="-systemd -gnome networkmanager sddm pipewire X kde pipewire-alsa xinerama -gpm elogind dbus osmesa vulkan -verify-sig"
+    - USE="-bluetooth -systemd -gnome networkmanager sddm pipewire X kde pipewire-alsa xinerama -gpm elogind dbus osmesa vulkan -verify-sig"
 17. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 18. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 19. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
