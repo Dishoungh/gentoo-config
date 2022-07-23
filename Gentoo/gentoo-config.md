@@ -1,4 +1,4 @@
-Keep in mind, this "install guide" is primarily made for me. If another person is reading this install guide intending on following it, you will have to do make some adjustments. Yes, I'm aware of distribution kernels, but I'm doing this as a project. To me, that's boring and I want to use a custom kernel and learn how to do it. So, no, I'm not using a pre-compiled distribution kernel. 
+Keep in mind, this really isn't an "install guide". This is a trace of everything I'm doing to get my Gentoo running to use for someone else to help me determine what I did wrong. 
 
 # Hardware (UEFI)
 
