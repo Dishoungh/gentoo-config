@@ -1,5 +1,3 @@
-Keep in mind, this really isn't an "install guide". This is a trace of everything I'm doing to get my Gentoo running to use for someone else to help me determine what I did wrong. 
-
 # Hardware (UEFI)
 
 - CPU: Ryzen 7 2700X (8 Cores / 16 Threads)
