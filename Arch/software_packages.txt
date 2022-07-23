@@ -1,0 +1,27 @@
+These are packages or software that I use regularly on my Arch 
+
+
+1. Arduino IDE
+2. Ark
+3. Audacity
+4. Bitwarden
+5. Firefox
+6. Discord
+7. Dolphin Emulator
+8. Filelight
+9. GNU Image Manpiulation Program
+10. Kate
+11. Kdenlive
+12. LibreOffice
+13. Logisim
+14. OBS Studio
+15. PCSX2
+16. Portmaster
+17. Psensor (or some equivalent)
+18. Spectacle
+19. Steam
+20. Timeshift
+21. Vim
+22. Virtual Machine Manager
+23. Visualboy Advance
+24. VLC Media Player
