@@ -26,9 +26,9 @@
 16. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
     - CHOST="x86_64-pc-linux-gnu"
     - COMMON_FLAGS="-O2 -march=znver1 -pipe"
-    - MAKEOPTS="-j16 -l16"
+    - MAKEOPTS="-j10 -l10"
     - PORTAGE_NICENESS=1
-    - EMERGE_DEFAULT_OPTS="--jobs=16 --load-average=16 --with-bdeps=y --complete-graph=y"
+    - EMERGE_DEFAULT_OPTS="--jobs=10 --load-average=10 --with-bdeps=y --complete-graph=y"
     - ACCEPT_KEYWORDS="~amd64"
     - ACCEPT_LICENSE="*"
     - VIDEO_CARDS="nvidia"
