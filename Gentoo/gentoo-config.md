@@ -180,7 +180,7 @@ Since manual configuration is very expansive and showing every single option wil
     - Device Drivers --->
         - PCI support --->
             - -X- VGA Arbitration
-            - (2) Maximum number of GPUs
+            - (16) Maximum number of GPUs
         - Generic Driver Options --->
             - Firmware loader --->
                 - (amd-ucode/microcode_amd_fam17h.bin) Build named firmware blobs into the kernel binary
@@ -247,6 +247,7 @@ Since manual configuration is very expansive and showing every single option wil
             - [*] Simple framebuffer driver
             - Frame buffer Devices --->
                 - [*] Support for frame buffer devices --->
+                    - [*] EFI-based Framebuffer support
         - [*] Sound card support --->
             - [*] Advanced Linux Sound Architecture --->
                 - [*] USB sound devices --->
@@ -290,7 +291,9 @@ Since manual configuration is very expansive and showing every single option wil
     - Gentoo Linux --->
 3. (chroot) livecd /usr/src/linux # make modules_prepare && make && make modules_install && make install
 4. (chroot) livecd /usr/src/linux # emerge -avq x11-drivers/nvidia-drivers
-5. (chroot) livecd /usr/src/linux # dracut --kver=(VERSION)-gentoo --force && cd /
+5. (chroot) livecd /usr/src/linux # vim /etc/X11/xorg.conf
+    - Looks like this: 
+6. (chroot) livecd /usr/src/linux # dracut --kver=(VERSION)-gentoo --force && cd /
 
 # Part V: Fstab + Networking
 1. (chroot) livecd / # vim /etc/fstab
@@ -375,7 +378,7 @@ Since manual configuration is very expansive and showing every single option wil
 10. nexus2 / # eselect repository enable pf4public
 11. nexus2 / # eselect repository enable steam-overlay
 12. nexus2 / # emerge --sync
-13. nexus2 / # emerge -avq x11-base/xorg-x11 app-shells/fish media-fonts/fonts-meta www-client/ungoogled-chromium-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-video/pipewire app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch kde-apps/ark kde-apps/dolphin kde-apps/filelight kde-apps/gwenview kde-apps/kate kde-apps/kdenlive kde-apps/konsole kde-apps/okular kde-apps/spectacle dev-libs/wayland x11-base/xwayland
+13. nexus2 / # emerge -avq x11-base/xorg-x11 app-shells/fish media-fonts/fonts-meta www-client/ungoogled-chromium-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-desktop kde-plasma/systemsettings kde-plasma/plasma-workspace-wallpapers kde-plasma/powerdevil kde-plasma/systemmonitor kde-plasma/plasma-nm kde-plasma/libkscreen kde-plasma/kwin kde-plasma/kwayland-server kde-plasma/ksystemstats kde-plasma/kscreen kde-plasma/kscreenlocker kde-plasma/kdeplasma-addons kde-plasma/kmenuedit kde-plasma/drkonqi kde-plasma/hotkeys kde-plasma/kgamma kde-plasma/kde-gtk-config kde-plasma/kdecoration kde-plasma/discover x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-video/pipewire app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch kde-apps/ark kde-apps/dolphin kde-apps/filelight kde-apps/gwenview kde-apps/kate kde-apps/kdenlive kde-apps/konsole kde-apps/okular kde-apps/spectacle dev-libs/wayland x11-base/xwayland
     - To rectify "The following USE changes are necessary to proceed" do this:
         - Add the USE flags needed in the /etc/portage/package.use file
 13. nexus2 / # usermod -aG video sddm
@@ -390,13 +393,11 @@ Since manual configuration is very expansive and showing every single option wil
         - unix_sock_rw_perms = "0770"
 17. nexus2 / # rc-service libvirtd start
 18. nexus2 / # rc-update add libvirtd default
-22. nexus2 / # vim /etc/conf.d/display-manager
+19. nexus2 / # vim /etc/conf.d/display-manager
     - CHECKVT=7
     - DISPLAYMANAGER="sddm"
-23. nexus2 / # rc-update add display-manager default
-24. nexus2 / # rc-service display-manager start
+20. nexus2 / # rc-update add display-manager default
+21. nexus2 / # emerge -ac 
+22. nexus2 / # reboot
 
 # Part VIII: Post Installation
-
-Reboot
-1. dishoungh@nexus2 ~ # sudo emerge -ac
