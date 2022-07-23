@@ -375,8 +375,8 @@ Since manual configuration is very expansive and showing every single option wil
     - net-im/discord-bin
     
     - \# overlays
-    - */*::pf4public
-    - */*::steam-overlay
+    - \*/\*::pf4public
+    - \*/\*::steam-overlay
 10. nexus2 / # eselect repository enable pf4public
 11. nexus2 / # eselect repository enable steam-overlay
 12. nexus2 / # emerge --sync
