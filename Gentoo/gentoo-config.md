@@ -1,3 +1,5 @@
+Keep in mind, this "install guide" is primarily made for me. If another person is reading this install guide intending on following it, you will have to do make some adjustments.
+
 # Hardware (UEFI)
 
 - CPU: Ryzen 7 2700X (8 Cores / 16 Threads)
