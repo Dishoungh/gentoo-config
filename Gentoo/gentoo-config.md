@@ -1,4 +1,4 @@
-Keep in mind, this "install guide" is primarily made for me. If another person is reading this install guide intending on following it, you will have to do make some adjustments. Yes, I'm aware of distribution kernels, but I'm doing this as a project. 
+Keep in mind, this "install guide" is primarily made for me. If another person is reading this install guide intending on following it, you will have to do make some adjustments. Yes, I'm aware of distribution kernels, but I'm doing this as a project. To me, that's boring and I want to use a custom kernel and learn how to do it. So, no, I'm not using a pre-compiled distribution kernel. 
 
 # Hardware (UEFI)
 
