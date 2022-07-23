@@ -19,11 +19,12 @@
 9. livecd ~ # mkswap (SWAP)
 10. livecd ~ # swapon (SWAP)
 11. livecd ~ # mount (ROOT) /mnt/gentoo
-12. livecd ~ # cd /mnt/gentoo/
-13. livecd /mnt/gentoo # links https://www.gentoo.org/downloads/mirrors
-14. livecd /mnt/gentoo # tar xpvf ./stage3-\*.tar.xz --xattrs-include="\*.\*" --numeric-owner
-15. livecd /mnt/gentoo # rm -f ./stage3-amd64-*
-16. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
+12. livecd ~ # mount (BOOT) /mnt/gentoo/boot
+13. livecd ~ # cd /mnt/gentoo/
+14. livecd /mnt/gentoo # links https://www.gentoo.org/downloads/mirrors
+15. livecd /mnt/gentoo # tar xpvf ./stage3-\*.tar.xz --xattrs-include="\*.\*" --numeric-owner
+16. livecd /mnt/gentoo # rm -f ./stage3-amd64-*
+17. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
     - CHOST="x86_64-pc-linux-gnu"
     - COMMON_FLAGS="-O2 -march=znver1 -pipe"
     - MAKEOPTS="-j10 -l10"
@@ -36,10 +37,10 @@
     - QEMU_SOFTMMU_TARGETS="arm x86_64 sparc"
     - QEMU_USER_TARGETS="x86_64"
     - USE="-bluetooth -systemd -gnome networkmanager sddm pipewire X kde pipewire-alsa xinerama -gpm elogind dbus osmesa vulkan -verify-sig"
-17. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
-18. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
-19. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
-20. livecd /mnt/gentoo # cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
+18. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
+19. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
+20. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
+21. livecd /mnt/gentoo # cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
 
 # Part II: Chroot
 1. livecd /mnt/gentoo # mount --types proc /proc /mnt/gentoo/proc
@@ -52,8 +53,7 @@
 8. livecd /mnt/gentoo # chroot /mnt/gentoo /bin/bash
 9. livecd / # source /etc/profile
 10. livecd / # export PS1="(chroot) ${PS1}"
-11. (chroot) livecd / # mount (BOOT) /boot
-12. (chroot) livecd / # lsblk
+11. (chroot) livecd / # lsblk
     - Check to make sure the boot and root partitions are properly mounted
 
 # Part III: Configuring Portage and Installing Core Packages
@@ -65,8 +65,8 @@
 5. (chroot) livecd / # emerge -avq app-portage/cpuid2cpuflags
 6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
 7. (chroot) livecd / # emerge -1 sys-libs/glibc
-8. (chroot)) livecd / # emerge -uqDN @world
-9. (chroot) livecd / # emerge -avqn sys-kernel/gentoo-sources sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-fs/btrfs-progs sys-boot/grub:2 sys-boot/efibootmgr sys-boot/os-prober net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git sys-process/cronie app-eselect/eselect-repository
+8. (chroot)) livecd / # emerge -auvDN @world
+9. (chroot) livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-fs/btrfs-progs sys-boot/grub:2 sys-boot/efibootmgr sys-boot/os-prober net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git sys-process/cronie app-eselect/eselect-repository
 10. (chroot) livecd / # emerge -ac
 11. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 12. (chroot) livecd / # emerge --config sys-libs/timezone-data
@@ -82,7 +82,7 @@
 # Part IV: Kernel Configuration & Build
 Since manual configuration is very expansive and showing every single option will be way too tedious, even more than this already is. I'll just show what I think would be the most important settings, especially the ones I changed. You can see my entire [kernel config file here](https://github.com/Dishoungh/gentoo-config/blob/master/Gentoo/kernel-config.txt).
 
-"-X-" means that the option was automatically selected as built-in and I can't deselect the option (I think).
+"-X-" means that the option was automatically selected as built-in and I can't deselect the option.
 
 "( )" means that the option is excluded from the kernel.
 
@@ -180,7 +180,6 @@ Since manual configuration is very expansive and showing every single option wil
     - Device Drivers --->
         - PCI support --->
             - -X- VGA Arbitration
-            - (16) Maximum number of GPUs
         - Generic Driver Options --->
             - Firmware loader --->
                 - (amd-ucode/microcode_amd_fam17h.bin) Build named firmware blobs into the kernel binary
@@ -341,7 +340,7 @@ Since manual configuration is very expansive and showing every single option wil
 
 # Part VII: User Administration and Desktop Installation
 1. nexus2 ~ # cd /
-2. nexus2 / # useradd -m -G users,wheel,audio  dishoungh
+2. nexus2 / # useradd -m -G users,wheel,audio -s /bin/bash dishoungh
 3. nexus2 / # passwd dishoungh
 4. nexus2 / # emerge -avq app-admin/sudo
 5. nexus2 / # vim /etc/sudoers
@@ -353,9 +352,8 @@ Since manual configuration is very expansive and showing every single option wil
     - Add alias command='sudo command' lines in /home/(USER)/.bashrc
 6. nexus2 / # eselect profile set 8
     - This selects default/linux/amd64/17.1/desktop/plasma (stable)
-7. nexus2 / # emerge -uDNpv @world
-8. nexus2 / # emerge -auvDN @world
-9. nexus2 / # vim /etc/portage/package.accept_keywords
+7. nexus2 / # emerge -auvDN @world
+8. nexus2 / # vim /etc/portage/package.accept_keywords
     - \# app-admin
     - app-admin/bitwarden-desktop-bin
     
@@ -375,29 +373,29 @@ Since manual configuration is very expansive and showing every single option wil
     - \# overlays
     - \*/\*::pf4public
     - \*/\*::steam-overlay
-10. nexus2 / # eselect repository enable pf4public
-11. nexus2 / # eselect repository enable steam-overlay
-12. nexus2 / # emerge --sync
-13. nexus2 / # emerge -avq x11-base/xorg-x11 app-shells/fish media-fonts/fonts-meta www-client/ungoogled-chromium-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-video/pipewire app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch x11-apps/mesa-progs
+9. nexus2 / # eselect repository enable pf4public
+10. nexus2 / # eselect repository enable steam-overlay
+11. nexus2 / # emerge --sync
+12. nexus2 / # emerge -avq x11-base/xorg-x11 app-shells/fish media-fonts/fonts-meta www-client/ungoogled-chromium-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-video/pipewire app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch x11-apps/mesa-progs
     - To rectify "The following USE changes are necessary to proceed" do this:
         - Add the USE flags needed in the /etc/portage/package.use file
 13. nexus2 / # usermod -aG video sddm
 14. nexus2 / # usermod -aG libvirt dishoungh
-15. nexus2 / # usermod -s /bin/fish dishoungh
-16. nexus2 / # vim /etc/libvirt/libvirtd.conf
+15. nexus2 / # vim /etc/libvirt/libvirtd.conf
     - Uncomment these lines
         - auth_unix_ro = "none"
         - auth_unix_rw = "none"
         - unix_sock_group = "libvirt"
         - unix_sock_ro_perms = "0777"
         - unix_sock_rw_perms = "0770"
-17. nexus2 / # rc-service libvirtd start
-18. nexus2 / # rc-update add libvirtd default
-19. nexus2 / # vim /etc/conf.d/display-manager
+16. nexus2 / # rc-service libvirtd start
+17. nexus2 / # rc-update add libvirtd default
+18. nexus2 / # vim /etc/conf.d/display-manager
     - CHECKVT=7
     - DISPLAYMANAGER="sddm"
-20. nexus2 / # rc-update add display-manager default
-21. nexus2 / # emerge -ac 
-22. nexus2 / # reboot
+19. nexus2 / # rc-update add display-manager default
+20. nexus2 / # emerge -ac 
+21. nexus2 / # reboot
 
 # Part VIII: Post Installation
+I haven't gotten to this part yet lol
