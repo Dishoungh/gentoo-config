@@ -1,4 +1,3 @@
-The whole point of this repo is to try out Gentoo Linux and see if I like it better than Arch.
+The whole point of this repo is to learn how to build a custom kernel on Gentoo while having an Arch main. Gentoo is for educational purposes for right now, but if I like it enough, I might switch Gentoo as my main.
 
-Plus, at some point, I'm going to get me a much bigger M.2 SSD at some point that I will put either Gentoo or Arch on as my main distro.
-The other will be put on a virtual machine. So, I will do an install guide for both myself and potentially whoever else is reading this. Feel free to use this as a guide for building your system too.
+NO, I am not using distribution kernels. I'm doing it custom. Otherwise, I would go back to maining Arch since I find using Arch with the AUR a superior experience than using Gentoo. The whole point of using trying Gentoo for me is so I can try setting a custom kernel on it.
