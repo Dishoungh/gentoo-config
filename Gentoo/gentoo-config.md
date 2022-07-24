@@ -36,7 +36,7 @@
     - ABI_X86="64 32"
     - QEMU_SOFTMMU_TARGETS="arm x86_64 sparc"
     - QEMU_USER_TARGETS="x86_64"
-    - USE="-bluetooth -systemd -gnome networkmanager sddm pipewire X kde pipewire-alsa xinerama -gpm elogind dbus osmesa vulkan -verify-sig"
+    - USE="-bluetooth -systemd -gnome networkmanager sddm pipewire X kde pipewire-alsa xinerama -gpm dist-kernel elogind dbus osmesa vulkan -verify-sig"
 18. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 19. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 20. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
@@ -62,11 +62,12 @@
 3. (chroot) livecd / # touch /etc/portage/package.use /etc/portage/package.accept_keywords /etc/portage/package.mask
 4. (chroot) livecd / # nano /etc/portage/package.use
     - sys-auth/pambase -passwdqc
+    - sys-kernel/gentoo-kernel savedconfig
 5. (chroot) livecd / # emerge -avq app-portage/cpuid2cpuflags
 6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
 7. (chroot) livecd / # emerge -1 sys-libs/glibc
 8. (chroot)) livecd / # emerge -auvDN @world
-9. (chroot) livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-fs/btrfs-progs sys-boot/grub:2 sys-boot/efibootmgr sys-boot/os-prober net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git sys-process/cronie app-eselect/eselect-repository
+9. (chroot) livecd / # emerge -avq sys-kernel/gentoo-kernel sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-fs/btrfs-progs sys-boot/grub:2 sys-boot/efibootmgr sys-boot/os-prober net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git sys-process/cronie app-eselect/eselect-repository x11-drivers/nvidia-drivers
 10. (chroot) livecd / # emerge -ac
 11. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 12. (chroot) livecd / # emerge --config sys-libs/timezone-data
@@ -78,223 +79,9 @@
 15. (chroot) livecd / # eselect locale set 6
     - This selects en_US.utf8
 16. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
+17. (chroot) livecd / # eselect kernel set ()
 
-# Part IV: Kernel Configuration & Build
-Since manual configuration is very expansive and showing every single option will be way too tedious, even more than this already is. I'll just show what I think would be the most important settings, especially the ones I changed. You can see my entire [kernel config file here](https://github.com/Dishoungh/gentoo-config/blob/master/Gentoo/kernel-config.txt).
-
-"-X-" means that the option was automatically selected as built-in and I can't deselect the option.
-
-"( )" means that the option is excluded from the kernel.
-
-1. (chroot) livecd / # eselect kernel set 1
-2. (chroot) livecd / # cd /usr/src/linux && make menuconfig
-    - General setup --->
-        - Kernel compression mode (LZ4) --->
-        - (nexus2) Default hostname
-        - Timers subsystem --->
-            - Timer tick handling (Periodic timer ticks (constant rate, no dynticks)) --->
-            - ( ) Old Idle dynticks config
-            - [*] High Resolution Timer Support
-        - [*] Initial RAM filesystem and RAM disk (initramfs/initrd) support
-        - ( ) Support initial ramdisk/ramfs compressed using gzip
-        - ( ) Support initial ramdisk/ramfs compressed using bzip2
-        - ( ) Support initial ramdisk/ramfs compressed using LZMA
-        - ( ) Support initial ramdisk/ramfs compressed using XZ
-        - ( ) Support initial ramdisk/ramfs compressed using LZO
-        - [*] Support initial ramdisk/ramfs compressed using LZ4
-        - ( ) Support initial ramdisk/ramfs compressed using ZSTD
-    - [*] 64-bit kernel
-    - Processor type and features --->
-        - [*] Symmetric multi-processing support
-        - [*] Support x2apic
-        - [*] AMD ACPI2Platform devices support
-        - [*] Linux guest support --->
-            - [*] Enable paravirtualization code
-            - [*] KVM Guest support (including kvmclock) (NEW)
-        - Processor family (Opteron/Athlon64/Hammer/K8) --->
-        - (16) Maximum number of CPUs
-        - [*] Multi-core scheduler support
-        - [*] Machine Check / overheating reporting
-        - ( ) Intel MCE features
-        - [*] AMD MCE features
-        - Performance monitoring --->
-            - [*] Intel uncore performance events
-            - [*] Intel/AMD rapl performance events
-            - [*] Intel cstate performance events
-            - [*] AMD Processor Power Reporting Mechanism
-            - [*] AMD Uncore performance events
-        - ( ) Intel microcode loading support
-        - [*] AMD microcode loading support
-        - -X- MTRR (Memory Type Range Register) support
-        - ( ) Memory Protection Keys
-        - [*] EFI runtime service support
-        - [*] EFI stub support
-        - [*] EFI mixed-mode support
-    - Power management and ACPI options --->
-        - CPU Frequency scaling --->
-            - Default CPUFreq governor (performance) ---> (For some reason, it won't let me change it to "ondemand", which is what the guide recommends for Ryzen)
-            - [*] 'ondemand' cpufreq policy governor
-            - [*] ACPI Processor P-States driver
-            - [*] Legacy cpb sysfs knob support for AMD CPUs
-            - ( ) AMD Opteron/Athlon64 PowerNow!
-            - [*] AMD frequency sensitivity feedback powersave bias
-    - Bus options (PCI etc.) --->
-    - Binary Emulations ---> 
-        - [*] IA32 Emulation
-        - [*] x32 ABI for 64-bit mode
-    - [*] Virtualization --->
-        - [*] Kernel-based Virtual Machine (KVM) support
-        - [*] KVM for AMD processors support
-    - General architecture-dependent options --->
-    - [*] Enable loadable module support --->
-    - -X- Enable the block layer --->
-        - Partition Types --->
-            - [*] Advanced partition selection
-            - ( ) PC BIOS (MSDOS partition tables) support (NEW)
-            - [*] EFI GUID Partition support (NEW)
-    - IO Schedulers --->
-        - [*] BFQ I/O scheduler
-    - Executable file formats --->
-    - Memory Management options --->
-    - [*] Networking support --->
-        - Networking options --->
-            - [*] 802.1d Ethernet Bridging
-            - [*] Network packet filtering framework (Netfilter) --->
-                - [*] Advanced netfilter configuration
-                - Core Netfilter Configuration --->
-                    - [*] "conntrack" connection tracking match support
-                    - [*] CHECKSUM target support
-                - IP: Netfilter Configuration --->
-                    - [*] iptables NAT support 
-                - [*] Ethernet Bridge tables (ebtables) support --->
-                    - [*] ebt: nat table support
-                    - [*] ebt: mark filter support
-            - [*] QoS and/or fair queueing --->
-                - [*] Hierarchical Token Bucket (HTB)
-                - [*] Stochastic Fairness Queueing (SFQ)
-                - [*] Ingress/classifier-action Qdisc
-                - [*] Netfilter mark (FW)
-                - [*] Universal 32bit comparisons w/ hashing (U32)
-                - [*] Actions
-                - [*] Traffic Policing
-    - Device Drivers --->
-        - PCI support --->
-            - -X- VGA Arbitration
-        - Generic Driver Options --->
-            - Firmware loader --->
-                - (amd-ucode/microcode_amd_fam17h.bin) Build named firmware blobs into the kernel binary
-                - (/lib/firmware) Firmware blobs root directory (NEW)
-        - Firmware Drivers
-            - -X- iSCSI Boot Firmware Table Attributes
-            - [*] iSCSI Boot Firmware Table Attributes module
-            - [*] Mark VGA/VBE/EFI FB as generic system framebuffer
-        - NVME Support --->
-            - [*] NVM Express block device
-        - SCSI device support
-            - [*] SCSI disk support
-            - ( ) SCSI tape support
-            - ( ) SCSI CDROM support
-            - [*] SCSI generic support
-            - [*] SCSI low-level drivers --->
-            - [*] SCSI Device Handlers --->
-        - [*] Serial ATA and Parallel ATA drivers (libata) --->
-            - [*] AHCI SATA support
-            - [*] Platform AHCI SATA support
-            - [*] Generic ATA Support
-        - ( ) Multiple devices driver support (RAID and LVM)
-        - ( ) Macintosh device drivers
-        - Network device support
-            - [*] Network core driver support
-            - [*] Universal TUN/TAP device driver support
-            - [*] Ethernet driver support --->
-                - ( ) Disable everything except intel (because the ethernet controller is Intel
-                - [*] Intel (82586/82593/82596) devices
-                - [*] Intel devices
-                - [*] Intel(R) PRO/100+ support
-                - [*] Intel(R) PRO/1000 Gigabit Ethernet support
-                - [*] Intel(R) PRO/1000 PCI-Express Gigabit Ethernet support
-                - [*] Support HW cross-timestamp on PCH devices
-                - [*] Intel(R) 82575/82576 PCI-Express Gigabit Ethernet support
-                - [*] Intel(R) PCI-Express Gigabit adapters HWMON support
-                - [*] Intel(R) 82576 Virtual Function Ethernet support
-                - [*] Intel(R) PRO/10GbE support
-                - [*] Intel(R) 10GbE PCI Express adapters support
-                - [*] Intel(R) 10GbE PCI Express adapters HWMON support
-                - [*] Intel(R) 10GbE PCI Express Virtual Function Ethernet support
-                - [*] Intel(R) Ethernet Controller XL710 Family support
-                - [*] Intel(R) Ethernet Adaptive Virtual Function support
-                - [*] Intel(R) Ethernet Connection E800 Series Support
-                - [*] Intel(R) Support HW cross-timestamp on platforms with PTM support
-                - [*] Intel(R) FM10000 Ethernet Switch Host Interface Support
-                - [*] Intel(R) Ethernet Controller I225-LM/I225-V support
-            - ( ) Wireless LAN
-        - Input device support --->
-            - [*] Joysticks/Gamepads --->
-                - [*] X-Box gamepad support
-                - [*] X-Box gamepad rumble support
-            - ( ) Tablets
-            - ( ) Touchscreens
-        - Character devices
-            - [*] IPMI top-level message handler
-        - Hardware Monitoring support
-            - [*] AMD Family 10h+ temperature sensor
-            - [*] AMD Family 15h processor power
-            - [*] NZXT Kraken X42/X51/X62/X72 liquid coolers
-        - Graphics support --->
-            - [*] /dev/agpgart (AGP Support) --->
-            - ( ) Intel xxx/9xx/G3x/G4x/HD Graphics
-            - [*] Simple framebuffer driver
-            - Frame buffer Devices --->
-                - [*] Support for frame buffer devices --->
-                    - [*] EFI-based Framebuffer support
-        - [*] Sound card support --->
-            - [*] Advanced Linux Sound Architecture --->
-                - [*] USB sound devices --->
-                    - [*] USB Audio/MIDI driver
-                    - [*] Virtio sound driver
-        - HID support
-            - -X- HID bus support
-            - [*] Battery level reporting for HID devices
-        - [*] Virtualization drivers --->
-        - ( ) Virtio drivers
-        - [*] VHOST drivers --->
-            - [*] Host kernel accelerator for virtio net
-        - ( ) X86 Platform Specific Device Drivers
-        - ( ) Microsoft Surface Platform-Specific Device Drivers
-        - [*] IOMMU Hardware Support --->
-            - [*] AMD IOMMU support
-            - [*] AMD IOMMU Version 2 driver
-            - [*] Virtio IOMMU driver
-    - File systems --->
-        - ( ) Second extended fs support
-        - ( ) The Extended 3 (ext3) filesystem
-        - [*] The Extended 4 (ext4) filesystem
-        - ( ) Reiserfs support
-        - ( ) JFS filesystem support
-        - ( ) XFS filesystem support
-        - [*] Btrfs filesystem support
-        - DOS/FAT/EXFAT/NT Filesystems --->
-            - [*] MSDOS fs support
-            - [*] VFAT (Windows-95) fs support
-        - Pseudo filesystems
-            - -X- /proc file system support
-            - -X- Tmpfs virtual memory file system support
-            - [*] EFI Variable filesystem
-        - Network File Systems
-            - [*] Network File Systems --->
-                - [*] SMB3 and CIFS support (advanced network filesystem)
-    - Security options --->
-    - -X- Cryptographic API --->
-    - Library routines --->
-    - Kernel hacking --->
-    - Gentoo Linux --->
-3. (chroot) livecd /usr/src/linux # make modules_prepare && make && make modules_install && make install
-4. (chroot) livecd /usr/src/linux # emerge -avq x11-drivers/nvidia-drivers
-5. (chroot) livecd /usr/src/linux # vim /etc/X11/xorg.conf
-    - Looks like this: 
-6. (chroot) livecd /usr/src/linux # dracut --kver=(VERSION)-gentoo --force && cd /
-
-# Part V: Fstab + Networking
+# Part IV: Fstab + Networking
 1. (chroot) livecd / # vim /etc/fstab
     - \# Boot Partition
     - UUID={BOOT}    /boot   vfat    defaults    1 2
@@ -327,8 +114,9 @@ Since manual configuration is very expansive and showing every single option wil
 18. (chroot) livecd /etc/init.d # rc-update add dbus default
 19. (chroot) livecd /etc/init.d # rc-update add cronie default
 
-# Part VI: Bootloader and Reboot
+# Part V: Bootloader and Reboot
 1. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
+2. (chroot) livecd / # emerge --config sys-kernel/gentoo-kernel
 2. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot --removable
 3. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
     - Change all the instances of the root UUID in this file to the PARTUUID version and change root=UUID= to root=PARTUUID=. I don't know why, but it just works for me. I would like to address this to where I don't have to do that, but somehow, doing this fixes Kernel panics for me.
