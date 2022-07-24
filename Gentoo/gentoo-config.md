@@ -19,14 +19,17 @@
 9. livecd ~ # mkswap (SWAP)
 10. livecd ~ # swapon (SWAP)
 11. livecd ~ # mount (ROOT) /mnt/gentoo
-12. livecd ~ # mount (BOOT) /mnt/gentoo/boot
-13. livecd ~ # cd /mnt/gentoo/
-14. livecd /mnt/gentoo # links https://www.gentoo.org/downloads/mirrors
-15. livecd /mnt/gentoo # tar xpvf ./stage3-\*.tar.xz --xattrs-include="\*.\*" --numeric-owner
-16. livecd /mnt/gentoo # rm -f ./stage3-amd64-*
-17. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
+12. livecd ~ # cd /mnt/gentoo/
+13. livecd /mnt/gentoo # links https://www.gentoo.org/downloads/mirrors
+14. livecd /mnt/gentoo # tar xpvf ./stage3-\*.tar.xz --xattrs-include="\*.\*" --numeric-owner
+15. livecd /mnt/gentoo # rm -f ./stage3-amd64-*
+16. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
     - CHOST="x86_64-pc-linux-gnu"
     - COMMON_FLAGS="-O2 -march=znver1 -pipe"
+    - CFLAGS="${COMMON_FLAGS}"
+    - CXXFLAGS="${COMMON_FLAGS}"
+    - FCFLAGS="${COMMON_FLAGS}"
+    - FFLAGS="${COMMON_FLAGS}"
     - MAKEOPTS="-j10 -l10"
     - PORTAGE_NICENESS=1
     - EMERGE_DEFAULT_OPTS="--jobs=10 --load-average=10 --with-bdeps=y --complete-graph=y"
@@ -37,10 +40,10 @@
     - QEMU_SOFTMMU_TARGETS="arm x86_64 sparc"
     - QEMU_USER_TARGETS="x86_64"
     - USE="-bluetooth -systemd -gnome networkmanager sddm pipewire X kde pipewire-alsa xinerama -gpm dist-kernel elogind dbus osmesa vulkan -verify-sig"
-18. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
-19. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
-20. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
-21. livecd /mnt/gentoo # cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
+17. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
+18. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
+19. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
+20. livecd /mnt/gentoo # cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
 
 # Part II: Chroot
 1. livecd /mnt/gentoo # mount --types proc /proc /mnt/gentoo/proc
@@ -53,7 +56,8 @@
 8. livecd /mnt/gentoo # chroot /mnt/gentoo /bin/bash
 9. livecd / # source /etc/profile
 10. livecd / # export PS1="(chroot) ${PS1}"
-11. (chroot) livecd / # lsblk
+11. livecd / # mount (BOOT) /boot
+12. (chroot) livecd / # lsblk
     - Check to make sure the boot and root partitions are properly mounted
 
 # Part III: Configuring Portage and Installing Core Packages
@@ -63,6 +67,7 @@
 4. (chroot) livecd / # nano /etc/portage/package.use
     - sys-auth/pambase -passwdqc
     - sys-kernel/gentoo-kernel savedconfig
+    - sys-boot/grub mount
 5. (chroot) livecd / # emerge -avq app-portage/cpuid2cpuflags
 6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
 7. (chroot) livecd / # emerge -1 sys-libs/glibc
@@ -79,7 +84,8 @@
 15. (chroot) livecd / # eselect locale set 6
     - This selects en_US.utf8
 16. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
-17. (chroot) livecd / # eselect kernel set ()
+17. (chroot) livecd / # eselect kernel list
+    - Make sure linux-*-gentoo-dist is selected
 
 # Part IV: Fstab + Networking
 1. (chroot) livecd / # vim /etc/fstab
@@ -128,7 +134,7 @@
 
 # Part VII: User Administration and Desktop Installation
 1. nexus2 ~ # cd /
-2. nexus2 / # useradd -m -G users,wheel,audio -s /bin/bash dishoungh
+2. nexus2 / # useradd -m -G users,wheel,audio,video -s /bin/bash dishoungh
 3. nexus2 / # passwd dishoungh
 4. nexus2 / # emerge -avq app-admin/sudo
 5. nexus2 / # vim /etc/sudoers
@@ -167,23 +173,20 @@
 12. nexus2 / # emerge -avq x11-base/xorg-x11 app-shells/fish media-fonts/fonts-meta www-client/ungoogled-chromium-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-video/pipewire app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch x11-apps/mesa-progs
     - To rectify "The following USE changes are necessary to proceed" do this:
         - Add the USE flags needed in the /etc/portage/package.use file
-13. nexus2 / # usermod -aG video sddm
-14. nexus2 / # usermod -aG libvirt dishoungh
-15. nexus2 / # vim /etc/libvirt/libvirtd.conf
+13. nexus2 / # emerge -ac
+14. nexus2 / # usermod -aG video sddm
+15. nexus2 / # usermod -aG libvirt dishoungh
+16. nexus2 / # vim /etc/libvirt/libvirtd.conf
     - Uncomment these lines
         - auth_unix_ro = "none"
         - auth_unix_rw = "none"
         - unix_sock_group = "libvirt"
         - unix_sock_ro_perms = "0777"
         - unix_sock_rw_perms = "0770"
-16. nexus2 / # rc-service libvirtd start
-17. nexus2 / # rc-update add libvirtd default
-18. nexus2 / # vim /etc/conf.d/display-manager
+17. nexus2 / # rc-service libvirtd start
+18. nexus2 / # rc-update add libvirtd default
+19. nexus2 / # vim /etc/conf.d/display-manager
     - CHECKVT=7
     - DISPLAYMANAGER="sddm"
-19. nexus2 / # rc-update add display-manager default
-20. nexus2 / # emerge -ac 
-21. nexus2 / # reboot
-
-# Part VIII: Post Installation
-I haven't gotten to this part yet lol
+20. nexus2 / # rc-update add display-manager default
+21. nexus2 / # rc-service display-manager start
