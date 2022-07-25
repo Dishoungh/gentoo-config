@@ -189,4 +189,6 @@
     - CHECKVT=7
     - DISPLAYMANAGER="sddm"
 20. nexus2 / # rc-update add display-manager default
-21. nexus2 / # rc-service display-manager start
+21. nexus2 / # emerge -avq sys-kernel/gentoo-kernel
+22. nexus2 / # emerge --config sys-kernel/gentoo-kernel
+23. nexus2 / # reboot
