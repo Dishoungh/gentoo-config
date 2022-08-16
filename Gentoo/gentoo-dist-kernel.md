@@ -31,7 +31,6 @@
     - MAKEOPTS="-j16 -l14"
     - PORTAGE_NICENESS=19
     - EMERGE_DEFAULT_OPTS="--jobs=16 --load-average=14 --with-bdeps=y --complete-graph=y"
-    - ACCEPT_KEYWORDS="amd64"
     - ACCEPT_LICENSE="*"
     - VIDEO_CARDS="nvidia"
     - ABI_X86="64 32"
