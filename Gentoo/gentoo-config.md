@@ -39,7 +39,7 @@
     - PYTHON_TARGETS="python3_11 python3_10 python3_9"
     - FEATURES="ccache"
     - CCACHE_DIR="/var/cache/ccache"
-    - USE="-bluetooth -systemd -gnome networkmanager sddm X kde pulseaudio xinerama -gpm dist-kernel elogind dbus osmesa vulkan -verify-sig"
+    - USE="-bluetooth -systemd -gnome networkmanager sddm X kde pipewire pipewire-alsa xinerama -gpm dist-kernel elogind dbus osmesa vulkan -verify-sig"
 17. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 18. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 19. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
@@ -172,7 +172,7 @@
 9. nexus2 / # eselect repository enable pf4public
 10. nexus2 / # eselect repository enable steam-overlay
 11. nexus2 / # emerge --sync
-12. nexus2 / # emerge -avq x11-base/xorg-x11 app-shells/fish media-fonts/fonts-meta www-client/ungoogled-chromium-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-sound/pavucontrol media-sound/pulsemixer media-plugins/alsa-plugins app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch x11-apps/mesa-progs kde-plasma/plasma-pa kde-plasma/plasma-nm
+12. nexus2 / # emerge -avq x11-base/xorg-x11 app-shells/fish media-fonts/fonts-meta www-client/ungoogled-chromium-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-sound/pavucontrol media-sound/pulseaudio  media-video/pipewire media-sound/pulsemixer media-plugins/alsa-plugins app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch x11-apps/mesa-progs kde-plasma/plasma-pa kde-plasma/plasma-nm
     - To rectify "The following USE changes are necessary to proceed" do this:
         - Add the USE flags needed in the /etc/portage/package.use file
 13. nexus2 / # emerge -ac
