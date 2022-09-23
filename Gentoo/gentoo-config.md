@@ -39,7 +39,7 @@
     - PYTHON_TARGETS="python3_11 python3_10 python3_9"
     - FEATURES="ccache"
     - CCACHE_DIR="/var/cache/ccache"
-    - USE="-bluetooth -systemd -gnome networkmanager sddm pipewire X kde pipewire-alsa xinerama -gpm dist-kernel elogind dbus osmesa vulkan -verify-sig"
+    - USE="-bluetooth -systemd -gnome networkmanager sddm X kde pulseaudio xinerama -gpm dist-kernel elogind dbus osmesa vulkan -verify-sig"
 17. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 18. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 19. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
@@ -72,7 +72,7 @@
 6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
 7. (chroot) livecd / # emerge -1 sys-libs/glibc
 8. (chroot)) livecd / # emerge -auvDN @world
-9. (chroot) livecd / # emerge -avq sys-kernel/gentoo-kernel sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-fs/btrfs-progs sys-boot/grub:2 sys-boot/efibootmgr sys-boot/os-prober net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git sys-process/cronie app-eselect/eselect-repository x11-drivers/nvidia-drivers
+9. (chroot) livecd / # emerge -avq sys-kernel/gentoo-kernel sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-fs/btrfs-progs sys-boot/grub:2 sys-boot/efibootmgr sys-boot/os-prober net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git sys-process/cronie app-eselect/eselect-repository x11-drivers/nvidia-drivers sys-auth/pambase
 10. (chroot) livecd / # emerge -ac
 11. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 12. (chroot) livecd / # emerge --config sys-libs/timezone-data
@@ -132,7 +132,7 @@
 7. livecd ~ # umount -R /mnt/gentoo
 8. livecd ~ # reboot
 
-# Part VII: User Administration and Desktop Installation
+# Part VI: User Administration and Desktop Installation
 1. nexus2 ~ # cd /
 2. nexus2 / # useradd -m -G users,wheel,audio,video -s /bin/bash dishoungh
 3. nexus2 / # passwd dishoungh
@@ -156,6 +156,8 @@
     
     - \# games-util
     - games-util/game-device-udev-rules
+    - games-util/lutris
+    - games-util/xpadneo
 
     - \# media-video
     - media-video/makemkv
@@ -170,7 +172,7 @@
 9. nexus2 / # eselect repository enable pf4public
 10. nexus2 / # eselect repository enable steam-overlay
 11. nexus2 / # emerge --sync
-12. nexus2 / # emerge -avq x11-base/xorg-x11 app-shells/fish media-fonts/fonts-meta www-client/ungoogled-chromium-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-video/pipewire app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch x11-apps/mesa-progs
+12. nexus2 / # emerge -avq x11-base/xorg-x11 app-shells/fish media-fonts/fonts-meta www-client/ungoogled-chromium-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-sound/pavucontrol media-sound/pulsemixer media-plugins/alsa-plugins app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch x11-apps/mesa-progs kde-plasma/plasma-pa kde-plasma/plasma-nm
     - To rectify "The following USE changes are necessary to proceed" do this:
         - Add the USE flags needed in the /etc/portage/package.use file
 13. nexus2 / # emerge -ac
@@ -192,3 +194,4 @@
 21. nexus2 / # emerge -avq sys-kernel/gentoo-kernel
 22. nexus2 / # emerge --config sys-kernel/gentoo-kernel
 23. nexus2 / # reboot
+24. dishoungh@nexus2 ~ # chsh -s $(which fish)
