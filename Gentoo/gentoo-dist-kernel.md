@@ -28,14 +28,19 @@
 16. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
     - CHOST="x86_64-pc-linux-gnu"
     - COMMON_FLAGS="-O2 -march=znver1 -pipe"
-    - MAKEOPTS="-j16 -l14"
+    - MAKEOPTS="-j14 -l14"
     - PORTAGE_NICENESS=19
     - EMERGE_DEFAULT_OPTS="--jobs=16 --load-average=14 --with-bdeps=y --complete-graph=y"
+    - ACCEPT_KEYWORDS="amd64"
     - ACCEPT_LICENSE="*"
     - VIDEO_CARDS="nvidia"
     - ABI_X86="64 32"
     - QEMU_SOFTMMU_TARGETS="arm x86_64 sparc"
     - QEMU_USER_TARGETS="x86_64"
+    - INPUT_DEVICES="udev libinput joystick"
+    - PYTHON_TARGETS="python3_11 python3_10 python3_9"
+    - FEATURES="ccache"
+    - CCACHE_DIR="/var/cache/ccache"
     - USE="-systemd -gnome networkmanager sddm pipewire dist-kernel X kde pipewire-alsa xinerama -gpm elogind dbus osmesa vulkan"
 17. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 18. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
@@ -64,7 +69,7 @@
 5. livecd / # emerge -avq app-portage/cpuid2cpuflags
 6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
 7. livecd / # emerge -1 sys-libs/glibc && emerge -uqDN @world
-8. livecd / # emerge -avq sys-kernel/gentoo-kernel-bin  sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager x11-drivers/nvidia-drivers sys-apps/usbutils
+8. livecd / # emerge -avq sys-kernel/gentoo-kernel sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-boot/grub:2 net-misc/chrony net-misc/networkmanager x11-drivers/nvidia-drivers sys-apps/usbutils
 9. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 10. (chroot) livecd / # emerge --config sys-libs/timezone-data
 11. (chroot) livecd / # nano /etc/locale.gen
