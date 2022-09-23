@@ -26,19 +26,19 @@
 16. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
     - CHOST="x86_64-pc-linux-gnu"
     - COMMON_FLAGS="-O2 -march=znver1 -pipe"
-    - CFLAGS="${COMMON_FLAGS}"
-    - CXXFLAGS="${COMMON_FLAGS}"
-    - FCFLAGS="${COMMON_FLAGS}"
-    - FFLAGS="${COMMON_FLAGS}"
-    - MAKEOPTS="-j10 -l10"
-    - PORTAGE_NICENESS=1
-    - EMERGE_DEFAULT_OPTS="--jobs=10 --load-average=10 --with-bdeps=y --complete-graph=y"
-    - ACCEPT_KEYWORDS="~amd64"
+    - MAKEOPTS="-j14 -l14"
+    - PORTAGE_NICENESS=19
+    - EMERGE_DEFAULT_OPTS="--jobs=16 --load-average=14 --with-bdeps=y --complete-graph=y"
+    - ACCEPT_KEYWORDS="amd64"
     - ACCEPT_LICENSE="*"
     - VIDEO_CARDS="nvidia"
     - ABI_X86="64 32"
     - QEMU_SOFTMMU_TARGETS="arm x86_64 sparc"
     - QEMU_USER_TARGETS="x86_64"
+    - INPUT_DEVICES="udev libinput joystick"
+    - PYTHON_TARGETS="python3_11 python3_10 python3_9"
+    - FEATURES="ccache"
+    - CCACHE_DIR="/var/cache/ccache"
     - USE="-bluetooth -systemd -gnome networkmanager sddm pipewire X kde pipewire-alsa xinerama -gpm dist-kernel elogind dbus osmesa vulkan -verify-sig"
 17. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 18. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
