@@ -14,9 +14,9 @@
 4. root@archiso ~ # mkswap /dev/nvme0n1p2
 5. root@archiso ~ # swapon /dev/nvme0n1p2
 6. root@archiso ~ # mkfs.ext4 /dev/nvme0n1p3
-7. root@archiso ~ # mkdir /mnt/boot
-8. root@archiso ~ # mkdir /mnt/etc
-9. root@archiso ~ # mount /dev/nvme0n1p3 /mnt
+7. root@archiso ~ # mount /dev/nvme0n1p3 /mnt
+8. root@archiso ~ # mkdir /mnt/boot
+9. root@archiso ~ # mkdir /mnt/etc
 10. root@archiso ~ # mount /dev/nvme0n1p1 /mnt/boot
   - Make sure your lsblk shows your root partition being mounted on /mnt and your boot partition being mounted on /mnt/boot
 11. root@archiso ~ # genfstab -U -p /mnt >> /mnt/etc/fstab
@@ -26,7 +26,7 @@
 2. root@archiso ~ # arch-chroot /mnt
 3. [root@archiso /] # ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime
 4. [root@archiso /] # hwclock --systohc
-5. [root@archiso /] # pacman -S linux linux-headers linux-lts linux-lts-headers vim base-devel openssh networkmanager git sudo
+5. [root@archiso /] # pacman -S linux linux-headers linux-lts linux-lts-headers vim neovim base-devel openssh networkmanager git sudo
 5. [root@archiso /] # systemctl enable sshd
 6. [root@archiso /] # systemctl enable NetworkManager
 
@@ -62,7 +62,7 @@
     - [multilib]
     - Include = /etc/pacman.d/mirrorlist
 2. [root@archlinux ~] # pacman -Syyy 
-3. [root@archlinux ~] # pacman -S xorg-server mesa nvidia nvidia-settings nvidia-lts nvidia-libgl vulkan-icd-loader fish sddm plasma konsole dolphin vulkan-headers vkd3d firefox discord steam audacity ark bitwarden dolphin-emu filelight gwenview handbrake kate kdenlive libreoffice-still obs-studio pcsx2 okular vlc libvirt qemu-desktop virt-manager dnsmasq vde2 edk2-ovmf bridge-utils openbsd-netcat desmume wine samba wget rsync nasm lib32-libxkbcommon lib32-libvpx steam-native-runtime ebtables iptables-nft libguestfs virt-viewer spectacle neofetch
+3. [root@archlinux ~] # pacman -S xorg-server mesa nvidia nvidia-settings nvidia-utils nvidia-lts nvidia-libgl vulkan-icd-loader fish sddm plasma konsole dolphin vulkan-headers vkd3d firefox discord steam audacity ark bitwarden dolphin-emu filelight gwenview handbrake kate kdenlive libreoffice-still obs-studio pcsx2 okular vlc libvirt qemu-desktop virt-manager dnsmasq vde2 edk2-ovmf bridge-utils openbsd-netcat desmume wine samba wget rsync nasm lib32-libxkbcommon lib32-libvpx iptables libguestfs virt-viewer spectacle neofetch
 4. [root@archlinux ~] # systemctl enable sddm
 5. [root@archlinux ~] # reboot
 
