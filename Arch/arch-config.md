@@ -62,7 +62,7 @@
     - [multilib]
     - Include = /etc/pacman.d/mirrorlist
 2. [root@archlinux ~] # pacman -Syyy 
-3. [root@archlinux ~] # pacman -S xorg-server mesa nvidia nvidia-settings nvidia-utils nvidia-lts nvidia-libgl vulkan-icd-loader fish sddm plasma konsole dolphin vulkan-headers vkd3d firefox discord steam audacity ark bitwarden dolphin-emu filelight gwenview handbrake kate kdenlive libreoffice-still obs-studio pcsx2 okular vlc libvirt qemu-desktop virt-manager dnsmasq vde2 edk2-ovmf bridge-utils openbsd-netcat desmume wine samba wget rsync nasm lib32-libxkbcommon lib32-libvpx iptables libguestfs virt-viewer spectacle neofetch
+3. [root@archlinux ~] # pacman -S xorg-server mesa (for Nvidia cards: nvidia nvidia-settings nvidia-utils nvidia-lts nvidia-libgl) (for AMD cards: lib32-mesa xf86-video-amdgpu vulkan-radeon lib32-vulkan-radeon libva-mesa-driver lib32-libva-mesa-driver mesa-vdpau lib32-mesa-vdpau lib32-vulkan-icd-loader) vulkan-icd-loader fish sddm plasma konsole dolphin vulkan-headers vkd3d firefox discord steam audacity ark bitwarden dolphin-emu filelight gwenview handbrake kate kdenlive libreoffice-still obs-studio pcsx2 okular vlc libvirt qemu-desktop virt-manager dnsmasq vde2 edk2-ovmf bridge-utils openbsd-netcat desmume wine samba wget rsync nasm lib32-libxkbcommon lib32-libvpx iptables libguestfs virt-viewer spectacle neofetch
 4. [root@archlinux ~] # systemctl enable sddm
 5. [root@archlinux ~] # reboot
 
