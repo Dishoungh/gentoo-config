@@ -39,7 +39,7 @@
     - PYTHON_TARGETS="python3_11 python3_10 python3_9"
     - FEATURES="ccache"
     - CCACHE_DIR="/var/cache/ccache"
-    - USE="-bluetooth -systemd -gnome networkmanager sddm X kde pipewire pipewire-alsa xinerama -gpm dist-kernel elogind dbus osmesa vulkan -verify-sig"
+    - USE="-bluetooth -systemd -gnome networkmanager sddm X kde pipewire pipewire-alsa xinerama -gpm elogind dbus osmesa vulkan -verify-sig"
 17. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 18. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 19. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
@@ -72,7 +72,7 @@
 6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
 7. (chroot) livecd / # emerge -1 sys-libs/glibc
 8. (chroot)) livecd / # emerge -auvDN @world
-9. (chroot) livecd / # emerge -avq sys-kernel/gentoo-kernel sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-fs/btrfs-progs sys-boot/grub:2 sys-boot/efibootmgr sys-boot/os-prober net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git sys-process/cronie app-eselect/eselect-repository x11-drivers/nvidia-drivers sys-auth/pambase
+9. (chroot) livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-fs/btrfs-progs sys-boot/grub:2 sys-boot/efibootmgr sys-boot/os-prober net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git sys-process/cronie app-eselect/eselect-repository (GPU drivers) sys-auth/pambase
 10. (chroot) livecd / # emerge -ac
 11. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 12. (chroot) livecd / # emerge --config sys-libs/timezone-data
@@ -85,16 +85,16 @@
     - This selects en_US.utf8
 16. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
 17. (chroot) livecd / # eselect kernel list
-    - Make sure linux-*-gentoo-dist is selected
+18. (chroot) livecd / # eselect kernel set (KERNEL)
 
 # Part IV: Fstab + Networking
 1. (chroot) livecd / # vim /etc/fstab
     - \# Boot Partition
-    - UUID={BOOT}    /boot   vfat    defaults    1 2
+    - PARTUUID={BOOT}    /boot   vfat    defaults    1 2
     - \# Swap Partition
-    - UUID={SWAP}    none    swap    sw          0 0
+    - PARTUUID={SWAP}    none    swap    sw          0 0
     - \# Root Partition
-    - UUID={ROOT}    /       ext4    noatime     0 1
+    - PARTUUID={ROOT}    /       ext4    noatime     0 1
 2. (chroot) livecd / # vim /etc/conf.d/hostname
     - hostname="nexus2"
 3. (chroot) livecd / # rc-update add dhcpcd default
@@ -124,30 +124,24 @@
 1. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
 2. (chroot) livecd / # emerge --config sys-kernel/gentoo-kernel
 2. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot --removable
-3. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
-    - Change all the instances of the root UUID in this file to the PARTUUID version and change root=UUID= to root=PARTUUID=. I don't know why, but it just works for me. I would like to address this to where I don't have to do that, but somehow, doing this fixes Kernel panics for me.
-4. (chroot) livecd / # exit
-5. livecd /mnt/gentoo # cd
-6. livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}
-7. livecd ~ # umount -R /mnt/gentoo
-8. livecd ~ # reboot
+3. (chroot) livecd / # vim /etc/default/grub
+    - GRUB_DISABLE_LINUX_UUID=true
+    - GRUB_DISABLE_LINUX_PARTUUID=false
+4. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
+5. (chroot) livecd / # exit
+6. livecd /mnt/gentoo # cd
+7. livecd ~ # umount -l /mnt/gentoo/dev{/shm,/pts,}
+8. livecd ~ # umount -R /mnt/gentoo
+9. livecd ~ # reboot
 
 # Part VI: User Administration and Desktop Installation
 1. nexus2 ~ # cd /
 2. nexus2 / # useradd -m -G users,wheel,audio,video -s /bin/bash dishoungh
 3. nexus2 / # passwd dishoungh
-4. nexus2 / # emerge -avq app-admin/sudo
-5. nexus2 / # vim /etc/sudoers
-    - %wheel ALL=(ALL:ALL) ALL
-    - dishoungh  ALL=(root) NOPASSWD: /sbin/reboot
-    - dishoungh  ALL=(root) NOPASSWD: /sbin/halt
-    - dishoungh  ALL=(root) NOPASSWD: /sbin/poweroff
-    - dishoungh  ALL=(root) NOPASSWD: /sbin/shutdown
-    - Add alias command='sudo command' lines in /home/(USER)/.bashrc
-6. nexus2 / # eselect profile set 8
-    - This selects default/linux/amd64/17.1/desktop/plasma (stable)
-7. nexus2 / # emerge -auvDN @world
-8. nexus2 / # vim /etc/portage/package.accept_keywords
+4. nexus2 / # emerge -avq app-admin/doas
+5. nexus2 / # vim /etc/doas.conf
+    - permit :wheel
+6. nexus2 / # vim /etc/portage/package.accept_keywords
     - \# app-admin
     - app-admin/bitwarden-desktop-bin
     
@@ -172,26 +166,21 @@
 9. nexus2 / # eselect repository enable pf4public
 10. nexus2 / # eselect repository enable steam-overlay
 11. nexus2 / # emerge --sync
-12. nexus2 / # emerge -avq x11-base/xorg-x11 app-shells/fish media-fonts/fonts-meta www-client/ungoogled-chromium-bin sys-fs/udisks x11-base/xorg-drivers kde-plasma/plasma-meta kde-apps/kdecore-meta kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta x11-misc/sddm gui-libs/display-manager-init kde-plasma/sddm-kcm net-im/discord-bin app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-sound/pavucontrol media-sound/pulseaudio  media-video/pipewire media-sound/pulsemixer media-plugins/alsa-plugins app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch x11-apps/mesa-progs kde-plasma/plasma-pa kde-plasma/plasma-nm
+12. nexus2 / # emerge -auvDN @world
+13. nexus2 / # emerge -avq x11-base/xorg-server app-shells/fish media-fonts/fonts-meta www-client/ungoogled-chromium-bin sys-fs/udisks x11-base/xorg-drivers net-im/discord app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-sound/pavucontrol media-sound/pulseaudio  media-video/pipewire media-sound/pulsemixer media-plugins/alsa-plugins app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch x11-apps/mesa-progs x11-apps/xrandr
     - To rectify "The following USE changes are necessary to proceed" do this:
         - Add the USE flags needed in the /etc/portage/package.use file
-13. nexus2 / # emerge -ac
-14. nexus2 / # usermod -aG video sddm
-15. nexus2 / # usermod -aG libvirt dishoungh
-16. nexus2 / # vim /etc/libvirt/libvirtd.conf
+14. nexus2 / # emerge -ac
+15. nexus2 / # usermod -aG video sddm
+16. nexus2 / # usermod -aG libvirt dishoungh
+17. nexus2 / # vim /etc/libvirt/libvirtd.conf
     - Uncomment these lines
         - auth_unix_ro = "none"
         - auth_unix_rw = "none"
         - unix_sock_group = "libvirt"
         - unix_sock_ro_perms = "0777"
         - unix_sock_rw_perms = "0770"
-17. nexus2 / # rc-service libvirtd start
-18. nexus2 / # rc-update add libvirtd default
-19. nexus2 / # vim /etc/conf.d/display-manager
-    - CHECKVT=7
-    - DISPLAYMANAGER="sddm"
-20. nexus2 / # rc-update add display-manager default
-21. nexus2 / # emerge -avq sys-kernel/gentoo-kernel
-22. nexus2 / # emerge --config sys-kernel/gentoo-kernel
-23. nexus2 / # reboot
-24. dishoungh@nexus2 ~ # chsh -s $(which fish)
+18. nexus2 / # rc-service libvirtd start
+19. nexus2 / # rc-update add libvirtd default
+24. nexus2 / # reboot
+25. dishoungh@nexus2 ~ # chsh -s $(which fish)
