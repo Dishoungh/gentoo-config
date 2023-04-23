@@ -1,9 +1,9 @@
 # Hardware (UEFI)
 
-- CPU: Ryzen 7 5800X (8 Cores / 16 Threads)
+- CPU: Ryzen 7 2700X (8 Cores / 16 Threads)
 - RAM: 32 GB (DDR4-3200)
-- GPU: AMD Radeon RX 6900XT
-- Storage: Samsung 2TB NVMe SSD
+- GPU: Nvidia Geforce GTX 1080 Ti
+- Storage: Samsung 850 EVO (250GB SATA SSD)
 - Monitors: 3x 2560x1440p Monitors (G-Sync IPS 1ms)
 
 # Part I: Booting into the USB Boot Media
@@ -23,8 +23,23 @@
 13. livecd /mnt/gentoo # links https://www.gentoo.org/downloads/mirrors
 14. livecd /mnt/gentoo # tar xpvf ./stage3-\*.tar.xz --xattrs-include="\*.\*" --numeric-owner
 15. livecd /mnt/gentoo # rm -f ./stage3-amd64-*
-15. Clone gentoo-config in mount
-16. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf **COPY make.conf file**
+16. livecd /mnt/gentoo # nano /mnt/gentoo/etc/portage/make.conf
+    - CHOST="x86_64-pc-linux-gnu"
+    - COMMON_FLAGS="-O2 -march=znver1 -pipe"
+    - MAKEOPTS="-j14 -l14"
+    - PORTAGE_NICENESS=19
+    - EMERGE_DEFAULT_OPTS="--jobs=16 --load-average=14 --with-bdeps=y --complete-graph=y"
+    - ACCEPT_KEYWORDS="amd64"
+    - ACCEPT_LICENSE="*"
+    - VIDEO_CARDS="nvidia"
+    - ABI_X86="64 32"
+    - QEMU_SOFTMMU_TARGETS="arm x86_64 sparc"
+    - QEMU_USER_TARGETS="x86_64"
+    - INPUT_DEVICES="udev libinput joystick"
+    - PYTHON_TARGETS="python3_11 python3_10 python3_9"
+    - FEATURES="ccache"
+    - CCACHE_DIR="/var/cache/ccache"
+    - USE="-bluetooth -systemd -gnome networkmanager sddm X kde pipewire pipewire-alsa xinerama -gpm elogind dbus osmesa vulkan -verify-sig"
 17. livecd /mnt/gentoo # mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf (I basically picked all the mirrors located in the U.S)
 18. livecd /mnt/gentoo # mkdir --parents /mnt/gentoo/etc/portage/repos.conf
 19. livecd /mnt/gentoo # cp /mnt/gentoo/usr/share/portage/config/repos.conf /mnt/gentoo/etc/portage/repos.conf/gentoo.conf
@@ -46,20 +61,18 @@
     - Check to make sure the boot and root partitions are properly mounted
 
 # Part III: Configuring Portage and Installing Core Packages
-1. Clone gentoo-config repository
 1. (chroot) livecd / # emerge-webrsync && emerge --sync --quiet
 2. (chroot) livecd / # rm -rf /etc/portage/package.*/
 3. (chroot) livecd / # touch /etc/portage/package.use /etc/portage/package.accept_keywords /etc/portage/package.mask
-4. (chroot) livecd / # Copy make.conf, package.use, package.mask, package.accept_keywords
+4. (chroot) livecd / # nano /etc/portage/package.use
     - sys-auth/pambase -passwdqc
     - sys-kernel/gentoo-kernel savedconfig
     - sys-boot/grub mount
 5. (chroot) livecd / # emerge -avq app-portage/cpuid2cpuflags
-6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use (Don't do this if you copied file)
+6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use
 7. (chroot) livecd / # emerge -1 sys-libs/glibc
 8. (chroot)) livecd / # emerge -auvDN @world
-9. (chroot) livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-fs/btrfs-progs sys-boot/grub:2 sys-boot/efibootmgr sys-boot/os-prober net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git sys-process/cronie app-eselect/eselect-repository x11-drivers/xf86-video-amdgpu sys-auth/pambase
-10. (chroot) livecd / # emerge --noreplace nano
+9. (chroot) livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/dracut sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-fs/btrfs-progs sys-boot/grub:2 sys-boot/efibootmgr sys-boot/os-prober net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git sys-process/cronie app-eselect/eselect-repository (GPU drivers) sys-auth/pambase
 10. (chroot) livecd / # emerge -ac
 11. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 12. (chroot) livecd / # emerge --config sys-libs/timezone-data
@@ -73,23 +86,17 @@
 16. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
 17. (chroot) livecd / # eselect kernel list
 18. (chroot) livecd / # eselect kernel set (KERNEL)
-19. Copy kernel config to /usr/src/linux
-20. Make sure settings are in using `make menuconfig` (Make sure there are no modules)
-21. BUILD NVME DRIVERS IN KERNEL!!!!!! The current config doesn't support it.
-21. (chroot) livecd /usr/src/linux # make && make install (There should be no modules)
-22. (chroot) 
 
 # Part IV: Fstab + Networking
-1. (chroot) livecd / # vim /etc/fstab (COPY FSTAB)
+1. (chroot) livecd / # vim /etc/fstab
     - \# Boot Partition
     - PARTUUID={BOOT}    /boot   vfat    defaults    1 2
     - \# Swap Partition
     - PARTUUID={SWAP}    none    swap    sw          0 0
     - \# Root Partition
     - PARTUUID={ROOT}    /       ext4    noatime     0 1
-    - (INCLUDE SECONDARY MOUNTS HERE: COPY FILE FROM ARCH BUILD)
 2. (chroot) livecd / # vim /etc/conf.d/hostname
-    - hostname="trinity"
+    - hostname="nexus2"
 3. (chroot) livecd / # rc-update add dhcpcd default
 4. (chroot) livecd / # rc-service dhcpcd start
     - /sbin/dhcpcd may be already running so it may spit out an error about the DHCP Client Daemon already running. Don't worry about it if you get this error.
@@ -101,7 +108,7 @@
 8. (chroot) livecd /etc/init.d # ln -s net.lo net.enp6s0
 9. (chroot) livecd /etc/init.d # rc-update add net.enp6s0 default
 10. (chroot) livecd /etc/init.d # vim /etc/hosts
-    - 127.0.0.1     trinity.homenetwork      trinity  localhost
+    - 127.0.0.1     nexus2.homenetwork      nexus2  localhost
     - ::1           localhost
 11. (chroot) livecd /etc/init.d # passwd
 12. (chroot) livecd /etc/init.d # rc-update add sysklogd default
@@ -114,8 +121,8 @@
 19. (chroot) livecd /etc/init.d # rc-update add cronie default
 
 # Part V: Bootloader and Reboot
-1. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf (DON'T DO THIS IF YOU COPIED ALREADY)
-2. (chroot) livecd / # Copy grub default config
+1. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
+2. (chroot) livecd / # emerge --config sys-kernel/gentoo-kernel
 2. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot --removable
 3. (chroot) livecd / # vim /etc/default/grub
     - GRUB_DISABLE_LINUX_UUID=true
@@ -132,9 +139,9 @@
 2. nexus2 / # useradd -m -G users,wheel,audio,video -s /bin/bash dishoungh
 3. nexus2 / # passwd dishoungh
 4. nexus2 / # emerge -avq app-admin/doas
-5. nexus2 / # vim /etc/doas.conf (COPY DOAS.CONF FILE)
+5. nexus2 / # vim /etc/doas.conf
     - permit :wheel
-6. nexus2 / # vim /etc/portage/package.accept_keywords **COPY files**
+6. nexus2 / # vim /etc/portage/package.accept_keywords
     - \# app-admin
     - app-admin/bitwarden-desktop-bin
     
@@ -156,21 +163,13 @@
     - \# overlays
     - \*/\*::pf4public
     - \*/\*::steam-overlay
+9. nexus2 / # eselect repository enable pf4public
 10. nexus2 / # eselect repository enable steam-overlay
 11. nexus2 / # emerge --sync
 12. nexus2 / # emerge -auvDN @world
-13. nexus2 / # emerge -avq x11-base/xorg-server app-shells/fish media-fonts/fonts-meta www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers net-im/discord app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-sound/pavucontrol media-sound/pulseaudio  media-video/pipewire media-plugins/alsa-plugins app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch x11-apps/mesa-progs x11-apps/xrandr
+13. nexus2 / # emerge -avq x11-base/xorg-server app-shells/fish media-fonts/fonts-meta www-client/ungoogled-chromium-bin sys-fs/udisks x11-base/xorg-drivers net-im/discord app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-sound/pavucontrol media-sound/pulseaudio  media-video/pipewire media-sound/pulsemixer media-plugins/alsa-plugins app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch x11-apps/mesa-progs x11-apps/xrandr
     - To rectify "The following USE changes are necessary to proceed" do this:
         - Add the USE flags needed in the /etc/portage/package.use file
-        - Use COPIED FILES to INSTALL MISSING PACKAGES
-14. Copy these files to their respective locations (You may want to temporarily comment out any calls to start the window manager since it's not installed yet)
-    - vimrc
-    - User Xinitrc
-    - System Xinitrc
-    - User fish shell config
-    - User .profile (You may want to temporarily comment out startx since dwm isn't installed yet)
-    - X11 Config (xorg.conf)
-14. nexus2 / # ln -s /opt/Bitwarden/bitwarden /usr/bin/bitwarden
 14. nexus2 / # emerge -ac
 15. nexus2 / # usermod -aG video sddm
 16. nexus2 / # usermod -aG libvirt dishoungh
@@ -185,9 +184,3 @@
 19. nexus2 / # rc-update add libvirtd default
 24. nexus2 / # reboot
 25. dishoungh@nexus2 ~ # chsh -s $(which fish)
-
-## Finishing It Off
-1. Clone customized packages into ~/Custom_Packages
-2. Go into each and `make clean install`
-3. Go into the files that dwm or startx were commented out and uncomment.
-4. It should work.

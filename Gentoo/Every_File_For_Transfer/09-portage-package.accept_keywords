@@ -1,0 +1,28 @@
+# app-admin
+app-admin/bitwarden-desktop-bin
+app-admin/doas ~amd64
+
+# app-backup
+app-backup/timeshift ~amd64
+
+# app-emulation
+app-emulation/vkd3d-proton
+
+# games-util
+games-util/game-device-udev-rules
+games-util/lutris
+games-util/xpadneo
+
+# media-video
+media-video/makemkv
+media-video/obs-studio
+
+# net-im
+net-im/discord-bin
+
+# overlays
+*/*::pf4public
+*/*::steam-overlay
+
+# sys-devel
+sys-devel/llvm ~amd64

@@ -1,0 +1,5 @@
+#!/bin/sh
+# Execute these commands at login
+
+# Initialize X session
+startx

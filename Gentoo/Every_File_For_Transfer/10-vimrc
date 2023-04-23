@@ -1,0 +1,25 @@
+" Enable line numbers and relative line numbers
+set number
+set relativenumber
+
+" Disable compatibility with original vi that might cause issues
+set nocompatible
+
+" Enable file type detection
+filetype on
+
+" Enable plugins and load plugins for detected file type
+filetype plugin on
+
+" Autoindention
+set autoindent
+
+" Turn on syntax highlighting
+syntax on
+
+" Set shift and tab width
+set shiftwidth=4
+set tabstop=4
+
+" Show partial commands in the last line of the screen
+set showcmd
