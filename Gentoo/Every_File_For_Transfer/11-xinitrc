@@ -19,6 +19,5 @@ pulseaudio --start
 
 # Execute Window Manager
 xhost + local:
-slstatus &
-exec dbus-launch --sh-syntax --exit-with-session dwm
-# exec dwm
+#slstatus &
+#exec dbus-launch --sh-syntax --exit-with-session dwm
