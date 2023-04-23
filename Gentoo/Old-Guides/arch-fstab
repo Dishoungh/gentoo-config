@@ -1,0 +1,14 @@
+# /dev/nvme0n1p3
+UUID=ed483a3c-1548-493b-aa84-209658b8c435	/         	ext4      	rw,relatime	0 1
+
+# /dev/nvme0n1p1
+UUID=6573-D4D9      	/boot     	vfat      	rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro	0 2
+
+# /dev/nvme0n1p2
+UUID=8258eb60-879e-4486-baed-899ccd1ef35a	none      	swap      	defaults  	0 0
+
+# 1 TB SSD (For VMs)
+UUID=4f50dce5-018c-4642-aa98-c8627f7cc37d	/media/4f50dce5-018c-4642-aa98-c8627f7cc37d	ext4	defaults,noatime	0 2
+
+# 8 TB Mass Storage SSD
+UUID=eca324a5-9a27-4eba-9b13-4f3e498576e6	/media/eca324a5-9a27-4eba-9b13-4f3e498576e6	ext4	defaults,noatime	0 2
