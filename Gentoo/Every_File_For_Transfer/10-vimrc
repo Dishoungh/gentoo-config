@@ -23,3 +23,6 @@ set tabstop=4
 
 " Show partial commands in the last line of the screen
 set showcmd
+
+" Enable Mouse Scrolling
+set mouse=a

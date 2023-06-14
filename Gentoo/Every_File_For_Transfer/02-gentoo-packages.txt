@@ -55,6 +55,8 @@ sys-fs/udisks
 sys-kernel/gentoo-sources
 sys-kernel/linux-firmware
 sys-process/cronie
+sys-process/htop
+sys-process/lsof
 virtual/wine
 www-client/firefox-bin
 x11-apps/mesa-progs

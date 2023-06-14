@@ -49,6 +49,9 @@ sys-boot/grub mount
 # sys-libs
 sys-libs/zlib minizip
 
+# sys-process
+sys-process/htop hwloc lm-sensors
+
 # x11-libs
 x11-libs/libdrm video_cards_amdgpu video_cards_radeon
 
