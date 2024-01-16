@@ -19,8 +19,11 @@ app-text/xmlto text
 
 # dev-libs
 dev-libs/libdbusmenu gtk3
+dev-libs/libgcrypt static-libs
+dev-libs/libgpg-error static-libs
 dev-libs/libpcre2 pcre32
 dev-libs/libxml2 icu
+dev-libs/lzo static-libs
 dev-libs/xmlsec nss
 
 # media-libs
@@ -31,11 +34,14 @@ media-libs/libsdl2 haptic
 media-sound/pulseaudio daemon
 
 # media-video
-media-video/ffmpeg fdk x264
+media-video/ffmpeg fdk x264 opus
 media-video/pipewire -pipewire-alsa -sound-server -jack-sdk
 
 # net-dns
 net-dns/dnsmasq script
+
+# net-libs
+net-libs/gnutls tools pkcs11
 
 # net-misc
 net-misc/spice-gtk usbredir
