@@ -46,20 +46,20 @@
     - Check to make sure the boot and root partitions are properly mounted
 
 # Part III: Configuring Portage and Installing Core Packages
-1. Clone gentoo-config repository
 1. (chroot) livecd / # emerge-webrsync && emerge --sync --quiet
-2. (chroot) livecd / # rm -rf /etc/portage/package.*/
-3. (chroot) livecd / # touch /etc/portage/package.use /etc/portage/package.accept_keywords /etc/portage/package.mask
-4. (chroot) livecd / # Copy make.conf, package.use, package.mask, package.accept_keywords
-    - sys-auth/pambase -passwdqc
-    - sys-kernel/gentoo-kernel savedconfig
-    - sys-boot/grub mount
-5. (chroot) livecd / # emerge -avq app-portage/cpuid2cpuflags
+2. (chroot) livecd / # emerge -vq app-eselect/eselect-repository app-portage/cpuid2cpuflags dev-vcs/git
+3. (chroot) livecd / # git clone https://github.com/Dishoungh/gentoo-config.git
+4. (chroot) livecd / # rm -rf /etc/portage/package.*/
+5. (chroot) livecd / # Copy make.conf, package.use, package.mask, package.accept_keywords
 6. (chroot) livecd / # echo "\*/\* $(cpuid2cpuflags)" >> /etc/portage/package.use (Don't do this if you copied file)
-7. (chroot) livecd / # emerge -1 sys-libs/glibc
-8. (chroot)) livecd / # emerge -auvDN @world
-9. (chroot) livecd / # emerge -avq sys-kernel/gentoo-sources sys-kernel/linux-firmware sys-apps/pciutils net-misc/dhcpcd app-admin/sysklogd sys-fs/e2fsprogs sys-fs/dosfstools sys-fs/btrfs-progs sys-boot/grub:2 sys-boot/efibootmgr sys-boot/os-prober net-misc/chrony net-misc/networkmanager sys-apps/usbutils app-editors/vim app-arch/lz4 dev-vcs/git sys-process/cronie app-eselect/eselect-repository x11-drivers/xf86-video-amdgpu sys-auth/pambase
-10. (chroot) livecd / # emerge --noreplace nano
+7. (chroot) livecd / # eselect repository enable guru && emerge --sync
+8. (chroot) livecd / # eselect repository enable pf4public && emerge --sync
+9. (chroot) livecd / # eselect repository enable steam-overlay && emerge --sync
+10. (chroot) livecd / # eselect profile set 8 (Select whichever one that has plasma/openrc)
+11. (chroot) livecd / # emerge -1 sys-libs/glibc
+12. (chroot) livecd / # emerge --noreplace app-editors/nano
+13. (chroot) livecd / # emerge -uvDN @world
+14. (chroot) livecd / # emerge -vq acct-group/libvirt app-admin/bitwarden-desktop-bin app-admin/doas app-admin/sysklogd app-arch/lz4 app-backup/timeshift app-editors/nano app-editors/vim app-emulation/libvirt app-emulation/qemu app-emulation/virt-manager app-emulation/vkd3d-proton app-misc/neofetch app-misc/screen app-office/libreoffice app-portage/gentoolkit app-shells/fish dev-qt/qtwebengine dev-util/ccache games-emulation/dolphin games-emulation/pcsx2 games-util/steam-meta gui-libs/display-manager-init kde-plasma/plasma-meta kde-plasma/sddm-kcm media-fonts/fonts-meta media-gfx/feh media-plugins/alsa-plugins media-sound/audacity media-sound/pavucontrol media-sound/pulseaudio media-sound/spotify media-video/libva-utils media-video/obs-studio media-video/pipewire media-video/vlc net-fs/samba net-im/discord net-misc/chrony net-misc/dhcpcd net-misc/netifrc net-misc/networkmanager net-misc/openssh sys-apps/lm-sensors sys-apps/pciutils sys-apps/usbutils sys-auth/pambase sys-boot/efibootmgr sys-boot/grub:2 sys-boot/os-prober sys-devel/llvm sys-fs/btrfs-progs sys-fs/dosfstools sys-fs/udisks sys-kernel/gentoo-sources sys-kernel/linux-firmware sys-power/suspend sys-process/cronie sys-process/htop sys-process/lsof virtual/wine www-client/chromium x11-apps/mesa-progs x11-apps/setxkbmap x11-apps/xhost x11-apps/xrandr x11-apps/xsetroot x11-base/xorg-drivers x11-base/xorg-server x11-drivers/xf86-video-amdgpu x11-misc/sddm x11-misc/sxhkd
 10. (chroot) livecd / # emerge -ac
 11. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
 12. (chroot) livecd / # emerge --config sys-libs/timezone-data
@@ -79,6 +79,11 @@
 21. (chroot) livecd /usr/src/linux # make && make install (There should be no modules)
 22. (chroot) 
 
+
+
+
+
+
 # Part IV: Fstab + Networking
 1. (chroot) livecd / # vim /etc/fstab (COPY FSTAB)
     - \# Boot Partition
@@ -93,7 +98,6 @@
 3. (chroot) livecd / # rc-update add dhcpcd default
 4. (chroot) livecd / # rc-service dhcpcd start
     - /sbin/dhcpcd may be already running so it may spit out an error about the DHCP Client Daemon already running. Don't worry about it if you get this error.
-5. (chroot) livecd / # emerge -an net-misc/netifrc
 6. (chroot) livecd / # vim /etc/conf.d/net
     - config_{INTERFACE}="dhcp"
     - You can find {INTERFACE} with "ls /sys/class/net"
