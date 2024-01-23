@@ -55,36 +55,40 @@
 7. (chroot) livecd / # eselect repository enable guru && emerge --sync
 8. (chroot) livecd / # eselect repository enable pf4public && emerge --sync
 9. (chroot) livecd / # eselect repository enable steam-overlay && emerge --sync
-10. (chroot) livecd / # eselect profile set 8 (Select whichever one that has plasma/openrc)
+10. (chroot) livecd / # eselect profile set 9 (Select whichever one that has plasma/openrc)
 11. (chroot) livecd / # emerge -1 sys-libs/glibc
 12. (chroot) livecd / # emerge --noreplace app-editors/nano
 13. (chroot) livecd / # emerge -uvDN @world
-14. (chroot) livecd / # emerge -vq acct-group/libvirt app-admin/bitwarden-desktop-bin app-admin/doas app-admin/sysklogd app-arch/lz4 app-backup/timeshift app-editors/nano app-editors/vim app-emulation/libvirt app-emulation/qemu app-emulation/virt-manager app-emulation/vkd3d-proton app-misc/neofetch app-misc/screen app-office/libreoffice app-portage/gentoolkit app-shells/fish dev-qt/qtwebengine dev-util/ccache games-emulation/dolphin games-emulation/pcsx2 games-util/steam-meta gui-libs/display-manager-init kde-plasma/plasma-meta kde-plasma/sddm-kcm media-fonts/fonts-meta media-gfx/feh media-plugins/alsa-plugins media-sound/audacity media-sound/pavucontrol media-sound/pulseaudio media-sound/spotify media-video/libva-utils media-video/obs-studio media-video/pipewire media-video/vlc net-fs/samba net-im/discord net-misc/chrony net-misc/dhcpcd net-misc/netifrc net-misc/networkmanager net-misc/openssh sys-apps/lm-sensors sys-apps/pciutils sys-apps/usbutils sys-auth/pambase sys-boot/efibootmgr sys-boot/grub:2 sys-boot/os-prober sys-devel/llvm sys-fs/btrfs-progs sys-fs/dosfstools sys-fs/udisks sys-kernel/gentoo-sources sys-kernel/linux-firmware sys-power/suspend sys-process/cronie sys-process/htop sys-process/lsof virtual/wine www-client/chromium x11-apps/mesa-progs x11-apps/setxkbmap x11-apps/xhost x11-apps/xrandr x11-apps/xsetroot x11-base/xorg-drivers x11-base/xorg-server x11-drivers/xf86-video-amdgpu x11-misc/sddm x11-misc/sxhkd
+14. (chroot) livecd / # emerge -vq acct-group/libvirt app-admin/bitwarden-desktop-bin app-admin/doas app-admin/sysklogd app-arch/lz4 app-backup/timeshift app-editors/nano app-editors/vim app-emulation/libvirt app-emulation/qemu app-emulation/virt-manager app-emulation/vkd3d-proton app-misc/neofetch app-misc/screen app-office/libreoffice app-portage/gentoolkit app-shells/fish dev-qt/qtwebengine dev-util/ccache games-emulation/dolphin games-emulation/pcsx2 games-util/steam-meta gui-libs/display-manager-init kde-apps/konsole kde-plasma/plasma-meta kde-plasma/sddm-kcm media-fonts/fonts-meta media-gfx/feh media-plugins/alsa-plugins media-sound/audacity media-sound/pavucontrol media-sound/pulseaudio media-sound/spotify media-video/libva-utils media-video/obs-studio media-video/pipewire media-video/vlc net-fs/samba net-im/discord net-misc/chrony net-misc/dhcpcd net-misc/netifrc net-misc/networkmanager net-misc/openssh sys-apps/lm-sensors sys-apps/pciutils sys-apps/usbutils sys-auth/pambase sys-boot/efibootmgr sys-boot/grub:2 sys-boot/os-prober sys-devel/llvm sys-fs/btrfs-progs sys-fs/dosfstools sys-fs/udisks sys-kernel/gentoo-sources sys-kernel/linux-firmware sys-power/suspend sys-process/cronie sys-process/htop sys-process/lsof virtual/wine www-client/chromium x11-apps/mesa-progs x11-apps/setxkbmap x11-apps/xhost x11-apps/xrandr x11-apps/xsetroot x11-base/xorg-drivers x11-base/xorg-server x11-drivers/xf86-video-amdgpu x11-misc/sddm x11-misc/sxhkd
 10. (chroot) livecd / # emerge -ac
-11. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
-12. (chroot) livecd / # emerge --config sys-libs/timezone-data
-13. (chroot) livecd / # vim /etc/locale.gen
+11. (chroot) livecd / # cp /gentoo-config/Gentoo/Every_File_For_Transfer/03-doas.conf /etc/doas.conf
+12. (chroot) livecd / # cp /gentoo-config/Gentoo/Every_File_For_Transfer/15-X11-xorg.conf /etc/X11/xorg.conf
+
+# Part IV: Time Zone and Locale Configuration
+1. (chroot) livecd / # echo "America/Chicago" > /etc/timezone
+2. (chroot) livecd / # emerge --config sys-libs/timezone-data
+3. (chroot) livecd / # vim /etc/locale.gen
     - Uncomment:
         - en_US ISO-8859-1
         - en_US.UTF-8 UTF-8
-14. (chroot) livecd / # locale-gen
-15. (chroot) livecd / # eselect locale set 6
+4. (chroot) livecd / # locale-gen
+5. (chroot) livecd / # eselect locale set 6
     - This selects en_US.utf8
-16. (chroot) livecd / # env-update && source /etc/profile && export PS1="(chroot) ${PS1}"
-17. (chroot) livecd / # eselect kernel list
-18. (chroot) livecd / # eselect kernel set (KERNEL)
-19. Copy kernel config to /usr/src/linux
-20. Make sure settings are in using `make menuconfig` (Make sure there are no modules)
-21. BUILD NVME DRIVERS IN KERNEL!!!!!! The current config doesn't support it.
-21. (chroot) livecd /usr/src/linux # make && make install (There should be no modules)
-22. (chroot) 
+6. (chroot) livecd / # env-update
+7. (chroot) livecd / # source /etc/profile
+8. livecd / # export PS1="(chroot) ${PS1}"
 
+# Part V: Kernel Configuration
+1. (chroot) livecd / # eselect kernel list
+2. (chroot) livecd / # eselect kernel set 1
+3. (chroot) livecd / # cd /usr/src/linux
+4. (chroot) livecd / # cp /gentoo-config/Gentoo/Every_File_For_Transfer/01-kernel-config.config ./.config
+5. (chroot) livecd / # make menuconfig
+    a. Make sure settings are in using `make menuconfig` (Make sure there are no modules)
+    b. BUILD NVME DRIVERS IN KERNEL!!!!!! The current config doesn't support it. CONFIG_BLK_DEV_NVME=y
+6. (chroot) livecd /usr/src/linux # make && make install (There should be no modules)
 
-
-
-
-
-# Part IV: Fstab + Networking
+# Part VI: Fstab + Networking
 1. (chroot) livecd / # vim /etc/fstab (COPY FSTAB)
     - \# Boot Partition
     - PARTUUID={BOOT}    /boot   vfat    defaults    1 2
@@ -94,7 +98,8 @@
     - PARTUUID={ROOT}    /       ext4    noatime     0 1
     - (INCLUDE SECONDARY MOUNTS HERE: COPY FILE FROM ARCH BUILD)
 2. (chroot) livecd / # vim /etc/conf.d/hostname
-    - hostname="trinity"
+    - hostname="{HOSTNAME}"
+        - Choose a hostname  
 3. (chroot) livecd / # rc-update add dhcpcd default
 4. (chroot) livecd / # rc-service dhcpcd start
     - /sbin/dhcpcd may be already running so it may spit out an error about the DHCP Client Daemon already running. Don't worry about it if you get this error.
@@ -102,10 +107,10 @@
     - config_{INTERFACE}="dhcp"
     - You can find {INTERFACE} with "ls /sys/class/net"
 7. (chroot) livecd / # cd /etc/init.d
-8. (chroot) livecd /etc/init.d # ln -s net.lo net.enp6s0
-9. (chroot) livecd /etc/init.d # rc-update add net.enp6s0 default
+8. (chroot) livecd /etc/init.d # ln -s net.lo net.{INTERFACE}
+9. (chroot) livecd /etc/init.d # rc-update add net.{INTERFACE} default
 10. (chroot) livecd /etc/init.d # vim /etc/hosts
-    - 127.0.0.1     trinity.homenetwork      trinity  localhost
+    - 127.0.0.1     {HOSTNAME}.homenetwork      {HOSTNAME}  localhost
     - ::1           localhost
 11. (chroot) livecd /etc/init.d # passwd
 12. (chroot) livecd /etc/init.d # rc-update add sysklogd default
@@ -117,11 +122,35 @@
 18. (chroot) livecd /etc/init.d # rc-update add dbus default
 19. (chroot) livecd /etc/init.d # rc-update add cronie default
 
-# Part V: Bootloader and Reboot
+# Part VII: User Creation
+1. (chroot) livecd /etc/init.d # useradd -m -G users,wheel,audio,video -s /bin/fish dishoungh
+2. (chroot) livecd /etc/init.d # passwd dishoungh
+3. (chroot) livecd /etc/init.d # usermod -aG video sddm
+4. (chroot) livecd /etc/init.d # usermod -aG libvirt dishoungh
+5. (chroot) livecd /etc/init.d # vim /etc/sudoers (I'm using doas instead but just for reference if I was to install sudo)
+        - %wheel ALL=(ALL:ALL) ALL
+        - dishoungh ALL=(root) NOPASSWD: /sbin/reboot
+        - dishoungh ALL=(root) NOPASSWD: /sbin/halt
+        - dishoungh ALL=(root) NOPASSWD: /sbin/poweroff
+        - dishoungh ALL=(root) NOPASSWD: /sbin/shutdown
+6. (chroot) livecd /etc/init.d # ln -s /opt/Bitwarden/bitwarden /usr/bin/bitwarden
+7. (chroot) livecd /etc/init.d # vim /etc/conf.d/display-manager
+    - CHECKVT=7
+    - DISPLAYMANAGER="sddm"
+8. (chroot) livecd /etc/init.d # vim /etc/libvirt/libvirtd.conf
+    - Uncomment these lines
+        - auth_unix_ro = "none"
+        - auth_unix_rw = "none"
+        - unix_sock_group = "libvirt"
+        - unix_sock_ro_perms = "0777"
+        - unix_sock_rw_perms = "0770"
+9. (chroot) livecd /etc/init.d # rc-update add libvirtd default
+
+# Part VIII: Bootloader and Reboot
 1. (chroot) livecd /etc/init.d # cd / && echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf (DON'T DO THIS IF YOU COPIED ALREADY)
-2. (chroot) livecd / # Copy grub default config
+2. (chroot) livecd / # cp /gentoo-config/Gentoo/Every_File_For_Transfer/05-default-grub /etc/default/grub
 2. (chroot) livecd / # grub-install --target=x86_64-efi --efi-directory=/boot --removable
-3. (chroot) livecd / # vim /etc/default/grub
+3. (chroot) livecd / # vim /etc/default/grub (If it hasn't been copied already)
     - GRUB_DISABLE_LINUX_UUID=true
     - GRUB_DISABLE_LINUX_PARTUUID=false
 4. (chroot) livecd / # grub-mkconfig -o /boot/grub/grub.cfg
@@ -131,67 +160,9 @@
 8. livecd ~ # umount -R /mnt/gentoo
 9. livecd ~ # reboot
 
-# Part VI: User Administration and Desktop Installation
-1. nexus2 ~ # cd /
-2. nexus2 / # useradd -m -G users,wheel,audio,video -s /bin/bash dishoungh
-3. nexus2 / # passwd dishoungh
-4. nexus2 / # emerge -avq app-admin/doas
-5. nexus2 / # vim /etc/doas.conf (COPY DOAS.CONF FILE)
-    - permit :wheel
-6. nexus2 / # vim /etc/portage/package.accept_keywords **COPY files**
-    - \# app-admin
-    - app-admin/bitwarden-desktop-bin
-    
-    - \# app-emulation
-    - app-emulation/vkd3d-proton
-    
-    - \# games-util
-    - games-util/game-device-udev-rules
-    - games-util/lutris
-    - games-util/xpadneo
-
-    - \# media-video
-    - media-video/makemkv
-    - media-video/obs-studio
-
-    - \# net-im
-    - net-im/discord-bin
-    
-    - \# overlays
-    - \*/\*::pf4public
-    - \*/\*::steam-overlay
-10. nexus2 / # eselect repository enable steam-overlay
-11. nexus2 / # emerge --sync
-12. nexus2 / # emerge -auvDN @world
-13. nexus2 / # emerge -avq x11-base/xorg-server app-shells/fish media-fonts/fonts-meta www-client/firefox-bin sys-fs/udisks x11-base/xorg-drivers net-im/discord app-office/libreoffice-bin x11-apps/setxkbmap media-video/vlc media-video/obs-studio games-util/steam-meta virtual/wine games-emulation/dolphin games-emulation/pcsx2 app-emulation/qemu app-emulation/libvirt app-emulation/virt-manager app-admin/bitwarden-desktop-bin media-video/makemkv media-video/handbrake app-emulation/vkd3d-proton media-sound/pavucontrol media-sound/pulseaudio  media-video/pipewire media-plugins/alsa-plugins app-misc/screen net-misc/openssh net-fs/samba media-sound/audacity app-misc/neofetch x11-apps/mesa-progs x11-apps/xrandr
-    - To rectify "The following USE changes are necessary to proceed" do this:
-        - Add the USE flags needed in the /etc/portage/package.use file
-        - Use COPIED FILES to INSTALL MISSING PACKAGES
-14. Copy these files to their respective locations (You may want to temporarily comment out any calls to start the window manager since it's not installed yet)
-    - vimrc
-    - User Xinitrc
-    - System Xinitrc
-    - User fish shell config
-    - User .profile (You may want to temporarily comment out startx since dwm isn't installed yet)
-    - X11 Config (xorg.conf)
-14. nexus2 / # ln -s /opt/Bitwarden/bitwarden /usr/bin/bitwarden
-14. nexus2 / # emerge -ac
-15. nexus2 / # usermod -aG video sddm
-16. nexus2 / # usermod -aG libvirt dishoungh
-17. nexus2 / # vim /etc/libvirt/libvirtd.conf
-    - Uncomment these lines
-        - auth_unix_ro = "none"
-        - auth_unix_rw = "none"
-        - unix_sock_group = "libvirt"
-        - unix_sock_ro_perms = "0777"
-        - unix_sock_rw_perms = "0770"
-18. nexus2 / # rc-service libvirtd start
-19. nexus2 / # rc-update add libvirtd default
-24. nexus2 / # reboot
-25. dishoungh@nexus2 ~ # chsh -s $(which fish)
-
-## Finishing It Off
-1. Clone customized packages into ~/Custom_Packages
-2. Go into each and `make clean install`
-3. Go into the files that dwm or startx were commented out and uncomment.
-4. It should work.
+# Part IX: Finishing Touches
+1. Login
+2. dishoungh@trinity ~> doas cp /gentoo-config/Gentoo/Every_File_For_Transfer/10-vimrc ~/.vimrc
+3. dishoungh@trinity ~> doas cp /gentoo-config/Gentoo/Every_File_For_Transfer/13-config.fish ~/.config/fish/fish.config
+4. dishoungh@trinity ~> doas rc-update add display-manager default
+5. dishoungh@trinity ~> doas rc-service display-manager start
